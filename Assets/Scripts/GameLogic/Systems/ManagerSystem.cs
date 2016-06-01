@@ -53,9 +53,9 @@ public class ManagerSystem : MonoBehaviour {
         dijkstra = FindObjectOfType<DijkstraSystem>();
 
         plane = GameObject.Find("Plane");
- 
 
 
+        DijkstraSystem.initialize();
     }
 	
 	// Update is called once per frame

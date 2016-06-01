@@ -12,8 +12,8 @@ public class BattlefieldCreater : MonoBehaviour {
 	public Material woodCubeMaterial;
     public float gridHeight;
 
-    public int mapSizeX;
-    public int mapSizeZ;
+    static public int mapSizeX;
+    static public int mapSizeZ;
 
     public List<Vector2> startPostionsP1;
     public List<Vector2> startPostionsP2;
