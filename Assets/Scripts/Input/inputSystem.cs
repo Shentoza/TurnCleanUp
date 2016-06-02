@@ -5,8 +5,6 @@ public class inputSystem : MonoBehaviour {
 
     //Stuff vom Manager
     ManagerSystem manager;
-    DijkstraSystem dijSys;
-    PlayerAssistanceSystem assist;
     AbilitySystem abilSys;
 
     //Ausgewählte Figur
@@ -38,15 +36,10 @@ public class inputSystem : MonoBehaviour {
     public bool gasAusgewaehlt;
     public bool granateAusgewaehlt;
 
-    UiManager uiManager;
-
 	// Use this for initialization
 	void Start () {
         GameObject managerObj = GameObject.Find("Manager");
-        uiManager = managerObj.GetComponent<UiManager>();
         manager = managerObj.GetComponent<ManagerSystem>();
-        dijSys = managerObj.GetComponent<DijkstraSystem>();
-        assist = managerObj.GetComponent<PlayerAssistanceSystem>();
         abilSys = managerObj.GetComponent<AbilitySystem>();
 
 
@@ -75,12 +68,12 @@ public class inputSystem : MonoBehaviour {
                 if (selectedCell != null)
                 {
                     if (figurGewaehlt && !movement.moving)
-                        dijSys.colorCell(selectedCell, attr.actMovRange, attr.weapon.GetComponent<WeaponComponent>().weaponRange);
+                        PlayerAssistanceSystem.colorCell(selectedCell);
                     else
-                        dijSys.resetSingleCell(selectedCell);
+                        PlayerAssistanceSystem.resetSingleCell(selectedCell);
                 }
                     selectedCell = tmp;
-                    dijSys.highlightSingleCell(selectedCell);
+                    PlayerAssistanceSystem.highlightSingleCell(selectedCell);
 
                 if(movementAusgewaehlt)
                 {
@@ -170,8 +163,8 @@ public class inputSystem : MonoBehaviour {
             {
                 movementAusgewaehlt = true;
                 selectedMovementCell = selectedCell;
-                ArrayList path = dijSys.getPath(attr.getCurrentCell(), selectedMovementCell);
-                assist.PaintWalkPath(path);
+                ArrayList path = DijkstraSystem.getPath(attr.getCurrentCell(), selectedMovementCell);
+                PlayerAssistanceSystem.PaintWalkPath(path);
             }
         }
 
@@ -180,8 +173,8 @@ public class inputSystem : MonoBehaviour {
         {
             if (movementAusgewaehlt && changedSelectedMovementCell)
             { 
-                ArrayList path = dijSys.getPath(attr.getCurrentCell(), selectedMovementCell);
-                assist.PaintWalkPath(path);
+                ArrayList path = DijkstraSystem.getPath(attr.getCurrentCell(), selectedMovementCell);
+                PlayerAssistanceSystem.PaintWalkPath(path);
             }
         }
 
@@ -191,8 +184,8 @@ public class inputSystem : MonoBehaviour {
                 if(movement.MoveTo(selectedMovementCell))
                 {
                     movementAusgewaehlt = false;
-                    assist.ClearWalkPath();
-                    dijSys.resetDijkstra();
+                    PlayerAssistanceSystem.ClearWalkPath();
+                    DijkstraSystem.resetDijkstra();
                 }
             }
         }
@@ -248,9 +241,9 @@ public class inputSystem : MonoBehaviour {
 
     public void selectFigurine(GameObject figurine)
     {
-        assist.ClearThrowPath();
-        assist.ClearWalkPath();
-        dijSys.resetDijkstra();
+        PlayerAssistanceSystem.ClearThrowPath();
+        PlayerAssistanceSystem.ClearWalkPath();
+        DijkstraSystem.resetDijkstra();
         player = figurine;
         if (figurine == null)
         {
@@ -263,7 +256,7 @@ public class inputSystem : MonoBehaviour {
             attr = (AttributeComponent)player.GetComponent(typeof(AttributeComponent));
             movement = (MovementSystem)player.GetComponent(typeof(MovementSystem));
             Cell currentCell = (Cell)attr.getCurrentCell().GetComponent(typeof(Cell));
-            dijSys.executeDijsktra(currentCell, attr.actMovRange, attr.items.getCurrentWeapon().weaponRange);
+            DijkstraSystem.executeDijsktra(currentCell, attr.actMovRange, attr.items.getCurrentWeapon().weaponRange);
             manager.setSelectedFigurine(figurine);
             figurGewaehlt = true;
             rotationScript.setNewTarget(player);

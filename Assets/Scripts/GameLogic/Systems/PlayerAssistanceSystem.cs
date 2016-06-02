@@ -3,6 +3,8 @@ using System.Collections;
 
 public class PlayerAssistanceSystem : MonoBehaviour {
 
+    public static PlayerAssistanceSystem instance{ get; private set; }
+
     bool drawingWalkPath;
     ArrayList walkPath = new ArrayList();
     bool drawingThrowPath;
@@ -19,50 +21,76 @@ public class PlayerAssistanceSystem : MonoBehaviour {
     [SerializeField]
     private Material highlightedMat;
 
-    
+    private Cell highlightedCell;
 
-    public void highlightSingleCell(Cell cell)
+    static GameObject selectedUnit;
+    static int moveRange;
+    static int attackRange;
+
+    static public void initialize()
+    {
+        if (instance != null)
+            Destroy(instance);
+        instance = new PlayerAssistanceSystem();
+        UnitSelectionEvent.OnUnitSelection += instance.UnitSelection;
+    }
+
+    void UnitSelection(GameObject unit)
+    {
+        selectedUnit = unit;
+        AttributeComponent selectedAttribute = instance.GetComponent<AttributeComponent>();
+        moveRange = selectedAttribute.actMovRange;
+        attackRange = selectedAttribute.weapon.GetComponent<WeaponComponent>().weaponRange;
+        resetAllCellColors();
+    }
+
+    void OnDestroy()
+    {
+        UnitSelectionEvent.OnUnitSelection -= instance.UnitSelection;
+    }
+
+    static public void highlightSingleCell(Cell cell)
     {
         MeshRenderer meshRend = (MeshRenderer)cell.gameObject.GetComponent(typeof(MeshRenderer));
-        meshRend.material = highlightedMat;
+        meshRend.material = instance.highlightedMat;
         meshRend.enabled = true;
     }
 
-    public void resetSingleCell(Cell cell)
+    static public void resetSingleCell(Cell cell)
     {
         MeshRenderer meshRend = (MeshRenderer)cell.gameObject.GetComponent(typeof(MeshRenderer));
-        meshRend.material = defaultMat;
+        meshRend.material = instance.defaultMat;
         meshRend.enabled = false;
     }
 
-    public void colorAllCells(int moveRange, int attackRange)
+    static public void colorAllCells()
     {
-        for (int i = 0; i < (battleField.sizeX * 10); ++i)
-            for (int j = 0; j < (battleField.sizeZ * 10); ++j)
+        for (int i = 0; i < (BattlefieldCreater.mapSizeX); ++i)
+            for (int j = 0; j < (BattlefieldCreater.mapSizeZ); ++j)
             {
-                Cell currentCell = battleField.getCell(i, j);
-                colorCell(currentCell, moveRange, attackRange);
+                Cell currentCell = BattlefieldCreater.instance.getCell(i, j);
+                colorCell(currentCell);
             }
     }
 
-    public void resetAllCellColors()
+    static public void resetAllCellColors()
     {
-        for (int i = 0; i < (battleField.sizeX * 10); ++i)
-            for (int j = 0; j < (battleField.sizeZ * 10); ++j)
+        for (int i = 0; i < (BattlefieldCreater.mapSizeX); ++i)
+            for (int j = 0; j < (BattlefieldCreater.mapSizeZ); ++j)
             {
-                Cell currentCell = battleField.getCell(i, j);
+                Cell currentCell = BattlefieldCreater.instance.getCell(i, j);
                 resetSingleCell(currentCell);
             }
     }
 
-    public void colorCell(Cell cell, int moveRange, int attackRange)
+    static public void colorCell(Cell cell)
     {
         MeshRenderer meshRend = (MeshRenderer)cell.gameObject.GetComponent(typeof(MeshRenderer));
         meshRend.enabled = true;
         if (cell.dij_GesamtKosten <= moveRange)
-            meshRend.material = begebarMat;
+            meshRend.material = instance.begebarMat;
         else if (cell.dij_GesamtKosten <= moveRange + attackRange)
-            meshRend.material = attackableMat;
+            meshRend.material = instance.attackableMat;
         else
             meshRend.enabled = false;
     }
@@ -70,7 +98,7 @@ public class PlayerAssistanceSystem : MonoBehaviour {
     /*Todo: neuen pfad nur bei wechselndem Pfad zeichnen (aktuell jeder Frame neuer Pfad)
     *irgendwelche fckn nullpointer fliegen
     */
-    public void PaintWalkPath(ArrayList path)
+    static public void PaintWalkPath(ArrayList path)
     {
         ClearWalkPath();
         MeshRenderer meshr;
@@ -79,26 +107,25 @@ public class PlayerAssistanceSystem : MonoBehaviour {
         {
             currentCell = (Cell)path[i];
             meshr = (MeshRenderer)currentCell.gameObject.GetComponent(typeof(MeshRenderer));
-            walkPath.Add(currentCell);
+            instance.walkPath.Add(currentCell);
 
-            meshr.material = pathMaterial;
+            meshr.material = instance.pathMaterial;
 
             
         }
     }
 
-    public void ClearThrowPath()
+    static public void ClearThrowPath()
     {
 
     }
 
-    public void ClearWalkPath()
+    static public void ClearWalkPath()
     {
-        foreach (Cell current in walkPath)
+        foreach (Cell current in instance.walkPath)
         {
-            MeshRenderer mr = (MeshRenderer)current.gameObject.GetComponent(typeof(MeshRenderer));
-            mr.material = begebarMat;
+            colorCell(current);
         }
-        walkPath.Clear();
+        instance.walkPath.Clear();
     }
 }

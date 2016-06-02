@@ -7,7 +7,6 @@ public class DijkstraSystem : MonoBehaviour {
     [SerializeField]
     static private BattlefieldCreater battleField;
     
-
     static private CellComparer comp = new CellComparer();
     static private ArrayList abgeschlosseneZellen = new ArrayList();
 
@@ -89,10 +88,8 @@ public class DijkstraSystem : MonoBehaviour {
         for(int i = 0; i < BattlefieldCreater.mapSizeX; ++i)
             for(int j = 0; j < BattlefieldCreater.mapSizeZ; ++j)
             {
-                Cell currentCell = battleField.getCell(i, j);
-                MeshRenderer meshRend = (MeshRenderer)currentCell.gameObject.GetComponent(typeof(MeshRenderer));
-                meshRend.material = defaultMat;
-                meshRend.enabled = false;
+                Cell currentCell = BattlefieldCreater.instance.getCell(i, j);
+                PlayerAssistanceSystem.resetSingleCell(currentCell);
                 currentCell.dij_ZellZustand = Cell.dij_Zustand.DIJ_UNBESUCHT;
                 currentCell.dij_Vorgaenger = null;
                 currentCell.dij_GesamtKosten = int.MaxValue;

@@ -31,23 +31,16 @@ public class CameraRotationScript : MonoBehaviour {
 	public float distanceMin = .5f;
 	public float distanceMax = 15f;
 
-	Vector3 distanceToObject = new Vector3 (0.0f, 2.0f, -5.0f);
-
 	//Dient für die Rotation
 	private Rigidbody rigid;
 	
 	float x = 0.0f;
 	float y = 0.0f;
 
-	//Lerptime für die Anfangs Kamerafahrt
-	float lerpTime = 0.0f;
-
 	//Aktivieren und Deaktivieren der Rotation
 	bool startRotation = false;
 	//Aktiviert/Deaktiviert die anfangs Kamerafahrt
 	bool startLerp = true;
-	//Aktiviert den Lerp zwischen Figuren
-	bool startSwitch = false;
 	//aktiviert/deaktiviert target verfolgung
 	bool mapCameraEnabled = true;
 
@@ -163,7 +156,6 @@ public class CameraRotationScript : MonoBehaviour {
 
 			transform.rotation = rotation;
 			transform.position = Vector3.Lerp(transform.position, position, 5.0f * 0.03f);
-			distanceToObject = transform.position - target.position;
 		}
 
 		//Die Rotation um ein Objekt
@@ -186,7 +178,6 @@ public class CameraRotationScript : MonoBehaviour {
 
 			transform.rotation = rotation;
 			transform.position = position;
-			distanceToObject = transform.position - target.position;
 		}/*
 			
 		if (!mapCamera && startRotation) {
@@ -239,15 +230,10 @@ public class CameraRotationScript : MonoBehaviour {
 			oldTarget = target;
 		}
 		target = newTarget.transform;
-		if (oldTarget)
-			distanceToObject = transform.position - oldTarget.position;
-		else {
-			distanceToObject = new Vector3 (5, 5, 0);
-		}
+
 		cameraTarget.transform.position = target.transform.position;
 		mapCameraEnabled = false;
 		switchTarget = target;
-		startSwitch = true;
 	}
 
 	public bool inBattlefield()

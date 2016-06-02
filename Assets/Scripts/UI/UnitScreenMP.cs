@@ -236,7 +236,7 @@ public class UnitScreenMP : MonoBehaviour {
         else if (dp4 == true && player1Picking)
         {
             xBase = (int)(Screen.width * dropdownBaseX) + unitIconWidth / 2;
-            yBase = yBase = unitListYAnker + 3 * buttonYOffset + unitIconHeight + 2;
+            yBase = unitListYAnker + 3 * buttonYOffset + unitIconHeight + 2;
             draw = 3;
         }
 

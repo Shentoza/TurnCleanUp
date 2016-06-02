@@ -10,10 +10,9 @@ public class AbilitySystem : MonoBehaviour {
 
     public int effektDauer;
     //Shit für animationen zum drehen
-    private float turningSpeed = 360.0f;
-    private float startAngle;
-    private bool startAngleSet;
-    private float turningDirection;
+    private float turning_Speed = 360.0f;
+    private bool turning_Started;
+    private float turning_Direction;
 
 
     //Grenade Stuff
@@ -71,7 +70,6 @@ public class AbilitySystem : MonoBehaviour {
             //Einsatz von AP durch Faehigkeit
             figur.GetComponentInParent<PlayerComponent>().useAP();
             throwing_effect = effectType;
-            WeaponHolding throwy = (WeaponHolding)playerAttr.model.GetComponent(typeof(WeaponHolding));
             playerAttr.anim.SetTrigger("Throw");
             switch (effectType)
             {
@@ -229,29 +227,28 @@ public class AbilitySystem : MonoBehaviour {
         //Schaue ich schon in die passende Richtung?
         if (angle != 0.0f)
         {
-            if (!startAngleSet)
+            if (!turning_Started)
             {
                 if (Vector3.Cross(walkingDirection.normalized, facingDirection).y < 0.0f)
                 {
-                    turningDirection = 1.0f;
+                    turning_Direction = 1.0f;
                 }
                 else
                 {
-                    turningDirection = -1.0f;
+                    turning_Direction = -1.0f;
                 }
 
-                startAngle = angle;
-                startAngleSet = true;
+                turning_Started = true;
             }
 
-            float yRotation = Mathf.Clamp(Time.deltaTime * turningSpeed * turningDirection, -angle, angle);
+            float yRotation = Mathf.Clamp(Time.deltaTime * turning_Speed * turning_Direction, -angle, angle);
             angle += yRotation;
             Vector3 euler = playerAttr.transform.rotation.eulerAngles;
             euler.y += angle;
             playerAttr.transform.rotation = Quaternion.Euler(euler);
         }
         else
-            startAngleSet = false;
+            turning_Started = false;
 
         return angle == 0.0f;
     }

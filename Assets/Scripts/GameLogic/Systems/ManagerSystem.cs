@@ -60,9 +60,7 @@ public class ManagerSystem : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
         activeUnitMark();
-
 	}
 
     public void startGame()
@@ -213,11 +211,7 @@ public class ManagerSystem : MonoBehaviour {
 
     public void placeUnit(int team, GameObject unit)
     {
-
         Vector2 posi = new Vector2(0,0);
-        
-        float sizeX = plane.GetComponent<BattlefieldCreater>().mapSizeX;
-        float sizeZ = plane.GetComponent<BattlefieldCreater>().mapSizeZ;
 
         if (team == 1)
         {

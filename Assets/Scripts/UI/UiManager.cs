@@ -26,9 +26,7 @@ public class UiManager : MonoBehaviour {
     public AttributeComponent activeUnit;
     public List<Enums.Actions> activeUnitSkills;
 
-    DijkstraSystem dijkstra;
-
-   public Enums.Actions activeSkill = 0;
+    public Enums.Actions activeSkill = 0;
 
     private bool figureSelected = false;
     
@@ -52,8 +50,6 @@ public class UiManager : MonoBehaviour {
 
         //setStyle
         style = new GUIStyle();
-
-        dijkstra = (DijkstraSystem)FindObjectOfType(typeof(DijkstraSystem));
 
         if (isPlayer1)
             input = player1.GetComponent<inputSystem>();
@@ -203,7 +199,7 @@ public class UiManager : MonoBehaviour {
         AttributeComponent attr = (AttributeComponent)managerSys.getSelectedFigurine().GetComponent(typeof(AttributeComponent));
         input.cancelActions();
         attr.regenerateMovepoints();
-        dijkstra.executeDijsktra(attr.getCurrentCell(), attr.actMovRange, attr.weapon.GetComponent<WeaponComponent>().weaponRange);
+        DijkstraSystem.executeDijsktra(attr.getCurrentCell(), attr.actMovRange, attr.weapon.GetComponent<WeaponComponent>().weaponRange);
     }
     public void hit(){
         actionCancel();
@@ -231,7 +227,7 @@ public class UiManager : MonoBehaviour {
 
         AttributeComponent attr = managerSys.getSelectedFigurine().GetComponent<AttributeComponent>();
         InventoryComponent inv = managerSys.getSelectedFigurine().GetComponent<InventoryComponent>();
-        dijkstra.executeDijsktra(attr.getCurrentCell(), attr.actMovRange, attr.weapon.GetComponent<WeaponComponent>().weaponRange);
+        DijkstraSystem.executeDijsktra(attr.getCurrentCell(), attr.actMovRange, attr.weapon.GetComponent<WeaponComponent>().weaponRange);
         inv.isPrimary = !inv.isPrimary;
 
         attr.model.GetComponent<WeaponHolding>().swapWeapons();

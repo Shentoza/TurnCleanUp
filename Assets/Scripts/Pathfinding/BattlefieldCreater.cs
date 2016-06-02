@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class BattlefieldCreater : MonoBehaviour {
-	
+
+    public static BattlefieldCreater instance { get; private set; }
+
 	Transform transformPlane;
 	public float sizeX;
 	public float sizeZ;
@@ -19,10 +21,14 @@ public class BattlefieldCreater : MonoBehaviour {
     public List<Vector2> startPostionsP2;
 
 	// Use this for initialization
-	void Start () {
-		transformPlane = (Transform) this.GetComponent (typeof(Transform));
-		initiateBattlefield ();
-	}
+    void Initialize()
+    {
+        if (instance != null)
+            Destroy(instance);
+        instance = new BattlefieldCreater();
+        instance.transformPlane = (Transform)this.GetComponent<Transform>();
+        initiateBattlefield();
+    }
 
 	// Update is called once per frame
 	void Update () {

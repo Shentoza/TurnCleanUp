@@ -5,7 +5,6 @@ using System;
 public class MovementSystem : MonoBehaviour {
 
     AttributeComponent playerAttr;
-    DijkstraSystem dijkstra;
 
     private float secondsPerCell;
 
@@ -18,18 +17,15 @@ public class MovementSystem : MonoBehaviour {
 
     float deltaSum;
 
-    private float turningSpeed = 360.0f;
-    private float startAngle;
-    private bool startAngleSet;
-    private float turningDirection;
+    private float turning_speed = 360.0f;
+    private bool turning_started;
+    private float turning_direction;
     
 	// Use this for initialization
 	void Start () {
         secondsPerCell = 0.5f;
-        dijkstra = (DijkstraSystem)FindObjectOfType(typeof(DijkstraSystem));
         playerAttr = (AttributeComponent)this.gameObject.GetComponent(typeof(AttributeComponent));
-        startAngle = 0.0f;
-        startAngleSet = false;
+        turning_started = false;
     }
 	
 	// Update is called once per frame
@@ -54,9 +50,9 @@ public class MovementSystem : MonoBehaviour {
             }
             targetCell = target;
             startingCell = playerAttr.getCurrentCell();
-            pfad = dijkstra.getPath(playerAttr.getCurrentCell(), target);
+            pfad = DijkstraSystem.getPath(playerAttr.getCurrentCell(), target);
             moving = true;
-            dijkstra.resetAllCellColors();
+            PlayerAssistanceSystem.resetAllCellColors();
         }
         else
         {
@@ -101,11 +97,11 @@ public class MovementSystem : MonoBehaviour {
                 //Nächste Zelle das Ziel?
                 if(nextCell == targetCell)
                 {
-                    parabelY = parabelY = -4.5f * progress * progress + 3.75f * progress + 0.75f + yHeight;
+                    parabelY = -4.5f * progress * progress + 3.75f * progress + 0.75f + yHeight;
                 }
                 else
                 {
-                    parabelY = parabelY = -3.0f * progress * progress + 3.0f * progress + 0.75f + yHeight;
+                    parabelY = -3.0f * progress * progress + 3.0f * progress + 0.75f + yHeight;
                 }
             }
             Vector3 yVector = new Vector3(0, parabelY, 0);
@@ -135,7 +131,7 @@ public class MovementSystem : MonoBehaviour {
                 if(currentCell == targetCell)
                 {
                     moving = false;
-                    dijkstra.executeDijsktra(currentCell, playerAttr.actMovRange, playerAttr.weapon.GetComponent<WeaponComponent>().weaponRange);
+                    DijkstraSystem.executeDijsktra(currentCell, playerAttr.actMovRange, playerAttr.weapon.GetComponent<WeaponComponent>().weaponRange);
                 }
             }
             deltaSum += Time.deltaTime;
@@ -162,29 +158,27 @@ public class MovementSystem : MonoBehaviour {
         //Schaue ich schon in die passende Richtung?
         if (angle != 0.0f)
         {
-            if (!startAngleSet)
+            if (!turning_started)
             {
                 if (Vector3.Cross(walkingDirection.normalized, facingDirection).y < 0.0f)
                 {
-                    turningDirection = 1.0f;
+                    turning_direction = 1.0f;
                 }
                 else
                 {
-                    turningDirection = -1.0f;
+                    turning_direction = -1.0f;
                 }
-
-                startAngle = angle;
-                startAngleSet = true;
+                turning_started = true;
             }
 
-            float yRotation = Mathf.Clamp(Time.deltaTime * turningSpeed * turningDirection, -angle, angle);
+            float yRotation = Mathf.Clamp(Time.deltaTime * turning_speed * turning_direction, -angle, angle);
             angle += yRotation;
             Vector3 euler = playerAttr.transform.rotation.eulerAngles;
             euler.y += yRotation;
             playerAttr.transform.rotation = Quaternion.Euler(euler);
         }
         else
-            startAngleSet = false;
+            turning_started = false;
 
         return angle == 0.0f;
     }
