@@ -29,6 +29,8 @@ public class UiManager : MonoBehaviour {
     public Enums.Actions activeSkill = 0;
 
     private bool figureSelected = false;
+
+    GameObject selected_Unit;
     
 	// Use this for initialization
 	void Start () {
@@ -55,8 +57,20 @@ public class UiManager : MonoBehaviour {
             input = player1.GetComponent<inputSystem>();
         else
             input = player2.GetComponent<inputSystem>();
+
+        UnitSelectionEvent.OnUnitSelection += UnitSelection;
+    }
+
+    void OnDestroy()
+    {
+        UnitSelectionEvent.OnUnitSelection -= UnitSelection;
     }
 	
+
+    void UnitSelection(GameObject unit)
+    {
+        selected_Unit = unit;
+    }
 
     // Update is called once per frame
     void Update()
@@ -72,13 +86,13 @@ public class UiManager : MonoBehaviour {
         if (managerSys.selectedFigurine != null && figureSelected == false)
         {
             figureSelected = true;
-            activeUnit = managerSys.selectedFigurine.GetComponent<AttributeComponent>();
+            activeUnit = selected_Unit.GetComponent<AttributeComponent>();
         }
         
         //beschaffe aktive einheit
         if (activeUnit)
         {
-            activeUnit = managerSys.selectedFigurine.GetComponent<AttributeComponent>();
+            activeUnit = selected_Unit.GetComponent<AttributeComponent>();
             activeUnitSkills = activeUnit.skills;
         }
         if (Input.GetKeyDown(KeyCode.Escape))

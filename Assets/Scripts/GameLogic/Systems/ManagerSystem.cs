@@ -22,7 +22,7 @@ public class ManagerSystem : MonoBehaviour {
 
     GameObject player1;
     GameObject player2;
-    public GameObject selectedFigurine;    //Aktuell ausgewählte Spielfigur
+    public GameObject selectedFigurine;
     int roundHalf;  //1 wenn Spieler1 seinen Turn beendet, 2 wenn Spieler2 seinen Turn beendet;
 
     //Verweise auf andere System
@@ -30,7 +30,8 @@ public class ManagerSystem : MonoBehaviour {
     public GameObject unit;
     public GameObject uiManager;
     public GameObject plane;
-    public DijkstraSystem dijkstra;
+
+    GameObject selected_unit;
     
 
     public bool uiManagerSet;
@@ -54,14 +55,25 @@ public class ManagerSystem : MonoBehaviour {
 
         plane = GameObject.Find("Plane");
 
-
         DijkstraSystem.initialize();
+        UnitSelectionEvent.OnUnitSelection += UnitSelection;
+    }
+
+    void OnDestroy()
+    {
+        UnitSelectionEvent.OnUnitSelection -= UnitSelection;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        activeUnitMark();
 	}
+
+    void UnitSelection(GameObject unit)
+    {
+        selected_unit = unit;
+
+        activeUnitMark();
+    }
 
     public void startGame()
     {

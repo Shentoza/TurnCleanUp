@@ -27,11 +27,6 @@ public class AbilitySystem : MonoBehaviour {
     private bool throwing_Active = false;
     private Enums.Effects throwing_effect;
     
-    // Use this for initialization
-    void Start () {
-        
-	}
-	
 	// Update is called once per frame
 	void Update () {
         if (throwing_Active)

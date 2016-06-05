@@ -27,6 +27,10 @@ public class inputSystem : MonoBehaviour {
     bool changedSelectedCell;
     bool changedSelectedMovementCell;
 
+    GameObject selected_Unit;
+    AttributeComponent selected_Attributes;
+    MovementSystem selected_movement;
+
 
     //Bools welche Aktion aktuell ausgewählt is
     public bool movementAusgewaehlt;
@@ -47,7 +51,42 @@ public class inputSystem : MonoBehaviour {
         changedSelectedCell = changedSelectedMovementCell = false;
 
         rotationScript = (CameraRotationScript)FindObjectOfType (typeof(CameraRotationScript));
+        UnitSelectionEvent.OnUnitSelection += UnitSelection;
 	}
+
+    void OnDestroy()
+    {
+        UnitSelectionEvent.OnUnitSelection -= UnitSelection;
+    }
+
+    void UnitSelection(GameObject unit)
+    {
+        PlayerAssistanceSystem.ClearThrowPath();
+        PlayerAssistanceSystem.ClearWalkPath();
+        DijkstraSystem.resetDijkstra();
+
+
+        selected_Unit = unit;
+
+        if (selected_Unit == null)
+        {
+            rotationScript.setNewTarget(null);
+            figurGewaehlt = false;
+        }
+        else
+        {
+
+            selected_Attributes = selected_Unit.GetComponent<AttributeComponent>();
+            selected_movement = selected_Unit.GetComponent<MovementSystem>();
+            Cell currentCell = selected_Attributes.getCurrentCell();
+
+            PlayerAssistanceSystem.resetAllCellColors();
+            DijkstraSystem.executeDijsktra(currentCell, attr.actMovRange, attr.items.getCurrentWeapon().weaponRange);
+            PlayerAssistanceSystem.colorAllCells();
+            rotationScript.setNewTarget(selected_Unit);
+            figurGewaehlt = true;
+        }
+    }
 	
 
 	// Update is called once per frame
@@ -103,7 +142,7 @@ public class inputSystem : MonoBehaviour {
                     //Neuer Spieler angeklickt
 					if(player != hit.collider.gameObject)
 					{
-                        selectFigurine(hit.collider.gameObject);
+                        UnitSelectionEvent.Send(hit.collider.gameObject);
 					}
 				}
 				if (angriffAusgewaehlt && figurGewaehlt)
@@ -237,30 +276,6 @@ public class inputSystem : MonoBehaviour {
         smokeAusgewaehlt = false;
         movementAusgewaehlt = false;
         GameObject.Find("UiManager(Clone)").GetComponent<UiManager>().activeSkill = Enums.Actions.Cancel;
-    }
-
-    public void selectFigurine(GameObject figurine)
-    {
-        PlayerAssistanceSystem.ClearThrowPath();
-        PlayerAssistanceSystem.ClearWalkPath();
-        DijkstraSystem.resetDijkstra();
-        player = figurine;
-        if (figurine == null)
-        {
-            player = null;
-            rotationScript.setNewTarget(null);
-            figurGewaehlt = false;
-        }
-        else
-        {
-            attr = (AttributeComponent)player.GetComponent(typeof(AttributeComponent));
-            movement = (MovementSystem)player.GetComponent(typeof(MovementSystem));
-            Cell currentCell = (Cell)attr.getCurrentCell().GetComponent(typeof(Cell));
-            DijkstraSystem.executeDijsktra(currentCell, attr.actMovRange, attr.items.getCurrentWeapon().weaponRange);
-            manager.setSelectedFigurine(figurine);
-            figurGewaehlt = true;
-            rotationScript.setNewTarget(player);
-        }
     }
 }
 

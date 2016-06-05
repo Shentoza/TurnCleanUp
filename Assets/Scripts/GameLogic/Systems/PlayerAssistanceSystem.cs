@@ -41,7 +41,6 @@ public class PlayerAssistanceSystem : MonoBehaviour {
         AttributeComponent selectedAttribute = instance.GetComponent<AttributeComponent>();
         moveRange = selectedAttribute.actMovRange;
         attackRange = selectedAttribute.weapon.GetComponent<WeaponComponent>().weaponRange;
-        resetAllCellColors();
     }
 
     void OnDestroy()

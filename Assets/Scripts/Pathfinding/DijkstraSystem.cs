@@ -4,19 +4,13 @@ using System;
 
 public class DijkstraSystem : MonoBehaviour {
 
-    [SerializeField]
-    static private BattlefieldCreater battleField;
-    
+
     static private CellComparer comp = new CellComparer();
     static private ArrayList abgeschlosseneZellen = new ArrayList();
 
 
     static public bool initialize()
     {
-        battleField = FindObjectOfType<BattlefieldCreater>();
-        if (battleField == null)
-            return false;
-
 
         return true;
     }
