@@ -3,6 +3,8 @@ using System.Collections;
 
 public class ShootingSystem : MonoBehaviour
 {
+    public static ShootingSystem instance { get; private set; }
+
     /*
     * Just dummy values
     * TO-DO: Make sure values are chosen so currentShootingAccuracy ends up between [0,1] when hitchance is calculated
@@ -27,8 +29,6 @@ public class ShootingSystem : MonoBehaviour
     // Range
     private const float MID_RANGE = 11.25f;
 
-    private HealthSystem healthSystem;
-
     private AttributeComponent currentplayerAttr;
     private WeaponComponent currentPlayerWeapon;
     private PlayerComponent currentPlayerComp;
@@ -38,11 +38,18 @@ public class ShootingSystem : MonoBehaviour
     private Cell currentTargetCell;
 
     private float distanceBetweenPlayers;
+
+    static void Initialize()
+    {
+        if (instance != null)
+            Destroy(instance);
+        instance = new ShootingSystem();
+    }
+
+
    
     public bool shoot(GameObject attacker, GameObject target)
     {
-        healthSystem = GameObject.Find("Manager").GetComponent<HealthSystem>();
-
         currentplayerAttr = (AttributeComponent)attacker.GetComponent(typeof(AttributeComponent));
         currentPlayerCell = currentplayerAttr.getCurrentCell();
         currentPlayerWeapon = (WeaponComponent)currentplayerAttr.weapon.GetComponent(typeof(WeaponComponent));
@@ -63,15 +70,13 @@ public class ShootingSystem : MonoBehaviour
             Debug.Log("Hitchance: " + hitChance);
             if (hitChance >= Random.value)
             {
-                if (healthSystem == null)
-                    Debug.Log("Healthsys");
                 if (currentplayerAttr == null)
                     Debug.Log("currentplayerAttr");
                 if (currentPlayerComp == null)
                     Debug.Log("currentPlayerComp");
                 if (currentTargetAttr == null)
                     Debug.Log("currentTargetAttr");
-                healthSystem.doDamage(currentplayerAttr, currentPlayerComp, currentTargetAttr, HealthSystem.SHOOT);
+                HealthSystem.doDamage(currentplayerAttr, currentPlayerComp, currentTargetAttr, HealthSystem.SHOOT);
                 return true;
             }
             else

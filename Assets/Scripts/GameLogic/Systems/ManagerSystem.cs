@@ -3,16 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class ManagerSystem : MonoBehaviour {
-
-    
-
     public int p1UnitCap = 6;
     public int p2UnitCap = 5;
 
     public List<GameObject> unitListP1;
     public List<GameObject> unitListP2;
 
-    
     public GameObject activeUnitMarker;
 
     CameraRotationScript cam;
@@ -22,17 +18,14 @@ public class ManagerSystem : MonoBehaviour {
 
     GameObject player1;
     GameObject player2;
-    public GameObject selectedFigurine;
+    public GameObject selected_Figurine;    //Aktuell ausgewählte Spielfigur
     int roundHalf;  //1 wenn Spieler1 seinen Turn beendet, 2 wenn Spieler2 seinen Turn beendet;
 
-    //Verweise auf andere System
-    private ShootingSystem shootingSys;
+
     public GameObject unit;
     public GameObject uiManager;
     public GameObject plane;
 
-    GameObject selected_unit;
-    
 
     public bool uiManagerSet;
 
@@ -50,13 +43,17 @@ public class ManagerSystem : MonoBehaviour {
 
         player2.GetComponent<inputSystem>().enabled = false;
         cam = GameObject.Find("Main Camera").GetComponent<CameraRotationScript>();
-        shootingSys = (ShootingSystem)this.gameObject.GetComponent(typeof(ShootingSystem));
-        dijkstra = FindObjectOfType<DijkstraSystem>();
-
         plane = GameObject.Find("Plane");
-
-        DijkstraSystem.initialize();
         UnitSelectionEvent.OnUnitSelection += UnitSelection;
+    }
+
+    void OnDestroy()
+    {
+        UnitSelectionEvent.OnUnitSelection -= UnitSelection;
+    }
+    void UnitSelection(GameObject unit)
+    {
+        selected_Figurine = unit;
     }
 
     void OnDestroy()
@@ -78,7 +75,7 @@ public class ManagerSystem : MonoBehaviour {
     public void startGame()
     {
         Instantiate(uiManager);
-        selectedFigurine = unitListP1[0];
+        UnitSelectionEvent.Send(unitListP1[0]);
         isPlayer1 = true;
         Camera.main.GetComponent<CameraRotationScript>().enabled = true;
 
@@ -93,7 +90,7 @@ public class ManagerSystem : MonoBehaviour {
 
         WeaponHolding weapon_anim = attackAttr.model.GetComponent<WeaponHolding>();
         attackAttr.anim.SetTrigger("Shoot");
-        if (shootingSys.shoot(attacker, target))
+        if (ShootingSystem.instance.shoot(attacker, target))
         {
             Debug.Log("HIIIIT!!!");
             targetAttr.anim.SetTrigger("getHit");
