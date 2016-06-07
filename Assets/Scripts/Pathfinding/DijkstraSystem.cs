@@ -4,14 +4,12 @@ using System;
 
 public class DijkstraSystem : MonoBehaviour {
 
-
     static private CellComparer comp = new CellComparer();
     static private ArrayList abgeschlosseneZellen = new ArrayList();
 
 
     static public bool initialize()
     {
-
         return true;
     }
 

@@ -1,0 +1,27 @@
+Wichtige Reihenfolge:
+
+Spieler müssen existieren
+
+Camera Rotation & Center Camera Position
+v
+Camera Rotation muss existieren
+
+
+ShootingSystem muss existieren
+Plane muss existieren
+
+v
+Manager
+
+
+v
+UIManager   Input
+
+
+
+Unabhängig:
+
+HealthSystem
+PlayerAssistanceSystem (braucht nur sich selbst, größtenteils statisch)
+DijkstraSystem (garkeine Instanz benötigt)
+ShootingSystem
