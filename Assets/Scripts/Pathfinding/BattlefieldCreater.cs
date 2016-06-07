@@ -21,6 +21,13 @@ public class BattlefieldCreater : MonoBehaviour {
     public List<Vector2> startPostionsP2;
 
 	// Use this for initialization
+    void Start()
+    {
+        instance = this;
+        instance.transformPlane = (Transform)this.GetComponent<Transform>();
+        initiateBattlefield();
+    }
+
     void Initialize()
     {
         if (instance != null)
@@ -143,4 +150,9 @@ public class BattlefieldCreater : MonoBehaviour {
 	{
 		return (Cell)Zellen [x, y].GetComponent (typeof(Cell));
 	}
+
+    public GameObject[,] getZellen()
+    {
+        return Zellen;
+    }
 }
