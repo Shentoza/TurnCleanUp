@@ -23,6 +23,12 @@ public class BattlefieldCreater : MonoBehaviour {
 	// Use this for initialization
     public static bool Initialize()
     {
+        instance = this;
+        instance.transformPlane = (Transform)this.GetComponent<Transform>();
+        initiateBattlefield();
+    }
+
+    {
         if (instance != null)
             Destroy(instance);
         instance = new BattlefieldCreater();
@@ -141,4 +147,9 @@ public class BattlefieldCreater : MonoBehaviour {
 	{
 		return (Cell)Zellen [x, y].GetComponent (typeof(Cell));
 	}
+
+    public GameObject[,] getZellen()
+    {
+        return Zellen;
+    }
 }

@@ -51,14 +51,7 @@ public class AttributeComponent : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         
-        if (items.isPrimary && items.primary != null)
-        {
-            weapon = items.primary.gameObject;
-        }
-        else if(items.secondary != null)
-        {
-            weapon = items.secondary.gameObject;
-        }
+
         
     }
 
@@ -78,8 +71,7 @@ public class AttributeComponent : MonoBehaviour {
 
     public void setCurrentCell(int x, int z)
     {
-        
-        this.cell = GameObject.Find(x.ToString() + "|" + z.ToString()).GetComponent<Cell>();
+        cell = BattlefieldCreater.instance.getCell(x, z);
     }
 
 
@@ -197,6 +189,7 @@ public class AttributeComponent : MonoBehaviour {
             weapons.primaryStance = stance;
 
             items.primary = tmp.GetComponent<WeaponComponent>();
+            items.isPrimary = true;
             items.primaryWeaponType = Enums.PrimaryWeapons.Pipe;
             skills.Add(Enums.Actions.Hit);
               
@@ -208,6 +201,7 @@ public class AttributeComponent : MonoBehaviour {
             weapons.primaryStance = stance;
 
             items.primary = tmp.GetComponent<WeaponComponent>();
+            items.isPrimary = true;
             items.primaryWeaponType = Enums.PrimaryWeapons.AssaultRifle;
             skills.Add(Enums.Actions.Shoot);
             skills.Add(Enums.Actions.Reload);
@@ -320,7 +314,16 @@ public class AttributeComponent : MonoBehaviour {
             items.amountTeargas = 2;
             skills.Add(Enums.Actions.Teargas);
         }
-        
+
+        if (items.isPrimary && items.primary != null)
+        {
+            weapon = items.primary.gameObject;
+        }
+        else if (items.secondary != null)
+        {
+            weapon = items.secondary.gameObject;
+        }
+
     }
 
     public void regenerateMovepoints()

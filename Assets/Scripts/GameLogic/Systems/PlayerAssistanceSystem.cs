@@ -32,6 +32,11 @@ public class PlayerAssistanceSystem : MonoBehaviour {
 
     static public bool Initialize()
     {
+        instance = this;
+        UnitSelectionEvent.OnUnitSelection += instance.UnitSelection;
+    }
+
+    {
         if (instance != null)
             Destroy(instance);
         instance = new PlayerAssistanceSystem();
@@ -51,7 +56,7 @@ public class PlayerAssistanceSystem : MonoBehaviour {
     void UnitSelection(GameObject unit)
     {
         selectedUnit = unit;
-        AttributeComponent selectedAttribute = instance.GetComponent<AttributeComponent>();
+        AttributeComponent selectedAttribute = unit.GetComponent<AttributeComponent>();
         moveRange = selectedAttribute.actMovRange;
         attackRange = selectedAttribute.weapon.GetComponent<WeaponComponent>().weaponRange;
     }

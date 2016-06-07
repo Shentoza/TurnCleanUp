@@ -522,6 +522,7 @@ public class UnitScreenMP : MonoBehaviour {
     {
         manager.addUnit(team);
         manager.unitListP1[unitCountP1].GetComponent<AttributeComponent>().setEquip(equip);
+        UnitSelectionEvent.Send(manager.unitListP1[0]);
     }
 
 

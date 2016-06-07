@@ -10,8 +10,6 @@ public class inputSystem : MonoBehaviour {
     //Ausgewählte Figur
     GameObject player;
     //Stuff von der Aktuell gewählten Figur
-    AttributeComponent attr;
-    MovementSystem movement;
 	CameraRotationScript rotationScript;
 
 	bool figurGewaehlt;
@@ -81,7 +79,7 @@ public class inputSystem : MonoBehaviour {
             Cell currentCell = selected_Attributes.getCurrentCell();
 
             PlayerAssistanceSystem.resetAllCellColors();
-            DijkstraSystem.executeDijsktra(currentCell, attr.actMovRange, attr.items.getCurrentWeapon().weaponRange);
+            DijkstraSystem.executeDijsktra(currentCell, selected_Attributes.actMovRange,selected_Attributes.items.getCurrentWeapon().weaponRange);
             PlayerAssistanceSystem.colorAllCells();
             rotationScript.setNewTarget(selected_Unit);
             figurGewaehlt = true;
@@ -106,7 +104,7 @@ public class inputSystem : MonoBehaviour {
             {
                 if (selectedCell != null)
                 {
-                    if (figurGewaehlt && !movement.moving)
+                    if (figurGewaehlt && !selected_movement.moving)
                         PlayerAssistanceSystem.colorCell(selectedCell);
                     else
                         PlayerAssistanceSystem.resetSingleCell(selectedCell);
@@ -116,7 +114,7 @@ public class inputSystem : MonoBehaviour {
 
                 if(movementAusgewaehlt)
                 {
-                    if(selectedCell.dij_GesamtKosten <= attr.actMovRange)
+                    if(selectedCell.dij_GesamtKosten <= selected_Attributes.actMovRange)
                     {
                         changedSelectedMovementCell = selectedMovementCell != selectedCell;
                         selectedMovementCell = selectedCell;
@@ -198,11 +196,11 @@ public class inputSystem : MonoBehaviour {
         //Wenn begonnen wird rechts zu klicken
         if(Input.GetMouseButtonDown(1))
         {
-            if (figurGewaehlt && selectedCell.dij_GesamtKosten <= attr.actMovRange)
+            if (figurGewaehlt && selectedCell.dij_GesamtKosten <= selected_Attributes.actMovRange)
             {
                 movementAusgewaehlt = true;
                 selectedMovementCell = selectedCell;
-                ArrayList path = DijkstraSystem.getPath(attr.getCurrentCell(), selectedMovementCell);
+                ArrayList path = DijkstraSystem.getPath(selected_Attributes.getCurrentCell(), selectedMovementCell);
                 PlayerAssistanceSystem.PaintWalkPath(path);
             }
         }
@@ -212,7 +210,7 @@ public class inputSystem : MonoBehaviour {
         {
             if (movementAusgewaehlt && changedSelectedMovementCell)
             { 
-                ArrayList path = DijkstraSystem.getPath(attr.getCurrentCell(), selectedMovementCell);
+                ArrayList path = DijkstraSystem.getPath(selected_Attributes.getCurrentCell(), selectedMovementCell);
                 PlayerAssistanceSystem.PaintWalkPath(path);
             }
         }
@@ -220,7 +218,7 @@ public class inputSystem : MonoBehaviour {
         if (Input.GetMouseButtonUp (1)) {
             if (movementAusgewaehlt)
             {
-                if(movement.MoveTo(selectedMovementCell))
+                if(selected_movement.MoveTo(selectedMovementCell))
                 {
                     movementAusgewaehlt = false;
                     PlayerAssistanceSystem.ClearWalkPath();

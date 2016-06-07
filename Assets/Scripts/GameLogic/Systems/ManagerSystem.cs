@@ -193,17 +193,19 @@ public class ManagerSystem : MonoBehaviour {
 
         if (team == 1)
         {
-            posi = plane.GetComponent<BattlefieldCreater>().startPostionsP1[unitListP1.Count];           
+            posi = plane.GetComponent<BattlefieldCreater>().startPostionsP1[unitListP1.Count -1];           
         }
         else if (team == 2)
         {
-            posi = plane.GetComponent<BattlefieldCreater>().startPostionsP2[unitListP1.Count];
+            posi = plane.GetComponent<BattlefieldCreater>().startPostionsP2[unitListP1.Count -1];
         }
 
         //setze map Coordinaten
+        /*
         unit.GetComponent<ObjectSetter>().x = (int) posi.x;
         unit.GetComponent<ObjectSetter>().z = (int) posi.y;
         unit.GetComponent<AttributeComponent>().setCurrentCell((int)posi.x, (int)posi.y);
+        
 
 
 
@@ -215,7 +217,11 @@ public class ManagerSystem : MonoBehaviour {
 
         unit.transform.position = new Vector3(xBase + (int)posi.x + 0.5f, yBase + 0.52f, zBase - (int)posi.y - 0.5f );
         // tmp.transform.position = new Vector3(x,1.0f,z)
-
+        */
+        ObjectSetter objSet = unit.GetComponent < ObjectSetter > ();
+        objSet.x = (int)posi.x;
+        objSet.z = (int)posi.y;
+        objSet.move(BattlefieldCreater.instance.getZellen());
 
 
     }
