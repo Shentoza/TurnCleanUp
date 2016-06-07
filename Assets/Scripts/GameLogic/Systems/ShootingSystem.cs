@@ -39,11 +39,13 @@ public class ShootingSystem : MonoBehaviour
 
     private float distanceBetweenPlayers;
 
-    static void Initialize()
+    public static bool Initialize()
     {
         if (instance != null)
             Destroy(instance);
         instance = new ShootingSystem();
+
+        return true;
     }
 
 

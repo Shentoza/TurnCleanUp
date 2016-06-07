@@ -5,6 +5,9 @@ public class PlayerAssistanceSystem : MonoBehaviour {
 
     public static PlayerAssistanceSystem instance{ get; private set; }
 
+    [SerializeField]
+    private static GameObject prefab;
+
     bool drawingWalkPath;
     ArrayList walkPath = new ArrayList();
     bool drawingThrowPath;
@@ -15,7 +18,7 @@ public class PlayerAssistanceSystem : MonoBehaviour {
     [SerializeField]
     private Material pathMaterial;
     [SerializeField]
-    private Material begebarMat;
+    private Material begehbarMat;
     [SerializeField]
     private Material attackableMat;
     [SerializeField]
@@ -27,12 +30,22 @@ public class PlayerAssistanceSystem : MonoBehaviour {
     static int moveRange;
     static int attackRange;
 
-    static public void initialize()
+    static public bool Initialize()
     {
         if (instance != null)
             Destroy(instance);
         instance = new PlayerAssistanceSystem();
+
+        PlayerAssistanceSystem prefabComp = prefab.GetComponent<PlayerAssistanceSystem>();
+        instance.defaultMat = prefabComp.defaultMat;
+        instance.pathMaterial = prefabComp.pathMaterial;
+        instance.begehbarMat = prefabComp.begehbarMat;
+        instance.attackableMat = prefabComp.attackableMat;
+        instance.highlightedMat = prefabComp.highlightedMat;
+
         UnitSelectionEvent.OnUnitSelection += instance.UnitSelection;
+
+        return true;
     }
 
     void UnitSelection(GameObject unit)
@@ -87,7 +100,7 @@ public class PlayerAssistanceSystem : MonoBehaviour {
         MeshRenderer meshRend = (MeshRenderer)cell.gameObject.GetComponent(typeof(MeshRenderer));
         meshRend.enabled = true;
         if (cell.dij_GesamtKosten <= moveRange)
-            meshRend.material = instance.begebarMat;
+            meshRend.material = instance.begehbarMat;
         else if (cell.dij_GesamtKosten <= moveRange + attackRange)
             meshRend.material = instance.attackableMat;
         else

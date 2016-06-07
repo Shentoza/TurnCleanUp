@@ -34,7 +34,6 @@ public class UiManager : MonoBehaviour {
     
 	// Use this for initialization
 	void Start () {
-
         player1 = GameObject.Find("Player1");
         player2 = GameObject.Find("Player2");
         managerSys = GameObject.Find("Manager").GetComponent<ManagerSystem>();
@@ -47,7 +46,7 @@ public class UiManager : MonoBehaviour {
 
 
         //getActiveUnitSkills
-        activeUnit = managerSys.selectedFigurine.GetComponent<AttributeComponent>();
+        activeUnit = managerSys.selected_Figurine.GetComponent<AttributeComponent>();
         activeUnitSkills = activeUnit.skills;
 
         //setStyle
@@ -83,7 +82,7 @@ public class UiManager : MonoBehaviour {
         else
             input = player2.GetComponent<inputSystem>();
 
-        if (managerSys.selectedFigurine != null && figureSelected == false)
+        if (managerSys.selected_Figurine != null && figureSelected == false)
         {
             figureSelected = true;
             activeUnit = selected_Unit.GetComponent<AttributeComponent>();
@@ -101,9 +100,6 @@ public class UiManager : MonoBehaviour {
         }
 
     }
-
-
-   
 
     // verhindert das zu viele waffenoptionen angezeigt werden
     public List<Enums.Actions> getActiveUnitSkills()
@@ -255,7 +251,7 @@ public class UiManager : MonoBehaviour {
             // Audiofeedpack wenn heilen klappt
             AudioManager.playMedikit();
 
-            healthSystem.doHeal(null, activeUnit, HealthSystem.MEDIPACK);
+            HealthSystem.instance.doHeal(null, activeUnit, HealthSystem.MEDIPACK);
         }
     }
 

@@ -22,13 +22,14 @@ public class ManagerSystem : MonoBehaviour {
     int roundHalf;  //1 wenn Spieler1 seinen Turn beendet, 2 wenn Spieler2 seinen Turn beendet;
 
 
-    public GameObject unit;
     public GameObject uiManager;
     public GameObject plane;
 
 
     public bool uiManagerSet;
 
+
+    public GameObject unitPrefab;
     public GameObject policePrefab;
     public GameObject rebelPrefab;
 
@@ -44,33 +45,22 @@ public class ManagerSystem : MonoBehaviour {
         player2.GetComponent<inputSystem>().enabled = false;
         cam = GameObject.Find("Main Camera").GetComponent<CameraRotationScript>();
         plane = GameObject.Find("Plane");
-        UnitSelectionEvent.OnUnitSelection += UnitSelection;
+        UnitSelectionEvent.OnUnitSelection += SelectUnit;
     }
 
     void OnDestroy()
     {
-        UnitSelectionEvent.OnUnitSelection -= UnitSelection;
+        UnitSelectionEvent.OnUnitSelection -= SelectUnit;
     }
-    void UnitSelection(GameObject unit)
+    void SelectUnit(GameObject unit)
     {
         selected_Figurine = unit;
-    }
-
-    void OnDestroy()
-    {
-        UnitSelectionEvent.OnUnitSelection -= UnitSelection;
+        activeUnitMark();
     }
 	
 	// Update is called once per frame
 	void Update () {
 	}
-
-    void UnitSelection(GameObject unit)
-    {
-        selected_unit = unit;
-
-        activeUnitMark();
-    }
 
     public void startGame()
     {
@@ -88,18 +78,18 @@ public class ManagerSystem : MonoBehaviour {
         AttributeComponent attackAttr = (AttributeComponent) attacker.GetComponent(typeof(AttributeComponent));
         AttributeComponent targetAttr = (AttributeComponent)attacker.GetComponent(typeof(AttributeComponent));
 
-        WeaponHolding weapon_anim = attackAttr.model.GetComponent<WeaponHolding>();
-        attackAttr.anim.SetTrigger("Shoot");
+        WeaponHolding weaponHolding = attackAttr.model.GetComponent<WeaponHolding>();
+        attackAttr.model_animator.SetTrigger("Shoot");
         if (ShootingSystem.instance.shoot(attacker, target))
         {
             Debug.Log("HIIIIT!!!");
-            targetAttr.anim.SetTrigger("getHit");
-            weapon_anim.shoot_isNextShotHit(true);
+            targetAttr.model_animator.SetTrigger("getHit");
+            weaponHolding.shoot_isNextShotHit(true);
             Debug.Log("Getroffen");
         }
         else
         {
-            weapon_anim.shoot_isNextShotHit(false);
+            weaponHolding.shoot_isNextShotHit(false);
             Debug.Log("Nicht getroffen");
         }
     }
@@ -131,31 +121,21 @@ public class ManagerSystem : MonoBehaviour {
         isPlayer1 = !isPlayer1;
         if(isPlayer1) //wenn Spieler 1 dran ist
         {
-            /*AttributeComponent attr = unitListP1[0].GetComponent<AttributeComponent>();
-            //To-Do: Mit UI verknüpfen 
-            Debug.Log("Spieler1 ist am Zug");
-            setSelectedFigurine(unitListP1[0]);               //Wählt das erste Child von Spieler2
-            dijkstra.executeDijsktra(attr.getCurrentCell(), attr.actMovRange, attr.items.getCurrentWeapon().weaponRange);
-            cam.setNewTarget(selectedFigurine);                 //Gibt der Kamera ein neues Target
-            player1.GetComponent<inputSystem>().enabled = true;                         //Aktiviere InputSys von Spieler1
-            player2.GetComponent<inputSystem>().enabled = false; */
 
 
-            setSelectedFigurine(unitListP1[0]);
-            cam.setNewTarget(selectedFigurine);                 //Gibt der Kamera ein neues Target
+            UnitSelectionEvent.Send(unitListP1[0]);
+            cam.setNewTarget(selected_Figurine);                 //Gibt der Kamera ein neues Target
             inputSystem input = player1.GetComponent<inputSystem>();
             input.enabled = true;
-            input.selectFigurine(null);
             player2.GetComponent<inputSystem>().enabled = false;
         }
         else
         {
             //To-Do: Mit UI verknüpfen 
-            setSelectedFigurine(unitListP2[0]);                 
-            cam.setNewTarget(selectedFigurine);                 //Gibt der Kamera ein neues Target
+            UnitSelectionEvent.Send(unitListP2[0]);                 
+            cam.setNewTarget(selected_Figurine);                 //Gibt der Kamera ein neues Target
             inputSystem input = player2.GetComponent<inputSystem>();
             input.enabled = true;
-            input.selectFigurine(null);
             player1.GetComponent<inputSystem>().enabled = false;
         }
 
@@ -168,22 +148,11 @@ public class ManagerSystem : MonoBehaviour {
                 g.GetComponent<AttributeComponent>().canShoot = true;
     }
 
-    public void setSelectedFigurine(GameObject selected)
-    {
-        selectedFigurine = selected;
-    }
-
-    public GameObject getSelectedFigurine()
-    {
-        return selectedFigurine;
-    }
-
-
     public void addUnit(int team)
     {
 
         //erzeuge einheit
-        GameObject tmp = Instantiate(unit);
+        GameObject tmp = Instantiate(unitPrefab);
 
         if (team == 1)
         {
@@ -208,10 +177,10 @@ public class ManagerSystem : MonoBehaviour {
 
     public void activeUnitMark()
     {
-        if (selectedFigurine)
+        if (selected_Figurine != null)
         {
-            activeUnitMarker.transform.position = selectedFigurine.transform.position;
-            activeUnitMarker.transform.rotation = selectedFigurine.transform.rotation;
+            activeUnitMarker.transform.position = selected_Figurine.transform.position;
+            activeUnitMarker.transform.rotation = selected_Figurine.transform.rotation;
         }
         
 
@@ -268,9 +237,9 @@ public class ManagerSystem : MonoBehaviour {
         if (team == 1)
         {
             //sterbende Figur ist aktuelle figur
-            if (unit == selectedFigurine)
+            if (unit == selected_Figurine)
             {
-                selectedFigurine = unitListP1[0];
+                UnitSelectionEvent.Send(unitListP1[0]);
                 activeUnitMark();
             }
 
@@ -279,9 +248,9 @@ public class ManagerSystem : MonoBehaviour {
         else if (team == 2)
         {
             //sterbende Figur ist aktuelle figur
-            if (unit == selectedFigurine)
+            if (unit == selected_Figurine)
             {
-                selectedFigurine = unitListP2[0];
+                UnitSelectionEvent.Send(unitListP2[0]);
                 activeUnitMark();
             }
             unitListP2.Remove(unit);
@@ -291,7 +260,6 @@ public class ManagerSystem : MonoBehaviour {
 
 
     }
-
 
     public void ende()
     {

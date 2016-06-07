@@ -8,7 +8,7 @@ public class DijkstraSystem : MonoBehaviour {
     static private ArrayList abgeschlosseneZellen = new ArrayList();
 
 
-    static public bool initialize()
+    static public bool Initialize()
     {
         return true;
     }

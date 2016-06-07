@@ -17,12 +17,14 @@ public class HealthSystem : MonoBehaviour
 
     static private int animId_tgetHit;
 
-    static void Initialize()
+    public static bool Initialize()
     {
         if (instance != null)
             Destroy(instance);
         instance = new HealthSystem();
         animId_tgetHit = Animator.StringToHash("getHit");
+
+        return true;
     }
 
     /* Generates and inflicts damage if necessary */
