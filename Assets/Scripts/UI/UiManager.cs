@@ -20,17 +20,15 @@ public class UiManager : MonoBehaviour {
 
     GUIStyle style;
 
-    public inputSystem input;
-
-    // aktionen enum
-    public AttributeComponent activeUnit;
-    public List<Enums.Actions> activeUnitSkills;
 
     public Enums.Actions activeSkill = 0;
 
     private bool figureSelected = false;
 
     GameObject selected_Unit;
+    AttributeComponent selected_Attributes;
+    List<Enums.Actions> selected_Skills;
+    inputSystem selected_input;
     
 	// Use this for initialization
 	void Start () {
@@ -46,59 +44,59 @@ public class UiManager : MonoBehaviour {
 
 
         //getActiveUnitSkills
-        activeUnit = managerSys.selected_Figurine.GetComponent<AttributeComponent>();
-        activeUnitSkills = activeUnit.skills;
+        selected_Attributes = selected_Unit.GetComponent<AttributeComponent>();
+        selected_Skills = selected_Attributes.skills;
 
         //setStyle
         style = new GUIStyle();
 
         if (isPlayer1)
-            input = player1.GetComponent<inputSystem>();
+            selected_input = player1.GetComponent<inputSystem>();
         else
-            input = player2.GetComponent<inputSystem>();
+            selected_input = player2.GetComponent<inputSystem>();
 
         UnitSelectionEvent.OnUnitSelection += UnitSelection;
+        EndturnEvent.OnEndTurn += EndTurn;
+        SpendAPEvent.OnAPSpent += SpendAP;
     }
 
     void OnDestroy()
     {
         UnitSelectionEvent.OnUnitSelection -= UnitSelection;
+        EndturnEvent.OnEndTurn -= EndTurn;
+        SpendAPEvent.OnAPSpent -= SpendAP;
+    }
+
+    void EndTurn(bool PlayerOne)
+    {
+        actionCancel();
+        isPlayer1 = PlayerOne;
+        selected_input = isPlayer1 ? player1.GetComponent<inputSystem>() : player2.GetComponent<inputSystem>();
     }
 	
 
     void UnitSelection(GameObject unit)
     {
         selected_Unit = unit;
+        figureSelected = false;
+        if(selected_Unit != null)
+        { 
+            selected_Attributes = selected_Unit.GetComponent<AttributeComponent>();
+            selected_Skills = selected_Attributes.skills;
+            figureSelected = true;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    void SpendAP(int amount, PlayerComponent player)
     {
-        isPlayer1 = managerSys.getPlayerTurn();
-        player1AP = player1.GetComponent<PlayerComponent>().actionPoints;
-        player2AP = player2.GetComponent<PlayerComponent>().actionPoints;
-        if (isPlayer1)
-            input = player1.GetComponent<inputSystem>();
-        else
-            input = player2.GetComponent<inputSystem>();
-
-        if (managerSys.selected_Figurine != null && figureSelected == false)
+        if(player.gameObject == player1)
         {
-            figureSelected = true;
-            activeUnit = selected_Unit.GetComponent<AttributeComponent>();
+            player1AP -= amount;
         }
-        
-        //beschaffe aktive einheit
-        if (activeUnit)
+        else if(player.gameObject == player2)
         {
-            activeUnit = selected_Unit.GetComponent<AttributeComponent>();
-            activeUnitSkills = activeUnit.skills;
+            player2AP -= amount;
         }
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            actionCancel();
-        }
-
     }
 
     // verhindert das zu viele waffenoptionen angezeigt werden
@@ -107,23 +105,23 @@ public class UiManager : MonoBehaviour {
         List<Enums.Actions> activeSkills = new List<Enums.Actions>();
        
        //kann gehen
-        if (activeUnitSkills.Contains(Enums.Actions.Move))
+        if (selected_Skills.Contains(Enums.Actions.Move))
         {
             activeSkills.Add(Enums.Actions.Move);
         }
 
        //hat Primärwaffe angelegt
-        if (activeUnit.items.isPrimary)
+        if (selected_Attributes.items.isPrimary)
         {
             //Schlagwaffe
-            if (activeUnitSkills.Contains(Enums.Actions.Hit))
+            if (selected_Skills.Contains(Enums.Actions.Hit))
             {
                 activeSkills.Add(Enums.Actions.Hit);
             }
             //Schusswaffe
             else
             {
-                if (activeUnitSkills.Contains(Enums.Actions.Shoot))
+                if (selected_Skills.Contains(Enums.Actions.Shoot))
                 {
                     activeSkills.Add(Enums.Actions.Shoot);
                     activeSkills.Add(Enums.Actions.Reload);
@@ -134,9 +132,9 @@ public class UiManager : MonoBehaviour {
         else
         {
             // schusswaffe
-            if (activeUnit.items.secondaryWeaponType != Enums.SecondaryWeapons.None)
+            if (selected_Attributes.items.secondaryWeaponType != Enums.SecondaryWeapons.None)
             {
-                if (activeUnitSkills.Contains(Enums.Actions.Shoot))
+                if (selected_Skills.Contains(Enums.Actions.Shoot))
                 {
                     activeSkills.Add(Enums.Actions.Shoot);
                 }
@@ -144,37 +142,37 @@ public class UiManager : MonoBehaviour {
         }
 
        //können waffen gewechselt werden
-        if (activeUnitSkills.Contains(Enums.Actions.ChangeWeapon))
+        if (selected_Skills.Contains(Enums.Actions.ChangeWeapon))
         {
             activeSkills.Add(Enums.Actions.ChangeWeapon);
         }
 
         //Heal
-        if (activeUnitSkills.Contains(Enums.Actions.Heal))
+        if (selected_Skills.Contains(Enums.Actions.Heal))
         {
             activeSkills.Add(Enums.Actions.Heal);
         }
 
         //Molotov
-        if (activeUnitSkills.Contains(Enums.Actions.Molotov))
+        if (selected_Skills.Contains(Enums.Actions.Molotov))
         {
             activeSkills.Add(Enums.Actions.Molotov);
         }
 
         //Grenade
-        if (activeUnitSkills.Contains(Enums.Actions.Grenade))
+        if (selected_Skills.Contains(Enums.Actions.Grenade))
         {
             activeSkills.Add(Enums.Actions.Grenade);
         }
 
         //Smoke
-        if (activeUnitSkills.Contains(Enums.Actions.Smoke))
+        if (selected_Skills.Contains(Enums.Actions.Smoke))
         {
             activeSkills.Add(Enums.Actions.Smoke);
         }
 
         //Teargas
-        if (activeUnitSkills.Contains(Enums.Actions.Teargas))
+        if (selected_Skills.Contains(Enums.Actions.Teargas))
         {
             activeSkills.Add(Enums.Actions.Teargas);
         }
@@ -186,14 +184,6 @@ public class UiManager : MonoBehaviour {
     public GUIStyle getStyle()
     {
         return style;
-    }
-
-
-
-    public void endTurn()
-    {
-        managerSys.setPlayerTurn();
-        actionCancel();
     }
 
     public void move() {

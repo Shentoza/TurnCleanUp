@@ -24,13 +24,6 @@ public class EndTurnButton : MonoBehaviour {
 	}
 	
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
     void OnGUI()
     {
 
@@ -38,25 +31,13 @@ public class EndTurnButton : MonoBehaviour {
         {
             if (GUI.Button(new Rect(Screen.width - width, Screen.height - height, width, height), new GUIContent(iconPlayer1EndTurn, "End Turn"), uiM.getStyle()))
             {
-                endTurn();
+                EndturnEvent.Send(false);
             }
-
         }
         else if (GUI.Button(new Rect(Screen.width - width, Screen.height - height, width, height), new GUIContent(iconPlayer2EndTurn, "End Turn"), uiM.getStyle()))
         {
-            endTurn();
+            EndturnEvent.Send(true);
         }
         GUI.Label(new Rect(Input.mousePosition.x + 15, Screen.height - Input.mousePosition.y, 50, 50), GUI.tooltip);
     }
-
-
-
-    //test
-    void endTurn() {
-
-        uiM.endTurn();
-    
-    }
-
-
 }

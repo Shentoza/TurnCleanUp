@@ -20,22 +20,24 @@ public class BattlefieldCreater : MonoBehaviour {
     public List<Vector2> startPostionsP1;
     public List<Vector2> startPostionsP2;
 
-	// Use this for initialization
     public static bool Initialize()
-    {
-        instance = this;
-        instance.transformPlane = (Transform)this.GetComponent<Transform>();
-        initiateBattlefield();
-    }
-
     {
         if (instance != null)
             Destroy(instance);
         instance = new BattlefieldCreater();
-
         instance.transformPlane = instance.GetComponent<Transform>();
         instance.initiateBattlefield();
+
         return true;
+    }
+
+    void Start()
+    {
+        if (instance != null)
+            Destroy(instance);
+        instance = new BattlefieldCreater();
+        instance.transformPlane = instance.GetComponent<Transform>();
+        instance.initiateBattlefield();
     }
 
 	void initiateBattlefield()

@@ -58,9 +58,41 @@ public class ManagerSystem : MonoBehaviour {
         activeUnitMark();
     }
 	
-	// Update is called once per frame
-	void Update () {
-	}
+    void EndTurn(bool PlayerOne)
+    {
+        AudioManager.playEndTurn();
+        roundHalf++;
+        if (roundHalf == 2)
+        {
+            nextRound();
+            roundHalf = 0;
+        }
+        isPlayer1 = PlayerOne;
+        if (isPlayer1) //wenn Spieler 1 dran ist
+        {
+            UnitSelectionEvent.Send(unitListP1[0]);
+            cam.setNewTarget(selected_Figurine);                 //Gibt der Kamera ein neues Target
+            inputSystem input = player1.GetComponent<inputSystem>();
+            input.enabled = true;
+            player2.GetComponent<inputSystem>().enabled = false;
+        }
+        else
+        {
+            //To-Do: Mit UI verknüpfen 
+            UnitSelectionEvent.Send(unitListP2[0]);
+            cam.setNewTarget(selected_Figurine);                 //Gibt der Kamera ein neues Target
+            inputSystem input = player2.GetComponent<inputSystem>();
+            input.enabled = true;
+            player1.GetComponent<inputSystem>().enabled = false;
+        }
+        //Setze Aktionen wieder frei
+        if (isPlayer1)
+            foreach (GameObject g in unitListP1)
+                g.GetComponent<AttributeComponent>().canShoot = true;
+        else
+            foreach (GameObject g in unitListP2)
+                g.GetComponent<AttributeComponent>().canShoot = true;
+    }
 
     public void startGame()
     {
@@ -108,49 +140,8 @@ public class ManagerSystem : MonoBehaviour {
         return isPlayer1;
     }
 
-    //Legt fest, welcher Spieler am Zug ist
-    public void setPlayerTurn()
-    {
-        AudioManager.playEndTurn();
-        roundHalf++;
-        if(roundHalf == 2)
-        {
-            nextRound();
-            roundHalf = 0;
-        }
-        isPlayer1 = !isPlayer1;
-        if(isPlayer1) //wenn Spieler 1 dran ist
-        {
-
-
-            UnitSelectionEvent.Send(unitListP1[0]);
-            cam.setNewTarget(selected_Figurine);                 //Gibt der Kamera ein neues Target
-            inputSystem input = player1.GetComponent<inputSystem>();
-            input.enabled = true;
-            player2.GetComponent<inputSystem>().enabled = false;
-        }
-        else
-        {
-            //To-Do: Mit UI verknüpfen 
-            UnitSelectionEvent.Send(unitListP2[0]);                 
-            cam.setNewTarget(selected_Figurine);                 //Gibt der Kamera ein neues Target
-            inputSystem input = player2.GetComponent<inputSystem>();
-            input.enabled = true;
-            player1.GetComponent<inputSystem>().enabled = false;
-        }
-
-        //Setze Aktionen wieder frei
-        if(isPlayer1)
-            foreach(GameObject g in unitListP1)
-                g.GetComponent<AttributeComponent>().canShoot = true;
-        else
-            foreach (GameObject g in unitListP2)
-                g.GetComponent<AttributeComponent>().canShoot = true;
-    }
-
     public void addUnit(int team)
     {
-
         //erzeuge einheit
         GameObject tmp = Instantiate(unitPrefab);
 
@@ -185,7 +176,6 @@ public class ManagerSystem : MonoBehaviour {
         
 
     }
-
 
     public void placeUnit(int team, GameObject unit)
     {
@@ -223,7 +213,6 @@ public class ManagerSystem : MonoBehaviour {
         objSet.z = (int)posi.y;
         objSet.move(BattlefieldCreater.instance.getZellen());
 
-
     }
 
     public void removeUnit(GameObject unit, int team)
@@ -237,9 +226,6 @@ public class ManagerSystem : MonoBehaviour {
             Debug.Log("Spieler 1 gewinnt");
             ende();
         }
-
-
-
         if (team == 1)
         {
             //sterbende Figur ist aktuelle figur
@@ -261,10 +247,6 @@ public class ManagerSystem : MonoBehaviour {
             }
             unitListP2.Remove(unit);
         }
-
-
-
-
     }
 
     public void ende()
