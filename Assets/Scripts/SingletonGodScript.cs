@@ -8,9 +8,9 @@ public class SingletonGodScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        PlayerAssistanceSystem.Initialize(PlayerAssistancePrefab);
-        ShootingSystem.Initialize();
-        HealthSystem.Initialize();
-	}
+        PlayerAssistanceSystem.Initialize(PlayerAssistancePrefab, this.gameObject).transform.SetParent(this.transform);
+        ShootingSystem.Initialize(this.gameObject).transform.SetParent(this.transform);
+        HealthSystem.Initialize(this.gameObject).transform.SetParent(this.transform);
+    }
 
 }

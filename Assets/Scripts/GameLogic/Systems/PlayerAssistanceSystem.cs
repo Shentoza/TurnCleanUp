@@ -27,11 +27,20 @@ public class PlayerAssistanceSystem : MonoBehaviour {
     static int moveRange;
     static int attackRange;
 
-    static public bool Initialize(GameObject prefab)
+    static public GameObject Initialize(GameObject prefab, GameObject toAdd)
     {
-        if (instance != null)
+        GameObject result;
+        if (!instance.Equals(null))
             Destroy(instance);
-        instance = new PlayerAssistanceSystem();
+
+        if (!toAdd.Equals(null))
+            result = toAdd;
+        else
+        { 
+            result = new GameObject("PlayerAssistanceSystem");
+        }
+
+        instance = result.AddComponent<PlayerAssistanceSystem>();
 
         PlayerAssistanceSystem prefabComp = prefab.GetComponent<PlayerAssistanceSystem>();
         instance.defaultMat = prefabComp.defaultMat;
@@ -42,7 +51,7 @@ public class PlayerAssistanceSystem : MonoBehaviour {
 
         UnitSelectionEvent.OnUnitSelection += instance.UnitSelection;
 
-        return true;
+        return result;
     }
 
     void UnitSelection(GameObject unit)
