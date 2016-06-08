@@ -84,7 +84,7 @@ public class overHeadUnitInfo : MonoBehaviour {
     void OnGUI()
     {
 
-       if(active && (Input.GetKey("tab") | uim.input.angriffAusgewaehlt )){
+       if(active && (Input.GetKey("tab") | uim.selected_input.angriffAusgewaehlt )){
 
 
            int xOffset = (5 * (healthIconWidth + barOffset) / 2);
