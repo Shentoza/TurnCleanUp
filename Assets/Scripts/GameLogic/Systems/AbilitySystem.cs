@@ -65,7 +65,7 @@ public class AbilitySystem : MonoBehaviour {
             //Einsatz von AP durch Faehigkeit
             figur.GetComponentInParent<PlayerComponent>().useAP();
             throwing_effect = effectType;
-            playerAttr.anim.SetTrigger("Throw");
+            playerAttr.model_animator.SetTrigger("Throw");
             switch (effectType)
             {
                 case Enums.Effects.Explosion:

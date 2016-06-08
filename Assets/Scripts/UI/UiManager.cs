@@ -28,7 +28,7 @@ public class UiManager : MonoBehaviour {
     GameObject selected_Unit;
     AttributeComponent selected_Attributes;
     List<Enums.Actions> selected_Skills;
-    inputSystem selected_input;
+    public inputSystem selected_input;
     
 	// Use this for initialization
 	void Start () {
@@ -196,28 +196,27 @@ public class UiManager : MonoBehaviour {
         else
             player2.GetComponent<PlayerComponent>().useAP();
         Debug.Log("Move Aktion");
-        AttributeComponent attr = (AttributeComponent)managerSys.getSelectedFigurine().GetComponent(typeof(AttributeComponent));
-        input.cancelActions();
-        attr.regenerateMovepoints();
-        DijkstraSystem.executeDijsktra(attr.getCurrentCell(), attr.actMovRange, attr.weapon.GetComponent<WeaponComponent>().weaponRange);
+        selected_input.cancelActions();
+        selected_Attributes.regenerateMovepoints();
+        DijkstraSystem.executeDijsktra(selected_Attributes.getCurrentCell(), selected_Attributes.actMovRange, selected_Attributes.weapon.GetComponent<WeaponComponent>().weaponRange);
     }
     public void hit(){
         actionCancel();
         activeSkill = Enums.Actions.Hit;
 
-        input.angriffAusgewaehlt = true;
+        selected_input.angriffAusgewaehlt = true;
     }
     public void shoot()
     {
         actionCancel();
         activeSkill = Enums.Actions.Shoot;
         
-        input.angriffAusgewaehlt = true;
+        selected_input.angriffAusgewaehlt = true;
     }
     public void reload(){
         actionCancel();
         activeSkill = Enums.Actions.Reload;
-        inventSys.reloadAmmo(GameObject.Find("Manager").GetComponent<ManagerSystem>().getSelectedFigurine());
+        inventSys.reloadAmmo(selected_Unit);
     }
     public void changeWeapon(){
         actionCancel();
@@ -225,23 +224,19 @@ public class UiManager : MonoBehaviour {
         // Audiofeedback wenn Waffe gewechselt wird
         AudioManager.playMainClick();
 
-        AttributeComponent attr = managerSys.getSelectedFigurine().GetComponent<AttributeComponent>();
-        InventoryComponent inv = managerSys.getSelectedFigurine().GetComponent<InventoryComponent>();
-        DijkstraSystem.executeDijsktra(attr.getCurrentCell(), attr.actMovRange, attr.weapon.GetComponent<WeaponComponent>().weaponRange);
-        inv.isPrimary = !inv.isPrimary;
-
-        attr.model.GetComponent<WeaponHolding>().swapWeapons();
+        DijkstraSystem.executeDijsktra(selected_Attributes.getCurrentCell(), selected_Attributes.actMovRange, selected_Attributes.items.getCurrentWeapon().weaponRange);
+        selected_Attributes.items.isPrimary = !selected_Attributes.items.isPrimary;
+        selected_Attributes.model.GetComponent<WeaponHolding>().swapWeapons();
     }
     public void heal() {
         actionCancel();
         activeSkill = Enums.Actions.Heal;
-        HealthSystem healthSystem = GameObject.Find("Manager").GetComponent<HealthSystem>();
-        if (inventSys.decreaseMedikits(GameObject.Find("Manager").GetComponent<ManagerSystem>().getSelectedFigurine()) > 0)
+        if (inventSys.decreaseMedikits(selected_Unit) > 0)
         {
             // Audiofeedpack wenn heilen klappt
             AudioManager.playMedikit();
 
-            HealthSystem.instance.doHeal(null, activeUnit, HealthSystem.MEDIPACK);
+            HealthSystem.doHeal(null, selected_Attributes, HealthSystem.MEDIPACK);
         }
     }
 
@@ -251,32 +246,30 @@ public class UiManager : MonoBehaviour {
     public void molotov() {
         actionCancel();
         activeSkill = Enums.Actions.Molotov;
-        input.molotovAusgewaehlt = true;     
+        selected_input.molotovAusgewaehlt = true;     
     }
 
     public void grenade(){
         actionCancel();
         activeSkill = Enums.Actions.Grenade;
-        input.granateAusgewaehlt = true;        
+        selected_input.granateAusgewaehlt = true;        
     }
 
     public void  smoke(){
         actionCancel();
         activeSkill = Enums.Actions.Smoke;
-        input.smokeAusgewaehlt = true;
+        selected_input.smokeAusgewaehlt = true;
     }
     public void teargas()
     {
         actionCancel();
         activeSkill = Enums.Actions.Teargas;
-        input.gasAusgewaehlt = true;
+        selected_input.gasAusgewaehlt = true;
     }
 
 
     public void actionCancel()
     {
-       // activeSkill = Enums.Actions.Cancel;
-
-        input.cancelActions();
+        selected_input.cancelActions();
     }
 }

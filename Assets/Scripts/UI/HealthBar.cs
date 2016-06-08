@@ -19,6 +19,7 @@ public class HealthBar : MonoBehaviour {
     int hpBars;
 
 
+
 	// Use this for initialization
 	void Start () {
         unit = this.transform.gameObject;
@@ -44,10 +45,7 @@ public class HealthBar : MonoBehaviour {
     void OnGUI()
     {
 
-       // Debug.Log("FICK");
-        if(uim && (Input.GetKey("tab") | uim.input.angriffAusgewaehlt )){
-
-            
+        if(uim && (Input.GetKey("tab") | uim.selected_input.angriffAusgewaehlt )){
 
             int xOffset = 0;
             int yOffset = 0;

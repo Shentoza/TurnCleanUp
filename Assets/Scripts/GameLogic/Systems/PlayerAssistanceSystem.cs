@@ -5,9 +5,6 @@ public class PlayerAssistanceSystem : MonoBehaviour {
 
     public static PlayerAssistanceSystem instance{ get; private set; }
 
-    [SerializeField]
-    private static GameObject prefab;
-
     bool drawingWalkPath;
     ArrayList walkPath = new ArrayList();
     bool drawingThrowPath;
@@ -30,12 +27,7 @@ public class PlayerAssistanceSystem : MonoBehaviour {
     static int moveRange;
     static int attackRange;
 
-    static public bool Initialize()
-    {
-        instance = this;
-        UnitSelectionEvent.OnUnitSelection += instance.UnitSelection;
-    }
-
+    static public bool Initialize(GameObject prefab)
     {
         if (instance != null)
             Destroy(instance);

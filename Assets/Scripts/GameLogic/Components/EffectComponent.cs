@@ -8,12 +8,10 @@ public class EffectComponent : MonoBehaviour {
     int dauer;
     int momentaneRunde;
     public ManagerSystem ms;
-    public HealthSystem hs;
 
     // Use this for initialization
     void Awake() {
-        ms = (ManagerSystem) GameObject.Find("Manager").GetComponent(typeof(ManagerSystem));
-        hs = (HealthSystem) GameObject.Find("Manager").GetComponent(typeof(HealthSystem));
+        ms = (ManagerSystem)FindObjectOfType<ManagerSystem>();
     }
 
     // Update is called once per frame
@@ -78,7 +76,7 @@ public class EffectComponent : MonoBehaviour {
                     {
                         if (c.objectOnCell.tag == "FigurSpieler1" || c.objectOnCell.tag == "FigurSpieler2")
                         {
-                            hs.inflictFireDamage((AttributeComponent)c.objectOnCell.GetComponent(typeof(AttributeComponent)));
+                            HealthSystem.inflictFireDamage(c.objectOnCell.GetComponent<AttributeComponent>());
                         }
                     }
                 }
@@ -91,7 +89,7 @@ public class EffectComponent : MonoBehaviour {
                     {
                         if (c.objectOnCell.tag == "FigurSpieler1" || c.objectOnCell.tag == "FigurSpieler2")
                         {
-                            hs.inflictGasDamage((AttributeComponent)c.objectOnCell.GetComponent(typeof(AttributeComponent)));
+                            HealthSystem.inflictGasDamage(c.objectOnCell.GetComponent<AttributeComponent>());
                         }
                     }
                 }
@@ -118,7 +116,7 @@ public class EffectComponent : MonoBehaviour {
                 {
                     if (c.objectOnCell.tag == "FigurSpieler1" || c.objectOnCell.tag == "FigurSpieler2")
                     {
-                        hs.inflictFireDamage((AttributeComponent)c.objectOnCell.GetComponent(typeof(AttributeComponent)));
+                        HealthSystem.inflictFireDamage(c.objectOnCell.GetComponent<AttributeComponent>());
                     }
                 }
             }
@@ -139,7 +137,7 @@ public class EffectComponent : MonoBehaviour {
                 {
                     if (c.objectOnCell.tag == "FigurSpieler1" || c.objectOnCell.tag == "FigurSpieler2")
                     {
-                        hs.inflictGasDamage((AttributeComponent)c.objectOnCell.GetComponent(typeof(AttributeComponent)));
+                        HealthSystem.inflictGasDamage(c.objectOnCell.GetComponent<AttributeComponent>());
                     }
                 }
             }
@@ -152,7 +150,7 @@ public class EffectComponent : MonoBehaviour {
                 {
                     if (c.objectOnCell.tag == "FigurSpieler1" || c.objectOnCell.tag == "FigurSpieler2")
                     {
-                        hs.inflictGrenadeDamage((AttributeComponent)c.objectOnCell.GetComponent(typeof(AttributeComponent)));
+                        HealthSystem.inflictGrenadeDamage(c.objectOnCell.GetComponent<AttributeComponent>());
                     }
                 }
             }

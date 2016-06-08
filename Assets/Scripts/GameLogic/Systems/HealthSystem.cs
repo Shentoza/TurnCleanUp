@@ -45,7 +45,7 @@ public class HealthSystem : MonoBehaviour
 
     /* Generates and inflicts health if necessary */
     // healingPlayerAttr can be null if not needed
-    static void doHeal(AttributeComponent healingPlayerAttr, AttributeComponent healthTakingPlayerAtrr, int healthFlag)
+    public static void doHeal(AttributeComponent healingPlayerAttr, AttributeComponent healthTakingPlayerAtrr, int healthFlag)
     {
         switch (healthFlag)
         {
