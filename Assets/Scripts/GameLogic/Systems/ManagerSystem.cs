@@ -9,8 +9,6 @@ public class ManagerSystem : MonoBehaviour {
     public List<GameObject> unitListP1;
     public List<GameObject> unitListP2;
 
-    public GameObject activeUnitMarker;
-
     CameraRotationScript cam;
     public int rounds;             //Spiegelt Rundenzahl wieder
     private bool isPlayer1;         //Spieler1 an der Reihe
@@ -26,7 +24,6 @@ public class ManagerSystem : MonoBehaviour {
     public GameObject plane;
 
 
-    public bool uiManagerSet;
 
 
     public GameObject unitPrefab;
@@ -55,7 +52,6 @@ public class ManagerSystem : MonoBehaviour {
     void SelectUnit(GameObject unit)
     {
         selected_Figurine = unit;
-        activeUnitMark();
     }
 	
     void EndTurn(bool PlayerOne)
@@ -97,11 +93,11 @@ public class ManagerSystem : MonoBehaviour {
     public void startGame()
     {
         Instantiate(uiManager);
-        UnitSelectionEvent.Send(unitListP1[0]);
+        
         isPlayer1 = true;
         Camera.main.GetComponent<CameraRotationScript>().enabled = true;
-
-        uiManagerSet = true;
+        Debug.Log("Start Game");
+        UnitSelectionEvent.Send(unitListP1[0]);
     }
 
 
@@ -166,17 +162,6 @@ public class ManagerSystem : MonoBehaviour {
     }
 
 
-    public void activeUnitMark()
-    {
-        if (selected_Figurine != null)
-        {
-            activeUnitMarker.transform.position = selected_Figurine.transform.position;
-            activeUnitMarker.transform.rotation = selected_Figurine.transform.rotation;
-        }
-        
-
-    }
-
     public void placeUnit(int team, GameObject unit)
     {
         Vector2 posi = new Vector2(0,0);
@@ -232,7 +217,6 @@ public class ManagerSystem : MonoBehaviour {
             if (unit == selected_Figurine)
             {
                 UnitSelectionEvent.Send(unitListP1[0]);
-                activeUnitMark();
             }
 
             unitListP1.Remove(unit);
@@ -243,7 +227,6 @@ public class ManagerSystem : MonoBehaviour {
             if (unit == selected_Figurine)
             {
                 UnitSelectionEvent.Send(unitListP2[0]);
-                activeUnitMark();
             }
             unitListP2.Remove(unit);
         }

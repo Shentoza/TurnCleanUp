@@ -20,10 +20,10 @@ public class HealthSystem : MonoBehaviour
     public static GameObject Initialize(GameObject toAdd)
     {
         GameObject result;
-        if (!instance.Equals(null))
+        if (instance != null)
             Destroy(instance);
 
-        if (!toAdd.Equals(null))
+        if (toAdd != null)
             result = toAdd;
         else
         {

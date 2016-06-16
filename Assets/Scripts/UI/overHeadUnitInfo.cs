@@ -62,30 +62,14 @@ public class overHeadUnitInfo : MonoBehaviour {
         if (prof == Enums.Prof.Support)
             iconToShow = iconSupport;
 
-       // Debug.Log(iconToShow);
+        uim = FindObjectOfType<UiManager>();
     }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (GameObject.Find("UiManager(Clone)"))
-        {
-            
-            uim = GameObject.Find("UiManager(Clone)").GetComponent<UiManager>();
-            active = true;
-        }
-
-
-        hpBars = (unit.GetComponent<AttributeComponent>().hp + 9) / 10;
-    }
-
 
     void OnGUI()
     {
 
        if(active && (Input.GetKey("tab") | uim.selected_input.angriffAusgewaehlt )){
-
+            hpBars = (unit.GetComponent<AttributeComponent>().hp + 9) / 10;
 
            int xOffset = (5 * (healthIconWidth + barOffset) / 2);
             int yOffset = 0;

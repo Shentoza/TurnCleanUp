@@ -30,10 +30,10 @@ public class PlayerAssistanceSystem : MonoBehaviour {
     static public GameObject Initialize(GameObject prefab, GameObject toAdd)
     {
         GameObject result;
-        if (!instance.Equals(null))
+        if (instance != null)
             Destroy(instance);
 
-        if (!toAdd.Equals(null))
+        if (toAdd != null)
             result = toAdd;
         else
         { 
@@ -49,12 +49,12 @@ public class PlayerAssistanceSystem : MonoBehaviour {
         instance.attackableMat = prefabComp.attackableMat;
         instance.highlightedMat = prefabComp.highlightedMat;
 
-        UnitSelectionEvent.OnUnitSelection += instance.UnitSelection;
+        UnitSelectionEvent.OnUnitSelection += instance.UnitEvent;
 
         return result;
     }
 
-    void UnitSelection(GameObject unit)
+    void UnitEvent(GameObject unit)
     {
         selectedUnit = unit;
         AttributeComponent selectedAttribute = unit.GetComponent<AttributeComponent>();
@@ -64,7 +64,7 @@ public class PlayerAssistanceSystem : MonoBehaviour {
 
     void OnDestroy()
     {
-        UnitSelectionEvent.OnUnitSelection -= instance.UnitSelection;
+        UnitSelectionEvent.OnUnitSelection -= instance.UnitEvent;
     }
 
     static public void highlightSingleCell(Cell cell)
