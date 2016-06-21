@@ -19,12 +19,7 @@ public class ManagerSystem : MonoBehaviour {
     public GameObject selected_Figurine;    //Aktuell ausgewählte Spielfigur
     int roundHalf;  //1 wenn Spieler1 seinen Turn beendet, 2 wenn Spieler2 seinen Turn beendet;
 
-
-    public GameObject uiManager;
     public GameObject plane;
-
-
-
 
     public GameObject unitPrefab;
     public GameObject policePrefab;
@@ -92,11 +87,8 @@ public class ManagerSystem : MonoBehaviour {
 
     public void startGame()
     {
-        Instantiate(uiManager);
-        
         isPlayer1 = true;
         Camera.main.GetComponent<CameraRotationScript>().enabled = true;
-        Debug.Log("Start Game");
         UnitSelectionEvent.Send(unitListP1[0]);
     }
 

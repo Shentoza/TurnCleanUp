@@ -52,7 +52,6 @@ public class UiManager : MonoBehaviour {
 
         UnitSelectionEvent.OnUnitSelection += UnitEvent;
 
-        Debug.Log("Listener angemeldet");
         EndturnEvent.OnEndTurn += EndTurn;
         SpendAPEvent.OnAPSpent += SpendAP;
     }
@@ -74,7 +73,6 @@ public class UiManager : MonoBehaviour {
 
     void UnitEvent(GameObject unit)
     {
-        Debug.Log("FEUEEEEER!");
         selected_Unit = unit;
         figureSelected = false;
         if(selected_Unit != null)
@@ -101,6 +99,9 @@ public class UiManager : MonoBehaviour {
     public List<Enums.Actions> getActiveUnitSkills()
     {
         List<Enums.Actions> activeSkills = new List<Enums.Actions>();
+        if (selected_Unit == null)
+            return activeSkills;
+
 
         //kann gehen
         if (selected_Skills.Contains(Enums.Actions.Move))
