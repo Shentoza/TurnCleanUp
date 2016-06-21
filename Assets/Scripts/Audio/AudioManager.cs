@@ -3,6 +3,8 @@ using System.Collections;
 
 public class AudioManager : MonoBehaviour
 {
+    public static AudioManager instance { get; private set; }
+
     // All necessary Audio Files
     private static AudioSource endTurnSound;
     private static AudioSource grenadeSound;
@@ -17,8 +19,6 @@ public class AudioManager : MonoBehaviour
     private static AudioSource soldierCrouch2Sound;
     private static AudioSource soldierWalk1Sound;
     private static AudioSource soldierWalk2Sound;
-
-    private static float pitch;
 
     // Use this for initialization
     void Start ()
@@ -62,11 +62,27 @@ public class AudioManager : MonoBehaviour
         soldierWalk2Sound = gameObject.AddComponent<AudioSource>();
         soldierWalk2Sound.clip = Resources.Load("Audio/soldierWalk2") as AudioClip;
     }
+
+    public static GameObject Initialize(GameObject toAdd)
+    {
+        GameObject result;
+        if (instance != null)
+            Destroy(instance);
+
+        if (toAdd != null)
+            result = toAdd;
+        else
+        {
+            result = new GameObject("AudioManager");
+        }
+        instance = result.AddComponent<AudioManager>();
+
+        return result;
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        pitch = UnityEngine.Random.Range(0.75f, 1.25f);
     }
 
     public static void playEndTurn()
@@ -76,13 +92,13 @@ public class AudioManager : MonoBehaviour
 
     public static void playMainClick()
     {
-        mainClickSound.pitch = pitch;
+        mainClickSound.pitch = UnityEngine.Random.Range(0.75f, 1.25f);
         mainClickSound.Play();
     }
 
     public static void playSecondClick()
     {
-        secondClickSound.pitch = pitch;
+        secondClickSound.pitch = UnityEngine.Random.Range(0.75f, 1.25f);
         secondClickSound.Play();
     }
 

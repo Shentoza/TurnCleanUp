@@ -39,13 +39,25 @@ public class ShootingSystem : MonoBehaviour
 
     private float distanceBetweenPlayers;
 
-    public static bool Initialize()
+    public static GameObject Initialize(GameObject prefab, GameObject toAdd)
     {
+        GameObject result;
         if (instance != null)
             Destroy(instance);
-        instance = new ShootingSystem();
 
-        return true;
+        if (toAdd != null)
+            result = toAdd;
+        else
+        {
+            result = new GameObject("ShootingSystem");
+        }
+
+        instance = result.AddComponent<ShootingSystem>();
+
+        ShootingSystem shootPrefab = prefab.GetComponent<ShootingSystem>();
+        instance.mask = shootPrefab.mask;
+
+        return result;
     }
 
 

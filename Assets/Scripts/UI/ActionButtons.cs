@@ -48,9 +48,6 @@ public class ActionButtons : MonoBehaviour {
 
 
     void OnGUI(){
-
-      
-        
         skills = uiM.getActiveUnitSkills();
 
         buttonsToDraw = skills.Count;

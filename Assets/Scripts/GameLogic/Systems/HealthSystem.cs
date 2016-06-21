@@ -17,14 +17,23 @@ public class HealthSystem : MonoBehaviour
 
     static private int animId_tgetHit;
 
-    public static bool Initialize()
+    public static GameObject Initialize(GameObject toAdd)
     {
+        GameObject result;
         if (instance != null)
             Destroy(instance);
-        instance = new HealthSystem();
+
+        if (toAdd != null)
+            result = toAdd;
+        else
+        {
+            result = new GameObject("ShootingSystem");
+        }
+
+        instance = result.AddComponent<HealthSystem>();
         animId_tgetHit = Animator.StringToHash("getHit");
 
-        return true;
+        return result;
     }
 
     /* Generates and inflicts damage if necessary */

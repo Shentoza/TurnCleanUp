@@ -42,11 +42,6 @@ public class UiManager : MonoBehaviour {
         //test angaben
         isPlayer1 = managerSys.getPlayerTurn();       
 
-
-        //getActiveUnitSkills
-        selected_Attributes = selected_Unit.GetComponent<AttributeComponent>();
-        selected_Skills = selected_Attributes.skills;
-
         //setStyle
         style = new GUIStyle();
 
@@ -55,14 +50,16 @@ public class UiManager : MonoBehaviour {
         else
             selected_input = player2.GetComponent<inputSystem>();
 
-        UnitSelectionEvent.OnUnitSelection += UnitSelection;
+        UnitSelectionEvent.OnUnitSelection += UnitEvent;
+
+        Debug.Log("Listener angemeldet");
         EndturnEvent.OnEndTurn += EndTurn;
         SpendAPEvent.OnAPSpent += SpendAP;
     }
 
     void OnDestroy()
     {
-        UnitSelectionEvent.OnUnitSelection -= UnitSelection;
+        UnitSelectionEvent.OnUnitSelection -= UnitEvent;
         EndturnEvent.OnEndTurn -= EndTurn;
         SpendAPEvent.OnAPSpent -= SpendAP;
     }
@@ -75,8 +72,9 @@ public class UiManager : MonoBehaviour {
     }
 	
 
-    void UnitSelection(GameObject unit)
+    void UnitEvent(GameObject unit)
     {
+        Debug.Log("FEUEEEEER!");
         selected_Unit = unit;
         figureSelected = false;
         if(selected_Unit != null)
@@ -103,8 +101,8 @@ public class UiManager : MonoBehaviour {
     public List<Enums.Actions> getActiveUnitSkills()
     {
         List<Enums.Actions> activeSkills = new List<Enums.Actions>();
-       
-       //kann gehen
+
+        //kann gehen
         if (selected_Skills.Contains(Enums.Actions.Move))
         {
             activeSkills.Add(Enums.Actions.Move);
@@ -195,7 +193,6 @@ public class UiManager : MonoBehaviour {
             player1.GetComponent<PlayerComponent>().useAP();
         else
             player2.GetComponent<PlayerComponent>().useAP();
-        Debug.Log("Move Aktion");
         selected_input.cancelActions();
         selected_Attributes.regenerateMovepoints();
         DijkstraSystem.executeDijsktra(selected_Attributes.getCurrentCell(), selected_Attributes.actMovRange, selected_Attributes.weapon.GetComponent<WeaponComponent>().weaponRange);

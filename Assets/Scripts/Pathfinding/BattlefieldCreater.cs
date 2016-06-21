@@ -24,7 +24,8 @@ public class BattlefieldCreater : MonoBehaviour {
     {
         if (instance != null)
             Destroy(instance);
-        instance = new BattlefieldCreater();
+        GameObject bfc = new GameObject();
+        instance = bfc.AddComponent<BattlefieldCreater>();
         instance.transformPlane = instance.GetComponent<Transform>();
         instance.initiateBattlefield();
 
@@ -35,7 +36,7 @@ public class BattlefieldCreater : MonoBehaviour {
     {
         if (instance != null)
             Destroy(instance);
-        instance = new BattlefieldCreater();
+        instance = this;
         instance.transformPlane = instance.GetComponent<Transform>();
         instance.initiateBattlefield();
     }
