@@ -46,6 +46,10 @@ public class ManagerSystem : MonoBehaviour {
     }
     void SelectUnit(GameObject unit)
     {
+        if (selected_Figurine == unit)
+            return;
+
+
         selected_Figurine = unit;
     }
 	

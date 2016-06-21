@@ -9,7 +9,6 @@ public class UnitSelectionEvent
 
     public static void Send(GameObject unit)
     {
-        Debug.Log("Seend");
         if (OnUnitSelection != null) OnUnitSelection(unit);
     }
 }

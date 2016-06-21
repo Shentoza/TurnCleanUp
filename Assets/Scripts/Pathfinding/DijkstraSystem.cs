@@ -15,6 +15,7 @@ public class DijkstraSystem : MonoBehaviour {
 
     static public void executeDijsktra(Cell start, int moveRange,int attackRange)
     {
+        Debug.Log("Execute Dijkstra");
         resetDijkstra();
 
         start.dij_GesamtKosten = 0;
@@ -76,6 +77,7 @@ public class DijkstraSystem : MonoBehaviour {
 
     static public void resetDijkstra()
     {
+        Debug.Log("Reset Dijkstra");
         abgeschlosseneZellen.Clear();
         for(int i = 0; i < BattlefieldCreater.mapSizeX; ++i)
             for(int j = 0; j < BattlefieldCreater.mapSizeZ; ++j)

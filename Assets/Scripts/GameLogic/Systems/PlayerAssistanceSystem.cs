@@ -83,6 +83,7 @@ public class PlayerAssistanceSystem : MonoBehaviour {
 
     static public void colorAllCells()
     {
+        Debug.Log("Color all cells");
         for (int i = 0; i < (BattlefieldCreater.mapSizeX); ++i)
             for (int j = 0; j < (BattlefieldCreater.mapSizeZ); ++j)
             {
@@ -93,6 +94,7 @@ public class PlayerAssistanceSystem : MonoBehaviour {
 
     static public void resetAllCellColors()
     {
+        Debug.Log("Resett all colors");
         for (int i = 0; i < (BattlefieldCreater.mapSizeX); ++i)
             for (int j = 0; j < (BattlefieldCreater.mapSizeZ); ++j)
             {

@@ -132,6 +132,7 @@ public class MovementSystem : MonoBehaviour {
                 {
                     moving = false;
                     DijkstraSystem.executeDijsktra(currentCell, playerAttr.actMovRange, playerAttr.weapon.GetComponent<WeaponComponent>().weaponRange);
+                    PlayerAssistanceSystem.colorAllCells();
                 }
             }
             deltaSum += Time.deltaTime;

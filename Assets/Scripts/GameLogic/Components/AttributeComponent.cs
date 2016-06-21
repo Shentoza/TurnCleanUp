@@ -89,7 +89,7 @@ public class AttributeComponent : MonoBehaviour {
         model.transform.localRotation = prefab.transform.rotation;
         model.transform.localScale = prefab.transform.localScale;
 
-        Animator anim = (Animator)model.GetComponent(typeof(Animator));
+        model_animator = (Animator)model.GetComponent(typeof(Animator));
 
 
         Enums.Stance stance = Enums.Stance.Range1H;
@@ -154,7 +154,7 @@ public class AttributeComponent : MonoBehaviour {
 
             items.utility1 = Enums.Equipment.MediPack;
         }
-        anim.SetInteger(animId_iStance, (int)stance);
+        model_animator.SetInteger(animId_iStance, (int)stance);
     }
 
     //Rebels
@@ -172,7 +172,7 @@ public class AttributeComponent : MonoBehaviour {
         model.transform.localPosition = prefab.transform.position;
         model.transform.localRotation = prefab.transform.rotation;
         model.transform.localScale = prefab.transform.localScale;
-        Animator anim = (Animator)model.GetComponent(typeof(Animator));
+        model_animator = (Animator)model.GetComponent(typeof(Animator));
 
         Enums.Stance stance = Enums.Stance.Range1H;
 
@@ -237,7 +237,7 @@ public class AttributeComponent : MonoBehaviour {
         }
 
 
-        anim.SetInteger(animId_iStance, (int)stance);
+        model_animator.SetInteger(animId_iStance, (int)stance);
         
         //utility1
         items.utility1 = (Enums.Equipment)v.z;

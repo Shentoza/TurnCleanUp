@@ -59,6 +59,9 @@ public class inputSystem : MonoBehaviour {
 
     void UnitSelection(GameObject unit)
     {
+        if (unit == selected_Unit)
+            return;
+
         PlayerAssistanceSystem.ClearThrowPath();
         PlayerAssistanceSystem.ClearWalkPath();
         DijkstraSystem.resetDijkstra();
