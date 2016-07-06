@@ -7,8 +7,6 @@ public class inputSystem : MonoBehaviour {
     ManagerSystem manager;
     AbilitySystem abilSys;
 
-    //Ausgewählte Figur
-    GameObject player;
     //Stuff von der Aktuell gewählten Figur
 	CameraRotationScript rotationScript;
 
@@ -25,8 +23,12 @@ public class inputSystem : MonoBehaviour {
     bool changedSelectedCell;
     bool changedSelectedMovementCell;
 
+
+    //Ausgewaehlte Figur
     GameObject selected_Unit;
+    //AttributeComponent der gewaehlten Figur
     AttributeComponent selected_Attributes;
+    //Movement der ausgewaehlten Figur
     MovementSystem selected_movement;
 
 
@@ -141,7 +143,7 @@ public class inputSystem : MonoBehaviour {
                     && !angriffAusgewaehlt) 
 				{
                     //Neuer Spieler angeklickt
-					if(player != hit.collider.gameObject)
+					if(selected_Unit != hit.collider.gameObject)
 					{
                         UnitSelectionEvent.Send(hit.collider.gameObject);
 					}
@@ -151,7 +153,7 @@ public class inputSystem : MonoBehaviour {
 					if((hit.collider.gameObject.tag == "FigurSpieler2" && spielerAmZug)
                         || hit.collider.gameObject.tag == "FigurSpieler1" && !spielerAmZug)
 					{
-                        manager.shoot(player, hit.collider.gameObject);
+                        manager.shoot(selected_Unit, hit.collider.gameObject);
                         angriffAusgewaehlt = false;
 					}
                     else
@@ -163,7 +165,8 @@ public class inputSystem : MonoBehaviour {
 				{
                     if (selectedCell != null && figurGewaehlt)
                     {
-                        abilSys.throwGrenade(selectedCell, player, Enums.Effects.Smoke);
+                        Debug.Log("Input: Smoke 2");
+                        abilSys.throwGrenade(selectedCell, selected_Unit, Enums.Effects.Smoke);
 						smokeAusgewaehlt = false;
 					}
 				}
@@ -171,7 +174,7 @@ public class inputSystem : MonoBehaviour {
 				{
                     if(selectedCell != null && figurGewaehlt)
                     {
-                        abilSys.throwGrenade(selectedCell, player, Enums.Effects.Fire);
+                        abilSys.throwGrenade(selectedCell, selected_Unit, Enums.Effects.Fire);
                         molotovAusgewaehlt = false;
 				}
 				}
@@ -179,7 +182,7 @@ public class inputSystem : MonoBehaviour {
                 {
                     if (selectedCell != null && figurGewaehlt)
                     {
-                        abilSys.throwGrenade(selectedCell, player, Enums.Effects.Gas);
+                        abilSys.throwGrenade(selectedCell, selected_Unit, Enums.Effects.Gas);
                         gasAusgewaehlt = false;
                     }
 
@@ -188,7 +191,7 @@ public class inputSystem : MonoBehaviour {
                 {
                     if (selectedCell != null && figurGewaehlt)
                     {
-                        abilSys.throwGrenade(selectedCell, player, Enums.Effects.Explosion);
+                        abilSys.throwGrenade(selectedCell, selected_Unit, Enums.Effects.Explosion);
                         granateAusgewaehlt = false;
                     }
 
@@ -230,7 +233,7 @@ public class inputSystem : MonoBehaviour {
             }
         }
 
-        if(Input.GetKeyDown("a") && player != null)
+        if(Input.GetKeyDown("a") && selected_Unit != null)
         {
             angriffAusgewaehlt = !angriffAusgewaehlt;
             if (angriffAusgewaehlt)
@@ -246,6 +249,7 @@ public class inputSystem : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown ("s")) {
+            Debug.Log("InpuT: Smoke 1");
 			smokeAusgewaehlt = true;
 		}
 		if (Input.GetKeyDown ("f")) {
@@ -276,7 +280,7 @@ public class inputSystem : MonoBehaviour {
         molotovAusgewaehlt = false;
         smokeAusgewaehlt = false;
         movementAusgewaehlt = false;
-        GameObject.Find("UiManager(Clone)").GetComponent<UiManager>().activeSkill = Enums.Actions.Cancel;
+        GameObject.Find("UiManager").GetComponent<UiManager>().activeSkill = Enums.Actions.Cancel;
     }
 }
 

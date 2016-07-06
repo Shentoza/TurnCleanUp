@@ -36,6 +36,7 @@ public class AbilitySystem : MonoBehaviour {
     //Methode um anfangen shit zu schmeißen
     public void throwGrenade(Cell ziel, GameObject figur, Enums.Effects effectType)
     {
+        Debug.Log("AbilSys: Smoke 1");
         AttributeComponent playerAttr = figur.GetComponent<AttributeComponent>();
         InventoryComponent invent = figur.GetComponent<InventoryComponent>();
         int amountOfGrenades = 0;
@@ -57,6 +58,7 @@ public class AbilitySystem : MonoBehaviour {
 
         if (ziel.dij_GesamtKosten <= playerAttr.attackRange && amountOfGrenades > 0)
         {
+            Debug.Log("AbilSys: Smoke 2");
             figur.GetComponentInParent<PlayerComponent>().useAP();
             //while (!checkRotation(ziel, playerAttr))
                             //yield return null;
@@ -85,7 +87,14 @@ public class AbilitySystem : MonoBehaviour {
 
         }
         else {
-            Debug.Log("OutOfRange");
+            if(amountOfGrenades <= 0)
+            {
+                Debug.Log("AbilSys: Keine Granaten");
+            }
+            else
+            {
+                Debug.Log("AbilSys: OutOfRange");
+            }
         }
     }
 
