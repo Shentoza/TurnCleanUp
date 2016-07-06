@@ -134,7 +134,7 @@ public class HealthSystem : MonoBehaviour
         damageTakingPlayerAttr.hp -= 20;
 
         //Zeug für Animationen
-        damageTakingPlayerAttr.gameObject.GetComponent<Animator>().SetTrigger(animId_tgetHit);
+        damageTakingPlayerAttr.model.GetComponent<Animator>().SetTrigger(animId_tgetHit);
         if (damageTakingPlayerAttr.hp <= 0)
             killFigurine(damageTakingPlayerAttr);
     }
@@ -143,7 +143,7 @@ public class HealthSystem : MonoBehaviour
     {
         damageTakingPlayerAttr.hp -= 10;
 
-        damageTakingPlayerAttr.gameObject.GetComponent<Animator>().SetTrigger(animId_tgetHit);
+        damageTakingPlayerAttr.model.GetComponent<Animator>().SetTrigger(animId_tgetHit);
 
 
         if (damageTakingPlayerAttr.hp <= 0)
@@ -154,7 +154,7 @@ public class HealthSystem : MonoBehaviour
     {
         damageTakingPlayerAttr.hp -= 10;
 
-        damageTakingPlayerAttr.gameObject.GetComponent<Animator>().SetTrigger(animId_tgetHit);
+        damageTakingPlayerAttr.model.GetComponent<Animator>().SetTrigger(animId_tgetHit);
         if (damageTakingPlayerAttr.hp <= 0)
             killFigurine(damageTakingPlayerAttr);
     }
