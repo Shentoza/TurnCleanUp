@@ -11,12 +11,12 @@ public class ManagerSystem : MonoBehaviour {
 
     CameraRotationScript cam;
     public int rounds;             //Spiegelt Rundenzahl wieder
-    private bool isPlayer1;         //Spieler1 an der Reihe
+    public bool isPlayer1;         //Spieler1 an der Reihe
 
 
     GameObject player1;
     GameObject player2;
-    public GameObject selected_Figurine;    //Aktuell ausgewählte Spielfigur
+    private GameObject selected_Figurine;    //Aktuell ausgewählte Spielfigur
     int roundHalf;  //1 wenn Spieler1 seinen Turn beendet, 2 wenn Spieler2 seinen Turn beendet;
 
     public GameObject plane;
@@ -25,10 +25,12 @@ public class ManagerSystem : MonoBehaviour {
     public GameObject policePrefab;
     public GameObject rebelPrefab;
 
+    [SerializeField]
+    private GameObject uimPrefab;
+
 
    	// Use this for initialization
     void Start () {
-
         rounds = 0;
         isPlayer1 = true;
         player1 = GameObject.Find("Player1");
@@ -38,11 +40,17 @@ public class ManagerSystem : MonoBehaviour {
         cam = GameObject.Find("Main Camera").GetComponent<CameraRotationScript>();
         plane = GameObject.Find("Plane");
         UnitSelectionEvent.OnUnitSelection += SelectUnit;
+        EndturnEvent.OnEndTurn += EndTurn;
+
+        GameObject uim = Instantiate(uimPrefab);
+        uim.name = uimPrefab.name;
+        uim.transform.SetParent(this.transform);
     }
 
     void OnDestroy()
     {
         UnitSelectionEvent.OnUnitSelection -= SelectUnit;
+        EndturnEvent.OnEndTurn -= EndTurn;
     }
     void SelectUnit(GameObject unit)
     {

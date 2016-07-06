@@ -34,14 +34,13 @@ public class UiManager : MonoBehaviour {
 	void Start () {
         player1 = GameObject.Find("Player1");
         player2 = GameObject.Find("Player2");
-        managerSys = GameObject.Find("Manager").GetComponent<ManagerSystem>();
-        inventSys = GameObject.Find("Manager").GetComponent<InventorySystem>();
+        managerSys = FindObjectOfType<ManagerSystem>();
+        inventSys = managerSys.gameObject.GetComponent<InventorySystem>();
         player1AP = player1.GetComponent<PlayerComponent>().actionPoints;
         player2AP = player2.GetComponent<PlayerComponent>().actionPoints;
 
         //test angaben
-        isPlayer1 = managerSys.getPlayerTurn();       
-
+        isPlayer1 = managerSys.getPlayerTurn();
         //setStyle
         style = new GUIStyle();
 

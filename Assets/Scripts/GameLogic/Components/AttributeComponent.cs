@@ -74,7 +74,7 @@ public class AttributeComponent : MonoBehaviour {
         cell = BattlefieldCreater.instance.getCell(x, z);
     }
 
-
+    //AUCH PROFESSIONS HABEN WAFFEN
     public void setProf(int i)
     {
         prof = (Enums.Prof)i;
@@ -97,6 +97,7 @@ public class AttributeComponent : MonoBehaviour {
         profession = (Enums.Prof)i;
         WeaponHolding weapons = (WeaponHolding)model.GetComponent(typeof(WeaponHolding));
         weapons.owner = this.gameObject;
+        items.isPrimary = true;
 
         if (profession == Enums.Prof.Riot)
         {
@@ -151,9 +152,17 @@ public class AttributeComponent : MonoBehaviour {
             skills.Add(Enums.Actions.ChangeWeapon);
             skills.Add(Enums.Actions.Heal);
 
-
             items.utility1 = Enums.Equipment.MediPack;
         }
+        if (items.isPrimary && items.primary != null)
+        {
+            weapon = items.primary.gameObject;
+        }
+        else if (items.secondary != null)
+        {
+            weapon = items.secondary.gameObject;
+        }
+
         model_animator.SetInteger(animId_iStance, (int)stance);
     }
 
@@ -323,7 +332,6 @@ public class AttributeComponent : MonoBehaviour {
         {
             weapon = items.secondary.gameObject;
         }
-
     }
 
     public void regenerateMovepoints()
