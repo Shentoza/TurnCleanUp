@@ -9,8 +9,8 @@ public class AbilitySystem : MonoBehaviour {
     public GameObject gas;
 
     public int effektDauer;
-    //Shit für animationen zum drehen
-    private float turning_Speed = 360.0f;
+    //Seconds to turn 360°
+    private float turning_secondsNeeded = 1.0f;
     private bool turning_Started;
     private float turning_Direction;
 
@@ -224,36 +224,13 @@ public class AbilitySystem : MonoBehaviour {
 
         //Aktuelle Richtung in die wir schauen
         Vector3 facingDirection = playerAttr.transform.forward;
+        float maxRadians = (Time.deltaTime * (float)(Mathf.PI * 2.0)) / turning_secondsNeeded;
 
-        //Winkel zwischen unseren zwei Vektoren
-        float angle = Vector3.Angle(walkingDirection.normalized, facingDirection);
+        Vector3 result = Vector3.RotateTowards(facingDirection, walkingDirection, maxRadians, 1);
+        playerAttr.transform.forward = result;
 
-        //Schaue ich schon in die passende Richtung?
-        if (angle != 0.0f)
-        {
-            if (!turning_Started)
-            {
-                if (Vector3.Cross(walkingDirection.normalized, facingDirection).y < 0.0f)
-                {
-                    turning_Direction = 1.0f;
-                }
-                else
-                {
-                    turning_Direction = -1.0f;
-                }
 
-                turning_Started = true;
-            }
-
-            float yRotation = Mathf.Clamp(Time.deltaTime * turning_Speed * turning_Direction, -angle, angle);
-            angle += yRotation;
-            Vector3 euler = playerAttr.transform.rotation.eulerAngles;
-            euler.y += angle;
-            playerAttr.transform.rotation = Quaternion.Euler(euler);
-        }
-        else
-            turning_Started = false;
-
+        float angle = Vector3.Angle(playerAttr.transform.forward.normalized, walkingDirection.normalized);
         return angle == 0.0f;
     }
 

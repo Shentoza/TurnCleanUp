@@ -17,7 +17,9 @@ public class MovementSystem : MonoBehaviour {
 
     float deltaSum;
 
-    private float turning_speed = 360.0f;
+
+    //Seconds to turn 360°
+    private float turning_secondsNeeded = 1.0f;
     private bool turning_started;
     private float turning_direction;
     
@@ -27,6 +29,7 @@ public class MovementSystem : MonoBehaviour {
         playerAttr = (AttributeComponent)this.gameObject.GetComponent(typeof(AttributeComponent));
         turning_started = false;
     }
+
 	
 	// Update is called once per frame
 	void Update () {
@@ -152,35 +155,13 @@ public class MovementSystem : MonoBehaviour {
         //Aktuelle Richtung in die wir schauen
         Vector3 facingDirection = playerAttr.transform.forward;
 
+        float maxRadians = (Time.deltaTime * (float)(Mathf.PI * 2.0)) / turning_secondsNeeded;
 
-        //Winkel zwischen unseren zwei Vektoren
-        float angle = Vector3.Angle(walkingDirection.normalized, facingDirection);
+        Vector3 result = Vector3.RotateTowards(facingDirection, walkingDirection, maxRadians, 1);
+        playerAttr.transform.forward = result;
 
-        //Schaue ich schon in die passende Richtung?
-        if (angle != 0.0f)
-        {
-            if (!turning_started)
-            {
-                if (Vector3.Cross(walkingDirection.normalized, facingDirection).y < 0.0f)
-                {
-                    turning_direction = 1.0f;
-                }
-                else
-                {
-                    turning_direction = -1.0f;
-                }
-                turning_started = true;
-            }
 
-            float yRotation = Mathf.Clamp(Time.deltaTime * turning_speed * turning_direction, -angle, angle);
-            angle += yRotation;
-            Vector3 euler = playerAttr.transform.rotation.eulerAngles;
-            euler.y += yRotation;
-            playerAttr.transform.rotation = Quaternion.Euler(euler);
-        }
-        else
-            turning_started = false;
-
+        float angle = Vector3.Angle(playerAttr.transform.forward.normalized, walkingDirection.normalized);
         return angle == 0.0f;
     }
 }
