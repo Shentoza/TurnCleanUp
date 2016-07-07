@@ -12,7 +12,10 @@ public class AttributeComponent : MonoBehaviour {
     public int actMovRange; //Aktuelle Bewegungsreichweite
     public int regPerAP; //Regeneration pro Aufruf von Move
     public float minAccuracy; //Mindest Trefferwahrscheinlichkeit
-    public int attackRange = 100; //Dient der Wurfrange von Granaten etc.
+
+    public int attackRange = 20; //Dient der Wurfrange von Granaten etc.
+
+
     public bool canShoot; // Spieler kann nur 1 mal pro Runde schießen
     public bool highCover; // Spieler ist hinter hoher Deckung
     public bool lowCover; // Spieler ist niedriger hoher Deckung
@@ -48,13 +51,6 @@ public class AttributeComponent : MonoBehaviour {
         animId_iStance = Animator.StringToHash("Stance");
     }
 	
-	// Update is called once per frame
-	void Update () {
-        
-
-        
-    }
-
     public void setCurrentCell(Cell cell)
     {
         this.cell = cell;
@@ -74,7 +70,6 @@ public class AttributeComponent : MonoBehaviour {
         cell = BattlefieldCreater.instance.getCell(x, z);
     }
 
-    //AUCH PROFESSIONS HABEN WAFFEN
     public void setProf(int i)
     {
         prof = (Enums.Prof)i;

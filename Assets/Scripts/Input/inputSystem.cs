@@ -84,8 +84,10 @@ public class inputSystem : MonoBehaviour {
             Cell currentCell = selected_Attributes.getCurrentCell();
 
             PlayerAssistanceSystem.resetAllCellColors();
-            DijkstraSystem.executeDijsktra(currentCell, selected_Attributes.actMovRange,selected_Attributes.items.getCurrentWeapon().weaponRange);
-            PlayerAssistanceSystem.colorAllCells();
+            int moveRange = selected_Attributes.actMovRange;
+            int attackRange = selected_Attributes.items.getCurrentWeapon().weaponRange;
+            DijkstraSystem.executeDijsktra(currentCell, moveRange, attackRange);
+            PlayerAssistanceSystem.colorAllCells(moveRange,attackRange);
             rotationScript.setNewTarget(selected_Unit);
             figurGewaehlt = true;
         }
@@ -110,7 +112,7 @@ public class inputSystem : MonoBehaviour {
                 if (selectedCell != null)
                 {
                     if (figurGewaehlt && !selected_movement.moving)
-                        PlayerAssistanceSystem.colorCell(selectedCell);
+                        PlayerAssistanceSystem.colorCell(selectedCell, PlayerAssistanceSystem.lastMoveRange, PlayerAssistanceSystem.lastAttackRange);
                     else
                         PlayerAssistanceSystem.resetSingleCell(selectedCell);
                 }
@@ -249,19 +251,18 @@ public class inputSystem : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown ("s")) {
-            Debug.Log("InpuT: Smoke 1");
-			smokeAusgewaehlt = true;
+            selectThrowingGrenade(Enums.Actions.Smoke);
 		}
 		if (Input.GetKeyDown ("f")) {
-			molotovAusgewaehlt = true;
+            selectThrowingGrenade(Enums.Actions.Molotov);
 		}
         if(Input.GetKeyDown("g"))
         {
-            gasAusgewaehlt = true;
+            selectThrowingGrenade(Enums.Actions.Teargas);
         }
         if (Input.GetKeyDown("d"))
         {
-            granateAusgewaehlt = true;
+            selectThrowingGrenade(Enums.Actions.Grenade);
         }
         if(Input.GetKeyDown("space"))
         {
@@ -274,13 +275,42 @@ public class inputSystem : MonoBehaviour {
         }
 	}
 
+    public void selectThrowingGrenade(Enums.Actions grenadeType)
+    {
+        cancelActions();
+        switch(grenadeType)
+        {
+            case Enums.Actions.Grenade:
+                granateAusgewaehlt = true;
+                break;
+            case Enums.Actions.Molotov:
+                molotovAusgewaehlt = true;
+                break;
+            case Enums.Actions.Smoke:
+                smokeAusgewaehlt = true;
+                break;
+            case Enums.Actions.Teargas:
+                gasAusgewaehlt = true;
+                break;
+        }
+        int attackRange = selected_Attributes.attackRange;
+        DijkstraSystem.executeDijsktra(selected_Attributes.getCurrentCell(), 0, attackRange);
+        PlayerAssistanceSystem.colorAllCells(0, attackRange);
+    }
+
     public void cancelActions()
     {
         angriffAusgewaehlt = false;
         molotovAusgewaehlt = false;
         smokeAusgewaehlt = false;
         movementAusgewaehlt = false;
+
         FindObjectOfType<UiManager>().activeSkill = Enums.Actions.Cancel;
+
+        int moveRange = selected_Attributes.actMovRange;
+        int attackRange = selected_Attributes.items.getCurrentWeapon().weaponRange;
+        DijkstraSystem.executeDijsktra(selected_Attributes.getCurrentCell(), moveRange, attackRange);
+        PlayerAssistanceSystem.colorAllCells(moveRange, attackRange);
     }
 }
 

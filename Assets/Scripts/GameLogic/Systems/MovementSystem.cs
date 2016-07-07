@@ -134,8 +134,10 @@ public class MovementSystem : MonoBehaviour {
                 if(currentCell == targetCell)
                 {
                     moving = false;
-                    DijkstraSystem.executeDijsktra(currentCell, playerAttr.actMovRange, playerAttr.weapon.GetComponent<WeaponComponent>().weaponRange);
-                    PlayerAssistanceSystem.colorAllCells();
+                    int moveRange = playerAttr.actMovRange;
+                    int attackRange = playerAttr.items.getCurrentWeapon().weaponRange;
+                    DijkstraSystem.executeDijsktra(currentCell, moveRange, attackRange);
+                    PlayerAssistanceSystem.colorAllCells(moveRange, attackRange);
                 }
             }
             deltaSum += Time.deltaTime;

@@ -195,7 +195,11 @@ public class UiManager : MonoBehaviour {
             player2.GetComponent<PlayerComponent>().useAP();
         selected_input.cancelActions();
         selected_Attributes.regenerateMovepoints();
-        DijkstraSystem.executeDijsktra(selected_Attributes.getCurrentCell(), selected_Attributes.actMovRange, selected_Attributes.weapon.GetComponent<WeaponComponent>().weaponRange);
+
+        int moveRange = selected_Attributes.actMovRange;
+        int attackRange = selected_Attributes.items.getCurrentWeapon().weaponRange;
+        DijkstraSystem.executeDijsktra(selected_Attributes.getCurrentCell(), moveRange, attackRange);
+        PlayerAssistanceSystem.colorAllCells(moveRange, attackRange);
     }
     public void hit(){
         actionCancel();
@@ -241,27 +245,23 @@ public class UiManager : MonoBehaviour {
     * Audio nur für Feedback erst einmal hier drin, eigentliche Audio soll bei ausführender Aktion gespielt werden
     */
     public void molotov() {
-        actionCancel();
         activeSkill = Enums.Actions.Molotov;
-        selected_input.molotovAusgewaehlt = true;     
+        selected_input.selectThrowingGrenade(activeSkill);
     }
 
     public void grenade(){
-        actionCancel();
         activeSkill = Enums.Actions.Grenade;
-        selected_input.granateAusgewaehlt = true;        
+        selected_input.selectThrowingGrenade(activeSkill);
     }
 
     public void  smoke(){
-        actionCancel();
         activeSkill = Enums.Actions.Smoke;
-        selected_input.smokeAusgewaehlt = true;
+        selected_input.selectThrowingGrenade(activeSkill);
     }
     public void teargas()
     {
-        actionCancel();
         activeSkill = Enums.Actions.Teargas;
-        selected_input.gasAusgewaehlt = true;
+        selected_input.selectThrowingGrenade(activeSkill);
     }
 
 

@@ -23,9 +23,8 @@ public class PlayerAssistanceSystem : MonoBehaviour {
 
     private Cell highlightedCell;
 
-    static GameObject selectedUnit;
-    static int moveRange;
-    static int attackRange;
+    public static int lastMoveRange;
+    public static int lastAttackRange;
 
     static public GameObject Initialize(GameObject prefab, GameObject toAdd)
     {
@@ -49,22 +48,8 @@ public class PlayerAssistanceSystem : MonoBehaviour {
         instance.attackableMat = prefabComp.attackableMat;
         instance.highlightedMat = prefabComp.highlightedMat;
 
-        UnitSelectionEvent.OnUnitSelection += instance.UnitEvent;
 
         return result;
-    }
-
-    void UnitEvent(GameObject unit)
-    {
-        selectedUnit = unit;
-        AttributeComponent selectedAttribute = unit.GetComponent<AttributeComponent>();
-        moveRange = selectedAttribute.actMovRange;
-        attackRange = selectedAttribute.weapon.GetComponent<WeaponComponent>().weaponRange;
-    }
-
-    void OnDestroy()
-    {
-        UnitSelectionEvent.OnUnitSelection -= instance.UnitEvent;
     }
 
     static public void highlightSingleCell(Cell cell)
@@ -81,13 +66,15 @@ public class PlayerAssistanceSystem : MonoBehaviour {
         meshRend.enabled = false;
     }
 
-    static public void colorAllCells()
+    static public void colorAllCells(int moveRange, int attackRange)
     {
+        lastMoveRange = moveRange;
+        lastAttackRange = attackRange;
         for (int i = 0; i < (BattlefieldCreater.mapSizeX); ++i)
             for (int j = 0; j < (BattlefieldCreater.mapSizeZ); ++j)
             {
                 Cell currentCell = BattlefieldCreater.instance.getCell(i, j);
-                colorCell(currentCell);
+                colorCell(currentCell,moveRange, attackRange);
             }
     }
 
@@ -101,7 +88,7 @@ public class PlayerAssistanceSystem : MonoBehaviour {
             }
     }
 
-    static public void colorCell(Cell cell)
+    static public void colorCell(Cell cell, int moveRange, int attackRange)
     {
         MeshRenderer meshRend = (MeshRenderer)cell.gameObject.GetComponent(typeof(MeshRenderer));
         meshRend.enabled = true;
@@ -142,7 +129,7 @@ public class PlayerAssistanceSystem : MonoBehaviour {
     {
         foreach (Cell current in instance.walkPath)
         {
-            colorCell(current);
+            colorCell(current, lastMoveRange, lastAttackRange);
         }
         instance.walkPath.Clear();
     }
