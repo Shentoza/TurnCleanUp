@@ -7,79 +7,114 @@ using System;
 public class SavingScript : MonoBehaviour {
 
     LevelConfiguration levelConfig;
-
+    private BinaryWriter m_writer;
+    List<GameObject> savedGameObjects = new List<GameObject>();
 
     public void saveLevel(string path)
     {
-        levelConfig = FindObjectOfType<LevelConfiguration>();
-        if(!path.EndsWith(Constants.FILE_ENDING))
+        levelConfig = LevelConfiguration.instance;
+        if(!path.EndsWith(Constants.FILE_EXTENSION))
         {
-            path += Constants.FILE_ENDING;
+            path += Constants.FILE_EXTENSION;
         }
 
-        BinaryWriter writer = new BinaryWriter(new FileStream(path, FileMode.Create));
-        List<GameObject> savedGameObjects = new List<GameObject>();
+        m_writer = new BinaryWriter(new FileStream(path, FileMode.Create));
+        savedGameObjects.Clear();
 
         levelConfig.objectCount = 0;
         foreach(Transform t in FindObjectsOfType<Transform>())
         {
-            if(Constants.GAME_SETTINGS_TAG.Contains(t.tag))
+            bool correctTag = false;
+            foreach(string tag in Constants.LEVEL_ITEM_TAGS)
             {
+                if(t.tag.Equals(tag)) {
+                    correctTag = true;
+                    break;
+                }
+            }
+
+            if(correctTag) {
+                levelConfig.objectCount++;
                 savedGameObjects.Add(t.gameObject);
             }
-            levelConfig.objectCount++;
         }
-        writeHeader(writer);
+        writeHeader();
 
-        foreach(GameObject g in savedGameObjects)
+        foreach(GameObject currentGameObject in savedGameObjects)
         {
-            writeObject(writer, g);
+            //Flag, dass ein neues Objekt kommt
+            m_writer.Write((short)Constants.OBJECT_FLAGS.NewObject);
+            writeObject(currentGameObject);
         }
+        //Flag dass Ende des Files erreicht ist
+        m_writer.Write((short)Constants.OBJECT_FLAGS.EndOfFile);
 
-        writer.Close();
+        m_writer.Close();
     }
 
-    public void writeHeader(BinaryWriter writer)
+    public void writeHeader()
     {
-        writer.Write(Constants.MAP_FILE_BEGINNING);
-        writer.Write(levelConfig.defaultValues);
+        m_writer.Write(Constants.MAP_FILE_BEGINNING);
+        m_writer.Write(levelConfig.defaultValues);
         //Default Values benutzt
         if (levelConfig.defaultValues)
             return;
 
-        writer.Write(levelConfig.gridWidth);
-        writer.Write(levelConfig.gridHeight);
-        writer.Write(levelConfig.objectCount);
+        m_writer.Write(levelConfig.gridWidth);
+        m_writer.Write(levelConfig.gridHeight);
+        m_writer.Write(levelConfig.objectCount);
     }
 
-    public void writeObject(BinaryWriter writer, GameObject gameObject)
+    public void writeObject(GameObject gameObject)
     {
-        writeObjectHeader(writer, gameObject);
-        writeTransform(writer, gameObject.transform);
+        writeObjectHeader(gameObject);
+        writeTransform(gameObject.transform);
+
         //Laufe alle möglichen Components durch, speichere sie, wenn keine Components mehr vorhanden sind, setze EndOfObjectFlag
-        for(int i = 0; i < (int)Constants.COMPONENT_FLAGS.Count; ++i)
-        {
-            
+        for(int i = 1; i < (int)Constants.COMPONENT_FLAGS.Count; ++i) {
+            //TODO: Komponenten ausdefinieren
+            Constants.COMPONENT_FLAGS componentFlag = (Constants.COMPONENT_FLAGS) i;
+            switch (componentFlag) {
+                case Constants.COMPONENT_FLAGS.Cell:
+                    {
+                        break;
+                    }
+                case Constants.COMPONENT_FLAGS.EndOfObject:
+                    {
+                        break;
+                    }
+                default:
+                    continue;
+            }
         }
 
+        //Überprüfen ob GameObjekt Kindobjekte hat
+        for(int i = 0; i < gameObject.transform.childCount; ++i) {
+            GameObject childObject = gameObject.transform.GetChild(i).gameObject;
+            m_writer.Write((int)Constants.COMPONENT_FLAGS.ChildObject);
+            writeObject(childObject);
+        }
+        m_writer.Write((int)Constants.COMPONENT_FLAGS.EndOfObject);
+        savedGameObjects.Remove(gameObject);
     }
 
-    public void writeObjectHeader(BinaryWriter writer, GameObject gameObject)
+    public void writeObjectHeader(GameObject gameObject)
     {
-
+        m_writer.Write(gameObject.name);
+        m_writer.Write(gameObject.tag);
     }
 
-    public void writeTransform(BinaryWriter writer, Transform transform)
+    public void writeTransform(Transform transform)
     {
-        writer.Write(transform.position.x);
-        writer.Write(transform.position.y);
-        writer.Write(transform.position.z);
-        writer.Write(transform.rotation.x);
-        writer.Write(transform.rotation.y);
-        writer.Write(transform.rotation.z);
-        writer.Write(transform.rotation.w);
-        writer.Write(transform.localScale.x);
-        writer.Write(transform.localScale.y);
-        writer.Write(transform.localScale.z);
+        m_writer.Write(transform.position.x);
+        m_writer.Write(transform.position.y);
+        m_writer.Write(transform.position.z);
+        m_writer.Write(transform.rotation.x);
+        m_writer.Write(transform.rotation.y);
+        m_writer.Write(transform.rotation.z);
+        m_writer.Write(transform.rotation.w);
+        m_writer.Write(transform.localScale.x);
+        m_writer.Write(transform.localScale.y);
+        m_writer.Write(transform.localScale.z);
     }
 }

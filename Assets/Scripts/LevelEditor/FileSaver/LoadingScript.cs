@@ -5,35 +5,40 @@ using System.IO;
 public class LoadingScript : MonoBehaviour {
 
     LevelConfiguration levelConfig;
+    private GameObject m_currentGameObject;
+    private BinaryReader m_reader;
 
 
     public void loadLevel(string path)
     {
-        levelConfig = FindObjectOfType<LevelConfiguration>();
-        BinaryReader reader;
+        levelConfig = LevelConfiguration.instance;
         try
         {
-            reader = new BinaryReader(new FileStream(path, FileMode.Open));
+            m_reader = new BinaryReader(new FileStream(path, FileMode.Open));
         }
         catch (FileNotFoundException ex)
         {
             return;
         }
-        bool reading = readHeader(reader);
+        bool reading = readHeader();
         Constants.OBJECT_FLAGS nextObjectFlag;
+        GameObject m_currentGameObject;
         while (reading)
         {
             try
             {
-                nextObjectFlag = (Constants.OBJECT_FLAGS)reader.ReadInt32();
+                nextObjectFlag = (Constants.OBJECT_FLAGS)m_reader.ReadInt16();
                 switch(nextObjectFlag)
                 { 
                     case Constants.OBJECT_FLAGS.NewObject:
                     {
+                        m_currentGameObject = new GameObject();
+                        readObject();
                         break;
                     }
                     case Constants.OBJECT_FLAGS.EndOfFile:
                     {
+                        reading = false;
                         break;
                     }
                 }
@@ -46,15 +51,15 @@ public class LoadingScript : MonoBehaviour {
         }
     }
 
-    public bool readHeader(BinaryReader reader)
+    public bool readHeader()
     {
-        string beginning = reader.ReadString();
+        string beginning = m_reader.ReadString();
         if(!beginning.Equals(Constants.MAP_FILE_BEGINNING))
         {
             //Falscher File Start
             return false;
         }
-        levelConfig.defaultValues = reader.ReadBoolean();
+        levelConfig.defaultValues = m_reader.ReadBoolean();
         if(levelConfig.defaultValues)
         {
             levelConfig.gridWidth = Constants.DEFAULT_GRID_WIDTH;
@@ -63,28 +68,69 @@ public class LoadingScript : MonoBehaviour {
         }
         else
         {
-            levelConfig.gridWidth = reader.ReadInt32();
-            levelConfig.gridHeight = reader.ReadInt32();
-            levelConfig.objectCount = reader.ReadInt32();
+            levelConfig.gridWidth = m_reader.ReadInt32();
+            levelConfig.gridHeight = m_reader.ReadInt32();
+            levelConfig.objectCount = m_reader.ReadInt32();
         }
         return true;
     }
 
-    public GameObject readObject(BinaryReader reader)
+    public void readObjectHeader()
     {
-        return null;
+        m_currentGameObject.name = m_reader.ReadString();
+        m_currentGameObject.tag = m_reader.ReadString();
     }
 
-    public GameObject readObjectHeader(BinaryReader reader, GameObject gameObject)
+    public void readObject(GameObject parentObject = null)
     {
-        return null;
+        readObjectHeader();
+        readTransform(parentObject);
+        Constants.COMPONENT_FLAGS nextComponentFlag = Constants.COMPONENT_FLAGS.EndOfObject;
+        do
+        {
+            nextComponentFlag = (Constants.COMPONENT_FLAGS) m_reader.ReadInt32();
+            switch (nextComponentFlag)
+            {
+                case Constants.COMPONENT_FLAGS.Cell: {
+                        break;
+                    }
+                case Constants.COMPONENT_FLAGS.ObjectSetter: {
+                        break;
+                    }
+
+                //KindObjekt gefunden
+                case Constants.COMPONENT_FLAGS.ChildObject: {
+                        GameObject parent = m_currentGameObject;
+                        m_currentGameObject = new GameObject();
+                        readObject(parent);
+                        break;
+                    }
+                case Constants.COMPONENT_FLAGS.EndOfObject:
+                    break;
+
+                default:
+                    break;
+            }
+        } while (nextComponentFlag != Constants.COMPONENT_FLAGS.EndOfObject);
     }
 
-    public void readTransform(BinaryReader reader, GameObject gameObject)
+    public void readTransform(GameObject parentObject = null)
     {
-        gameObject.transform.position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-        gameObject.transform.rotation = new Quaternion(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-        gameObject.transform.localScale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+        m_currentGameObject.transform.position = new Vector3(m_reader.ReadSingle(), m_reader.ReadSingle(), m_reader.ReadSingle());
+        m_currentGameObject.transform.rotation = new Quaternion(m_reader.ReadSingle(), m_reader.ReadSingle(), m_reader.ReadSingle(), m_reader.ReadSingle());
+        m_currentGameObject.transform.localScale = new Vector3(m_reader.ReadSingle(), m_reader.ReadSingle(), m_reader.ReadSingle());
+
+        if(parentObject != null)
+            m_currentGameObject.transform.SetParent(parentObject.transform);
+    }
+
+    public void readCellComponent()
+    {
+
+    }
+
+    public void readObjectSetterComponent()
+    {
 
     }
 }
