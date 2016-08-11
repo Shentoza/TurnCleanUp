@@ -4,11 +4,12 @@ using System.IO;
 
 public class LoadingScript : MonoBehaviour {
 
+    LevelConfiguration levelConfig;
 
-    public static void loadLevel(string path)
+
+    public void loadLevel(string path)
     {
-
-        int count = 0;
+        levelConfig = FindObjectOfType<LevelConfiguration>();
         BinaryReader reader;
         try
         {
@@ -19,19 +20,24 @@ public class LoadingScript : MonoBehaviour {
             return;
         }
         bool reading = readHeader(reader);
-
+        Constants.OBJECT_FLAGS nextObjectFlag;
         while (reading)
         {
             try
             {
-                count = reader.ReadInt32();
-                go = new GameObject();
-                readTransform(reader, go);
-                go.transform.position = trans_pos;
-                go.transform.rotation = trans_rot;
-                go.transform.localScale = trans_scale;
-                go.name = name;
-                go.tag = tag;
+                nextObjectFlag = (Constants.OBJECT_FLAGS)reader.ReadInt32();
+                switch(nextObjectFlag)
+                { 
+                    case Constants.OBJECT_FLAGS.NewObject:
+                    {
+                        break;
+                    }
+                    case Constants.OBJECT_FLAGS.EndOfFile:
+                    {
+                        break;
+                    }
+                }
+
             }
             catch (EndOfStreamException ex)
             {
@@ -40,17 +46,41 @@ public class LoadingScript : MonoBehaviour {
         }
     }
 
-    public static int readHeader(BinaryReader reader)
+    public bool readHeader(BinaryReader reader)
     {
+        string beginning = reader.ReadString();
+        if(!beginning.Equals(Constants.MAP_FILE_BEGINNING))
+        {
+            //Falscher File Start
+            return false;
+        }
+        levelConfig.defaultValues = reader.ReadBoolean();
+        if(levelConfig.defaultValues)
+        {
+            levelConfig.gridWidth = Constants.DEFAULT_GRID_WIDTH;
+            levelConfig.gridHeight = Constants.DEFAULT_GRID_HEIGHT;
+            levelConfig.objectCount = Constants.DEFAULT_OBJECT_COUNT;
+        }
+        else
+        {
+            levelConfig.gridWidth = reader.ReadInt32();
+            levelConfig.gridHeight = reader.ReadInt32();
+            levelConfig.objectCount = reader.ReadInt32();
+        }
         return true;
     }
 
-    public static bool readObjectHeader(BinaryReader reader, GameObject gameObject)
+    public GameObject readObject(BinaryReader reader)
     {
-
+        return null;
     }
 
-    public static void readTransform(BinaryReader reader, GameObject gameObject)
+    public GameObject readObjectHeader(BinaryReader reader, GameObject gameObject)
+    {
+        return null;
+    }
+
+    public void readTransform(BinaryReader reader, GameObject gameObject)
     {
         gameObject.transform.position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         gameObject.transform.rotation = new Quaternion(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());

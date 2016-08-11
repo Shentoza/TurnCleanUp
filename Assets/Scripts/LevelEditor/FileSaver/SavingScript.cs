@@ -20,6 +20,7 @@ public class SavingScript : MonoBehaviour {
         BinaryWriter writer = new BinaryWriter(new FileStream(path, FileMode.Create));
         List<GameObject> savedGameObjects = new List<GameObject>();
 
+        levelConfig.objectCount = 0;
         foreach(Transform t in FindObjectsOfType<Transform>())
         {
             if(Constants.GAME_SETTINGS_TAG.Contains(t.tag))
@@ -41,6 +42,11 @@ public class SavingScript : MonoBehaviour {
     public void writeHeader(BinaryWriter writer)
     {
         writer.Write(Constants.MAP_FILE_BEGINNING);
+        writer.Write(levelConfig.defaultValues);
+        //Default Values benutzt
+        if (levelConfig.defaultValues)
+            return;
+
         writer.Write(levelConfig.gridWidth);
         writer.Write(levelConfig.gridHeight);
         writer.Write(levelConfig.objectCount);
@@ -53,7 +59,7 @@ public class SavingScript : MonoBehaviour {
         //Laufe alle möglichen Components durch, speichere sie, wenn keine Components mehr vorhanden sind, setze EndOfObjectFlag
         for(int i = 0; i < (int)Constants.COMPONENT_FLAGS.Count; ++i)
         {
-            //Components auslesen /abspeichern
+            
         }
 
     }
