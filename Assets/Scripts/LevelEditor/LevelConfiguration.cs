@@ -9,13 +9,10 @@ public class LevelConfiguration {
     public int gridHeight;
     public int objectCount;
 
-    public static LevelConfiguration instance {
-        get {
-            if (instance == null)
-                instance = new LevelConfiguration();
-            return instance;
-        }
-        private set { instance = value; }
+    public static readonly LevelConfiguration instance = new LevelConfiguration();
+
+    static LevelConfiguration()
+    {
     }
 
     private LevelConfiguration()
@@ -25,6 +22,4 @@ public class LevelConfiguration {
         gridHeight = Constants.DEFAULT_GRID_HEIGHT;
         objectCount = Constants.DEFAULT_OBJECT_COUNT;
     }
-
-
 }

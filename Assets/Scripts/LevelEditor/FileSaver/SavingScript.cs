@@ -18,15 +18,22 @@ public class SavingScript : MonoBehaviour {
             path += Constants.FILE_EXTENSION;
         }
 
+
         m_writer = new BinaryWriter(new FileStream(path, FileMode.Create));
         savedGameObjects.Clear();
-
         levelConfig.objectCount = 0;
+
+
         foreach(Transform t in FindObjectsOfType<Transform>())
         {
+            //Zu speichernde Elemente müssen "Wurzel"-Element sein
+            //innere Kinder, werden ignoriert. Kinder werden unabhängig vom Tag
+            //gespeichert, und wie Komponenten behandelt
+            if (t.parent != null)
+                continue;
+
             bool correctTag = false;
-            foreach(string tag in Constants.LEVEL_ITEM_TAGS)
-            {
+            foreach(string tag in Constants.LEVEL_ITEM_TAGS) {
                 if(t.tag.Equals(tag)) {
                     correctTag = true;
                     break;
@@ -34,8 +41,8 @@ public class SavingScript : MonoBehaviour {
             }
 
             if(correctTag) {
-                levelConfig.objectCount++;
-                savedGameObjects.Add(t.gameObject);
+                    levelConfig.objectCount++;
+                    savedGameObjects.Add(t.gameObject);
             }
         }
         writeHeader();
@@ -48,7 +55,7 @@ public class SavingScript : MonoBehaviour {
         }
         //Flag dass Ende des Files erreicht ist
         m_writer.Write((short)Constants.OBJECT_FLAGS.EndOfFile);
-
+        Debug.Log("Close");
         m_writer.Close();
     }
 
@@ -88,14 +95,13 @@ public class SavingScript : MonoBehaviour {
             }
         }
 
-        //Überprüfen ob GameObjekt Kindobjekte hat
+        //Überprüfen ob GameObjekt Kindobjekte hat, sollte als letztes passieren
         for(int i = 0; i < gameObject.transform.childCount; ++i) {
             GameObject childObject = gameObject.transform.GetChild(i).gameObject;
             m_writer.Write((int)Constants.COMPONENT_FLAGS.ChildObject);
             writeObject(childObject);
         }
         m_writer.Write((int)Constants.COMPONENT_FLAGS.EndOfObject);
-        savedGameObjects.Remove(gameObject);
     }
 
     public void writeObjectHeader(GameObject gameObject)
