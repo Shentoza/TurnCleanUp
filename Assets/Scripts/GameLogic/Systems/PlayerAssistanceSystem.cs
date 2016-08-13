@@ -54,7 +54,9 @@ public class PlayerAssistanceSystem : MonoBehaviour {
 
     static public void highlightSingleCell(Cell cell)
     {
+        
         MeshRenderer meshRend = (MeshRenderer)cell.gameObject.GetComponent(typeof(MeshRenderer));
+        Debug.Log(meshRend);
         meshRend.material = instance.highlightedMat;
         meshRend.enabled = true;
     }

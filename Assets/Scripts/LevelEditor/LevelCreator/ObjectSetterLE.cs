@@ -1,11 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ObjectSetter : MonoBehaviour {
-
-
-	public int x;
-	public int z;
+public class ObjectSetterLE : MonoBehaviour {
 
 	Transform objecttrans;
 	GameObject zelle;
@@ -24,12 +20,12 @@ public class ObjectSetter : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
-	}	
+
+    }	
 
 
 	//Setzt das Spielerobjekt an dem das Script hängt auf die Zelle
-	public void move(GameObject[,] Zellen)
+	public void move(GameObject[,] Zellen, int x, int z)
 	{
 		//Objekt Transform und AttributeComponent
 		objecttrans = (Transform)this.gameObject.GetComponent (typeof(Transform));
@@ -45,10 +41,10 @@ public class ObjectSetter : MonoBehaviour {
 
 
 	//Setzt Objekte auf richtige Zelle, setzt deckung etc
-	public void moveObject(GameObject[,] Zellen)
+	public void moveObject(GameObject[,] Zellen, int x, int z, GameObject p_Object, bool placable)
 	{
-		Transform objectTrans = (Transform)this.gameObject.GetComponent (typeof(Transform));
-		ObjectComponent objectComp = (ObjectComponent)this.gameObject.GetComponent (typeof(ObjectComponent));
+		Transform objectTrans = (Transform)p_Object.GetComponent (typeof(Transform));
+		ObjectComponent objectComp = (ObjectComponent)p_Object.GetComponent (typeof(ObjectComponent));
 
         //Setzt alle Zellen auf occupied, deckung etc sofern das Objekt mehr als eine Zelle in x oder z einnimmt.
         // zB an Stelle 1, 1 und groesse 2*2 waere dann:
@@ -61,10 +57,12 @@ public class ObjectSetter : MonoBehaviour {
         posi /= 2;
         posi += Zellen[x, z].transform.position;
 
+        objectComp.cell = Zellen[x, z].GetComponent<Cell>();
+
         objectTrans.position = new Vector3(posi.x, objectTrans.position.y, posi.z) ;
 
 
-        if (objectComp.sizeX > 1 || objectComp.sizeZ > 1) {
+        if ((objectComp.sizeX > 1 || objectComp.sizeZ > 1) && placable) {
 			for (int i = 0; i < objectComp.sizeX; i++) {
 				zelle = Zellen [x + i, z];
 				cell = (Cell)zelle.GetComponent (typeof(Cell));
@@ -97,7 +95,7 @@ public class ObjectSetter : MonoBehaviour {
 			}
 		}
 		//Falls die groesse des Objekts 1*1 ist
-		else 
+		else if(placable)
 		{
 			zelle = Zellen [x, z];
 			cell = (Cell)zelle.GetComponent (typeof(Cell));

@@ -21,9 +21,11 @@ public class Cell : MonoBehaviour {
 	public bool smoked = false;
     public bool setOnGas = false;
 
-	public bool keineDeckung;
 	public bool niedrigeDeckung;
 	public bool hoheDeckung;
+
+    public int xCoord;
+    public int zCoord;
 
 	// Use this for initialization
 	void Start () {
