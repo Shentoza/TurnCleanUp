@@ -8,6 +8,6 @@ public class LookUpTable : MonoBehaviour {
 
     public void Start() {
         prefabs.Add(Constants.PREFAB_FLAGS.None, null);
-        prefabs.Add(Constants.PREFAB_FLAGS.Barrel_LP, Resources.Load<GameObject>(Constants.PROPS_PREFAB_PATH + "barrel2_lp.prefab");
+        prefabs.Add(Constants.PREFAB_FLAGS.Barrel_LP, Resources.Load<GameObject>(Constants.PROPS_PREFAB_PATH + "barrel2_lp.prefab"));
     }
 }
