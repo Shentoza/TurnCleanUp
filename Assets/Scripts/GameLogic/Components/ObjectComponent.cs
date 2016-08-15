@@ -6,7 +6,7 @@ using System.Collections;
 
 public class ObjectComponent : MonoBehaviour {
 
-	Cell cell;
+	public Cell cell;
 	public bool keineDeckung;
 	public bool niedrigeDeckung;
 	public bool hoheDeckung;
