@@ -10,7 +10,7 @@ public class Constants
     public enum COMPONENT_FLAGS
     {
         EndOfObject,
-        Cell,
+        ObjectComponent,
         ObjectSetter,
         ChildObject,
         Count

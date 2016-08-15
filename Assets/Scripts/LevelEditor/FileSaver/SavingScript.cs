@@ -82,14 +82,25 @@ public class SavingScript : MonoBehaviour {
             //TODO: Komponenten ausdefinieren
             Constants.COMPONENT_FLAGS componentFlag = (Constants.COMPONENT_FLAGS) i;
             switch (componentFlag) {
-                case Constants.COMPONENT_FLAGS.Cell:
-                    {
+                case Constants.COMPONENT_FLAGS.ObjectComponent: {
+                        ObjectComponent currentObjectComponent = gameObject.GetComponent<ObjectComponent>();
+                        if (!currentObjectComponent.Equals(null)) {
+                            m_writer.Write((int)componentFlag);
+                            writeObjectComponent(currentObjectComponent);
+                        }
                         break;
                     }
-                case Constants.COMPONENT_FLAGS.EndOfObject:
-                    {
+
+                case Constants.COMPONENT_FLAGS.ObjectSetter: {
+                        ObjectSetter currentObjectSetter = gameObject.GetComponent<ObjectSetter>();
+                        if (!currentObjectSetter.Equals(null)) {
+                            m_writer.Write((int)componentFlag);
+                            writeObjectSetter(currentObjectSetter);
+                        }
                         break;
                     }
+
+
                 default:
                     continue;
             }
@@ -124,4 +135,16 @@ public class SavingScript : MonoBehaviour {
         m_writer.Write(transform.localScale.y);
         m_writer.Write(transform.localScale.z);
     }
+    public void writeObjectSetter(ObjectSetter component)
+    {
+        m_writer.Write(component.x);
+        m_writer.Write(component.z);
+    }
+
+    public void writeObjectComponent(ObjectComponent component)
+    {
+        m_writer.Write(component.sizeX);
+        m_writer.Write(component.sizeZ);
+    }
+
 }

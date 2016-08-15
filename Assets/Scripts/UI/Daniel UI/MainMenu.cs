@@ -27,7 +27,7 @@ public class MainMenu : MonoBehaviour
     }
     void OnGUI()
     {
-        
+
     }
 
     public void handleCreate()
@@ -63,7 +63,7 @@ public class MainMenu : MonoBehaviour
 
         else if (day.isOn)
             return "day";
- 
+
         else if (night.isOn)
             return "night";
 
