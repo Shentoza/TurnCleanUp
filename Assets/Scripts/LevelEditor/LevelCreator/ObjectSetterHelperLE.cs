@@ -65,6 +65,10 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             testCOL.enabled = false;
             obsLE.moveObject(bfcLE.getZellen(), highlightedCell.GetComponent<Cell>().xCoord,
                 highlightedCell.GetComponent<Cell>().zCoord, newObject, true);
+            newObject.GetComponent<ObjectSetter>().x = highlightedCell.GetComponent<Cell>().xCoord;
+            newObject.GetComponent<ObjectSetter>().z = highlightedCell.GetComponent<Cell>().zCoord;
+
+            newObject.GetComponent<ObjectComponent>().original = testObjekt;
 
             if(!Input.GetKey("left shift"))
             {
@@ -235,55 +239,57 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Hilft beim platzieren von Objekten("Geistobjekt")
     void placingHelper()
     {
-        Debug.Log("placinghelper");
-        int x = highlightedCell.GetComponent<Cell>().xCoord;
-        int z = highlightedCell.GetComponent<Cell>().zCoord;
-        canPlace = true;
-        bool moveable = true;
-
-        testCOL.enabled = false;
-
-        if (x > (bfcLE.sizeX * 10) - (testOC.sizeX) || z > (bfcLE.sizeZ * 10) - (testOC.sizeZ))
+        if (highlightedCell != null)
         {
-            canPlace = false;
-            moveable = false;
-        }
-        if ((bfcLE.sizeZ * 10) > (z + testOC.sizeZ - 1) && (bfcLE.sizeX * 10) > (x + testOC.sizeX - 1) && canPlace)
-        {
-            for (int i = x; i < x + testOC.sizeX; i++)
+            int x = highlightedCell.GetComponent<Cell>().xCoord;
+            int z = highlightedCell.GetComponent<Cell>().zCoord;
+            canPlace = true;
+            bool moveable = true;
+
+            testCOL.enabled = false;
+
+            if (x > (bfcLE.sizeX * 10) - (testOC.sizeX) || z > (bfcLE.sizeZ * 10) - (testOC.sizeZ))
             {
-                for (int j = z; j < z + testOC.sizeZ; j++)
+                canPlace = false;
+                moveable = false;
+            }
+            if ((bfcLE.sizeZ * 10) > (z + testOC.sizeZ - 1) && (bfcLE.sizeX * 10) > (x + testOC.sizeX - 1) && canPlace)
+            {
+                for (int i = x; i < x + testOC.sizeX; i++)
                 {
-                    if (Zellen[i,j].GetComponent<Cell>().isOccupied == true)
+                    for (int j = z; j < z + testOC.sizeZ; j++)
                     {
-                        canPlace = false;
+                        if (Zellen[i, j].GetComponent<Cell>().isOccupied == true)
+                        {
+                            canPlace = false;
+                        }
                     }
                 }
             }
-        }
-        if (canPlace && moveable)
-        {
-            testmr.material = highlightedMat;
+            if (canPlace && moveable)
+            {
+                testmr.material = highlightedMat;
 
-            Vector3 posi = Zellen[x + testOC.sizeX - 1, z + testOC.sizeZ - 1].transform.position - Zellen[x, z].transform.position;
-            posi /= 2;
-            posi += Zellen[x, z].transform.position;
+                Vector3 posi = Zellen[x + testOC.sizeX - 1, z + testOC.sizeZ - 1].transform.position - Zellen[x, z].transform.position;
+                posi /= 2;
+                posi += Zellen[x, z].transform.position;
 
-            testTrans.position = new Vector3(posi.x, testTrans.position.y, posi.z);
-        }
-        else if(moveable && !canPlace)
-        {
-            testmr.material = notSelected;
+                testTrans.position = new Vector3(posi.x, testTrans.position.y, posi.z);
+            }
+            else if (moveable && !canPlace)
+            {
+                testmr.material = notSelected;
 
-            Vector3 posi = Zellen[x + testOC.sizeX - 1, z + testOC.sizeZ - 1].transform.position - Zellen[x, z].transform.position;
-            posi /= 2;
-            posi += Zellen[x, z].transform.position;
+                Vector3 posi = Zellen[x + testOC.sizeX - 1, z + testOC.sizeZ - 1].transform.position - Zellen[x, z].transform.position;
+                posi /= 2;
+                posi += Zellen[x, z].transform.position;
 
-            testTrans.position = new Vector3(posi.x, testTrans.position.y, posi.z);
-        }
-        if(!moveable)
-        {
-            testmr.material = notSelected;
+                testTrans.position = new Vector3(posi.x, testTrans.position.y, posi.z);
+            }
+            if (!moveable)
+            {
+                testmr.material = notSelected;
+            }
         }
 
     }
