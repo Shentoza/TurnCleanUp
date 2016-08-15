@@ -38,6 +38,7 @@ public class BattlefieldCreater : MonoBehaviour {
             Destroy(instance);
         instance = this;
         instance.transformPlane = instance.GetComponent<Transform>();
+        instance.transformPlane.localScale = new Vector3((float) LevelConfiguration.instance.gridHeight / 10, transformPlane.localScale.y, (float)LevelConfiguration.instance.gridWidth / 10);
         instance.initiateBattlefield();
     }
 
@@ -122,14 +123,6 @@ public class BattlefieldCreater : MonoBehaviour {
 				currentCell.setNeighbours(upper, left, right, lower);
 			}
 		}
-
-		/*
-		//Setzt Objekte an richtiche Stelle
-		ObjectSetter[] os = FindObjectsOfType (typeof(ObjectSetter)) as ObjectSetter[];
-		foreach (ObjectSetter obs in os) 
-		{
-			obs.move (Zellen);
-		}*/
 
 		AttributeComponent[] attribComp = FindObjectsOfType (typeof(AttributeComponent)) as AttributeComponent[];
 		foreach (AttributeComponent abc in attribComp) 

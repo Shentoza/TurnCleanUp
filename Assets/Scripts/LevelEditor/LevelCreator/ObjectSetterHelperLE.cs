@@ -16,6 +16,11 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     GameObject test;
 
     [SerializeField]
+    GameObject RebPlaceholder;
+    [SerializeField]
+    GameObject GovPlaceholder;
+
+    [SerializeField]
     ObjectSetterLE obsLE;
     [SerializeField]
     BattlefieldCreatorLE bfcLE;
@@ -35,6 +40,11 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     bool killObject;
     bool placeMode;
     bool canPlace;
+
+    bool placeRebSpwn;
+    int countReb = 0;
+    bool placeGovSpwn;
+    int countGov = 0;
 
     // Use this for initialization
     void Start () {
@@ -62,6 +72,24 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 destroyTestObject();
             }
         }
+        else if(Input.GetMouseButtonDown(0) && highlightedCell && canPlace)
+        {
+            testCOL.enabled = true;
+            GameObject newObject = Instantiate(test);
+            newObject.GetComponent<MeshRenderer>().material = originalMat;
+            testCOL.enabled = false;
+            obsLE.moveObject(bfcLE.getZellen(), highlightedCell.GetComponent<Cell>().xCoord,
+                highlightedCell.GetComponent<Cell>().zCoord, newObject, true);
+
+            if (placeRebSpwn)
+            {
+                bfcLE.startPostionsP1.Add(new Vector2(highlightedCell.GetComponent<Cell>().xCoord, highlightedCell.GetComponent<Cell>().zCoord));
+            }
+            if (placeGovSpwn)
+            {
+                bfcLE.startPostionsP2.Add(new Vector2(highlightedCell.GetComponent<Cell>().xCoord, highlightedCell.GetComponent<Cell>().zCoord));
+            }
+        }
 
         //Platziertes Objekt Zuerstören
         if(Input.GetKeyDown("k"))
@@ -80,6 +108,36 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 placeMode = true;
                 setNewTest(testObjekt);
                 placingHelper();
+            }
+        }
+
+        //Spawnpunkte Platzieren
+        if(Input.GetKeyDown("b"))
+        {
+            if (!placeRebSpwn)
+            {
+                placeRebSpwn = true;
+                setNewTest(RebPlaceholder);
+                placingHelper();
+            }
+            else
+            {
+                placeRebSpwn = false;
+                destroyTestObject();
+            }
+        }
+        if(Input.GetKeyDown("v"))
+        {
+            if (!placeGovSpwn)
+            {
+                placeGovSpwn = true;
+                setNewTest(GovPlaceholder);
+                placingHelper();
+            }
+            else
+            {
+                placeGovSpwn = false;
+                destroyTestObject();
             }
         }
 
@@ -123,7 +181,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                     MeshRenderer mr = hover.collider.gameObject.GetComponent<MeshRenderer>();
                     mr.material = highlightedMat;
                     highlightedCell = hover.collider;
-                    if(placeMode)
+                    if(placeMode || placeGovSpwn || placeRebSpwn)
                     {
                         placingHelper();
                     }
@@ -177,6 +235,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Hilft beim platzieren von Objekten("Geistobjekt")
     void placingHelper()
     {
+        Debug.Log("placinghelper");
         int x = highlightedCell.GetComponent<Cell>().xCoord;
         int z = highlightedCell.GetComponent<Cell>().zCoord;
         canPlace = true;
@@ -252,9 +311,23 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         int x = killOC.cell.xCoord;
         int z = killOC.cell.zCoord;
         GameObject[,] Zellen = bfcLE.getZellen();
-        canPlace = true;
 
+        if (toDestroy.collider.gameObject.tag == "RebPlaceholder") 
+        {
+            Vector2 coords = new Vector2(x, z);
 
+            bfcLE.startPostionsP1.Remove(coords);
+
+            countReb--;
+        }
+        if (toDestroy.collider.gameObject.tag == "GovPlacerholder") 
+        {
+            Vector2 coords = new Vector2(x, z);
+
+            bfcLE.startPostionsP2.Remove(coords);
+
+            countGov--;
+        }
         for (int i = x; i < x + killOC.sizeX; i++)
         {
             for (int j = z; j < z + killOC.sizeZ; j++)
@@ -278,4 +351,5 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         testTrans = test.GetComponent<Transform>();
         originalMat = Instantiate(testmr.material);
     }
+
 }

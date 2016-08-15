@@ -24,10 +24,10 @@ public class MainMenu : MonoBehaviour
     }
     void OnGUI()
     {
-        
+
     }
 
-    public void handleCreate() 
+    public void handleCreate()
     {
         string filename = GameObject.Find("InputField").GetComponent<InputField>().text;
         string daytime = checkDaytime();
@@ -53,7 +53,7 @@ public class MainMenu : MonoBehaviour
 
         else if (day.isOn)
             return "day";
- 
+
         else if (night.isOn)
             return "night";
 
