@@ -108,6 +108,7 @@ public class SavingScript : MonoBehaviour {
     {
         m_writer.Write(gameObject.name);
         m_writer.Write(gameObject.tag);
+
     }
 
     public void writeTransform(Transform transform)

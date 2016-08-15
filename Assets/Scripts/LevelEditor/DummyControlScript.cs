@@ -3,9 +3,7 @@ using System.Collections;
 
 public class DummyControlScript : MonoBehaviour {
 
-    [SerializeField]
     private LoadingScript loadingScript;
-    [SerializeField]
     private SavingScript savingScript;
 
 	// Use this for initialization

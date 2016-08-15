@@ -35,3 +35,11 @@ Objekt:
 Komponente:
 	Komponenten Flag - Constant.COMPONENT_FLAGS (Welche gespeicherte Komponente folgt oder ChildObjekt) (int)
 	Komponenten Data
+	
+	
+	Komponenten die sich ändern:
+		Object Setter (X Z)
+		Object Component(Size X, Size  Z)
+		Plane / Battlefield Creator LE ( statisch?) Cube Material
+		
+	switch zwischen Level Editor und Play Modus

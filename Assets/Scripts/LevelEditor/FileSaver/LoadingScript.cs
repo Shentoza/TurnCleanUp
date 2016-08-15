@@ -5,8 +5,12 @@ using System.IO;
 public class LoadingScript : MonoBehaviour {
 
     LevelConfiguration levelConfig;
-    private GameObject m_currentGameObject;
     private BinaryReader m_reader;
+
+
+    private GameObject m_currentGameObject;
+    private Constants.OBJECT_FLAGS m_currentObjectFlag;
+    private Constants.COMPONENT_FLAGS m_currentComponentFlag;
 
 
     public void loadLevel(string path)
@@ -21,27 +25,22 @@ public class LoadingScript : MonoBehaviour {
             return;
         }
         bool reading = readHeader();
-        Constants.OBJECT_FLAGS nextObjectFlag;
         while (reading)
         {
             try
             {
-                nextObjectFlag = (Constants.OBJECT_FLAGS)m_reader.ReadInt16();
-                switch(nextObjectFlag)
-                { 
-                    case Constants.OBJECT_FLAGS.NewObject:
-                    {
+                m_currentObjectFlag = (Constants.OBJECT_FLAGS)m_reader.ReadInt16();
+                switch(m_currentObjectFlag) { 
+                    case Constants.OBJECT_FLAGS.NewObject: {
                         m_currentGameObject = new GameObject();
                         readObject();
                         break;
                     }
-                    case Constants.OBJECT_FLAGS.EndOfFile:
-                    {
+                    case Constants.OBJECT_FLAGS.EndOfFile: {
                         reading = false;
                         break;
                     }
                 }
-
             }
             catch (EndOfStreamException ex)
             {
@@ -86,11 +85,10 @@ public class LoadingScript : MonoBehaviour {
     {
         readObjectHeader();
         readTransform(parentObject);
-        Constants.COMPONENT_FLAGS nextComponentFlag = Constants.COMPONENT_FLAGS.EndOfObject;
         do
         {
-            nextComponentFlag = (Constants.COMPONENT_FLAGS) m_reader.ReadInt32();
-            switch (nextComponentFlag)
+            m_currentComponentFlag = (Constants.COMPONENT_FLAGS) m_reader.ReadInt32();
+            switch (m_currentComponentFlag)
             {
                 case Constants.COMPONENT_FLAGS.Cell: {
                         break;
@@ -98,7 +96,6 @@ public class LoadingScript : MonoBehaviour {
                 case Constants.COMPONENT_FLAGS.ObjectSetter: {
                         break;
                     }
-
                 //KindObjekt gefunden, sollte letztes Komponentenflag sein
                 case Constants.COMPONENT_FLAGS.ChildObject: {
                         GameObject parent = m_currentGameObject;
@@ -113,7 +110,7 @@ public class LoadingScript : MonoBehaviour {
                 default:
                     break;
             }
-        } while (nextComponentFlag != Constants.COMPONENT_FLAGS.EndOfObject);
+        } while (m_currentComponentFlag != Constants.COMPONENT_FLAGS.EndOfObject);
     }
 
     public void readTransform(GameObject parentObject = null)
