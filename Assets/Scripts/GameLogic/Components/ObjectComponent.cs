@@ -16,6 +16,7 @@ public class ObjectComponent : MonoBehaviour {
 	public int sizeX;
 	public int sizeZ;
 
+    public GameObject original;
 
 	// Use this for initialization
 	void Start () {

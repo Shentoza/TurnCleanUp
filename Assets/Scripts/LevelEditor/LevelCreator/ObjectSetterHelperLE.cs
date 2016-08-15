@@ -65,6 +65,10 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             testCOL.enabled = false;
             obsLE.moveObject(bfcLE.getZellen(), highlightedCell.GetComponent<Cell>().xCoord,
                 highlightedCell.GetComponent<Cell>().zCoord, newObject, true);
+            newObject.GetComponent<ObjectSetter>().x = highlightedCell.GetComponent<Cell>().xCoord;
+            newObject.GetComponent<ObjectSetter>().z = highlightedCell.GetComponent<Cell>().zCoord;
+
+            newObject.GetComponent<ObjectComponent>().original = testObjekt;
 
             if(!Input.GetKey("left shift"))
             {
