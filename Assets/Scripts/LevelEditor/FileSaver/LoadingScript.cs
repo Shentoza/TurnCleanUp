@@ -22,7 +22,6 @@ public class LoadingScript : MonoBehaviour {
         }
         bool reading = readHeader();
         Constants.OBJECT_FLAGS nextObjectFlag;
-        GameObject m_currentGameObject;
         while (reading)
         {
             try
@@ -49,6 +48,7 @@ public class LoadingScript : MonoBehaviour {
                 reading = false;
             }
         }
+        m_reader.Close();
     }
 
     public bool readHeader()
@@ -56,6 +56,7 @@ public class LoadingScript : MonoBehaviour {
         string beginning = m_reader.ReadString();
         if(!beginning.Equals(Constants.MAP_FILE_BEGINNING))
         {
+            Debug.Log("Wrong File Start");
             //Falscher File Start
             return false;
         }
@@ -98,11 +99,12 @@ public class LoadingScript : MonoBehaviour {
                         break;
                     }
 
-                //KindObjekt gefunden
+                //KindObjekt gefunden, sollte letztes Komponentenflag sein
                 case Constants.COMPONENT_FLAGS.ChildObject: {
                         GameObject parent = m_currentGameObject;
                         m_currentGameObject = new GameObject();
                         readObject(parent);
+                        m_currentGameObject = parent;
                         break;
                     }
                 case Constants.COMPONENT_FLAGS.EndOfObject:
@@ -116,12 +118,12 @@ public class LoadingScript : MonoBehaviour {
 
     public void readTransform(GameObject parentObject = null)
     {
+        if (parentObject != null)
+            m_currentGameObject.transform.SetParent(parentObject.transform);
+
         m_currentGameObject.transform.position = new Vector3(m_reader.ReadSingle(), m_reader.ReadSingle(), m_reader.ReadSingle());
         m_currentGameObject.transform.rotation = new Quaternion(m_reader.ReadSingle(), m_reader.ReadSingle(), m_reader.ReadSingle(), m_reader.ReadSingle());
         m_currentGameObject.transform.localScale = new Vector3(m_reader.ReadSingle(), m_reader.ReadSingle(), m_reader.ReadSingle());
-
-        if(parentObject != null)
-            m_currentGameObject.transform.SetParent(parentObject.transform);
     }
 
     public void readCellComponent()
