@@ -90,10 +90,11 @@ public class LoadingScript : MonoBehaviour {
             m_currentComponentFlag = (Constants.COMPONENT_FLAGS) m_reader.ReadInt32();
             switch (m_currentComponentFlag)
             {
-                case Constants.COMPONENT_FLAGS.Cell: {
+                case Constants.COMPONENT_FLAGS.ObjectComponent: {
                         break;
                     }
                 case Constants.COMPONENT_FLAGS.ObjectSetter: {
+                        readObjectSetter();
                         break;
                     }
                 //KindObjekt gefunden, sollte letztes Komponentenflag sein
@@ -123,13 +124,21 @@ public class LoadingScript : MonoBehaviour {
         m_currentGameObject.transform.localScale = new Vector3(m_reader.ReadSingle(), m_reader.ReadSingle(), m_reader.ReadSingle());
     }
 
-    public void readCellComponent()
+    public void readObjectSetter()
     {
-
+        ObjectSetter defaultObjectSetter = m_currentGameObject.GetComponent<ObjectSetter>();
+        if(!defaultObjectSetter.Equals(null)) {
+            defaultObjectSetter.x = m_reader.ReadInt32();
+            defaultObjectSetter.z = m_reader.ReadInt32();
+        }
     }
 
-    public void readObjectSetterComponent()
+    public void readObjectComponent()
     {
-
+        ObjectComponent defaultObjectComponent = m_currentGameObject.GetComponent<ObjectComponent>();
+        if(!defaultObjectComponent.Equals(null)) {
+            defaultObjectComponent.sizeX = m_reader.ReadInt32();
+            defaultObjectComponent.sizeZ = m_reader.ReadInt32();
+        }
     }
 }
