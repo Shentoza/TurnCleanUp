@@ -8,6 +8,8 @@ public class LevelConfiguration {
     public int gridWidth;
     public int gridHeight;
     public int objectCount;
+    public string filename;
+    public string daytime;
 
     public static readonly LevelConfiguration instance = new LevelConfiguration();
 
