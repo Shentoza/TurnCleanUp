@@ -33,7 +33,7 @@ public class SavingScript : MonoBehaviour {
                 continue;
 
             bool correctTag = false;
-            foreach(string tag in Constants.LEVEL_ITEM_TAGS) {
+            foreach(string tag in Constants.FILE_LEVEL_ITEM_TAGS) {
                 if(t.tag.Equals(tag)) {
                     correctTag = true;
                     break;
@@ -50,18 +50,18 @@ public class SavingScript : MonoBehaviour {
         foreach(GameObject currentGameObject in savedGameObjects)
         {
             //Flag, dass ein neues Objekt kommt
-            m_writer.Write((short)Constants.OBJECT_FLAGS.NewObject);
+            m_writer.Write((short)Constants.FILE_OBJECT_FLAGS.NewObject);
             writeObject(currentGameObject);
         }
         //Flag dass Ende des Files erreicht ist
-        m_writer.Write((short)Constants.OBJECT_FLAGS.EndOfFile);
+        m_writer.Write((short)Constants.FILE_OBJECT_FLAGS.EndOfFile);
         Debug.Log("Close");
         m_writer.Close();
     }
 
     public void writeHeader()
     {
-        m_writer.Write(Constants.MAP_FILE_BEGINNING);
+        m_writer.Write(Constants.FILE_BEGINNING_TAG);
         m_writer.Write(levelConfig.defaultValues);
         //Default Values benutzt
         if (levelConfig.defaultValues)
@@ -78,11 +78,11 @@ public class SavingScript : MonoBehaviour {
         writeTransform(gameObject.transform);
 
         //Laufe alle möglichen Components durch, speichere sie, wenn keine Components mehr vorhanden sind, setze EndOfObjectFlag
-        for(int i = 1; i < (int)Constants.COMPONENT_FLAGS.Count; ++i) {
+        for(int i = 1; i < (int)Constants.FILE_COMPONENT_FLAGS.Count; ++i) {
             //TODO: Komponenten ausdefinieren
-            Constants.COMPONENT_FLAGS componentFlag = (Constants.COMPONENT_FLAGS) i;
+            Constants.FILE_COMPONENT_FLAGS componentFlag = (Constants.FILE_COMPONENT_FLAGS) i;
             switch (componentFlag) {
-                case Constants.COMPONENT_FLAGS.ObjectComponent: {
+                case Constants.FILE_COMPONENT_FLAGS.ObjectComponent: {
                         ObjectComponent currentObjectComponent = gameObject.GetComponent<ObjectComponent>();
                         if (!currentObjectComponent.Equals(null)) {
                             m_writer.Write((int)componentFlag);
@@ -91,7 +91,7 @@ public class SavingScript : MonoBehaviour {
                         break;
                     }
 
-                case Constants.COMPONENT_FLAGS.ObjectSetter: {
+                case Constants.FILE_COMPONENT_FLAGS.ObjectSetter: {
                         ObjectSetter currentObjectSetter = gameObject.GetComponent<ObjectSetter>();
                         if (!currentObjectSetter.Equals(null)) {
                             m_writer.Write((int)componentFlag);
@@ -109,17 +109,24 @@ public class SavingScript : MonoBehaviour {
         //Überprüfen ob GameObjekt Kindobjekte hat, sollte als letztes passieren
         for(int i = 0; i < gameObject.transform.childCount; ++i) {
             GameObject childObject = gameObject.transform.GetChild(i).gameObject;
-            m_writer.Write((int)Constants.COMPONENT_FLAGS.ChildObject);
+            m_writer.Write((int)Constants.FILE_COMPONENT_FLAGS.ChildObject);
             writeObject(childObject);
         }
-        m_writer.Write((int)Constants.COMPONENT_FLAGS.EndOfObject);
+        m_writer.Write((int)Constants.FILE_COMPONENT_FLAGS.EndOfObject);
     }
 
     public void writeObjectHeader(GameObject gameObject)
     {
+        ObjectComponent objComp = gameObject.GetComponent<ObjectComponent>();
+        if (!objComp.Equals(null)) {
+            if (!objComp.original.Equals(null)) {
+                m_writer.Write(LookUpTable.prefabsInverse[objComp.original]);
+            }
+            else
+                m_writer.Write(Constants.FILE_NO_PREFAB_TAG);
+        }
         m_writer.Write(gameObject.name);
         m_writer.Write(gameObject.tag);
-
     }
 
     public void writeTransform(Transform transform)

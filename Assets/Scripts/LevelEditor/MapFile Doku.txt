@@ -20,6 +20,7 @@ Objekt:
 	Objekt Header:
 		Objekt Name - string
 		Objekt Tag - string
+		Prefab - string (Dictionary Key)
 	Transform:
 		Position ( 3x float)
 		Rotation (4x float (Quaternion))
@@ -45,3 +46,12 @@ Komponente:
 		Plane / Battlefield Creator LE ( statisch?) Cube Material
 		
 	switch zwischen Level Editor und Play Modus
+	
+	
+###############
+
+Notizen für später:
+	Prefabs mit Kindobjekten werden problematisch:
+		Alle Kindobjekte die beim erstellen angelegt werden werden auch im File abgelegt.
+		Flag welche "Kindkomponenten" durch Prefabs erstellt wurden, welche nicht.
+		
