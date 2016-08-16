@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 //To-Do: Lerp von anfangsposition zum ersten ausgewählten Objekt UND lerp zwischen Objekten!
 
@@ -81,8 +82,10 @@ public class CameraRotationScript : MonoBehaviour {
 		mousePosX = Input.mousePosition.x;
 		mousePosY = Input.mousePosition.y;
 
-		//Führt die Kamerafahrt am Anfang durch
-		if (startLerp) {
+        bool isGUIelement = UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(-1);
+
+        //Führt die Kamerafahrt am Anfang durch
+        if (startLerp) {
 			transform.position = Vector3.Lerp(transform.position, new Vector3(5, 10, -15), 5.0f * 0.03f);
 			if (transform.position == new Vector3 (5, 10, -15)) {
 				startLerp = false;
@@ -90,7 +93,7 @@ public class CameraRotationScript : MonoBehaviour {
 		}
 
 		//Links scrollen
-		if (mousePosX / Screen.width < 1 - scrollDistance && !startRotation) {
+		if (mousePosX / Screen.width < 1 - scrollDistance && !startRotation && !isGUIelement) {
 			mapCameraEnabled = true;
 			target = cameraTarget.transform;
 			/*
@@ -102,7 +105,7 @@ public class CameraRotationScript : MonoBehaviour {
 			}
 		}
 		//rechts scrollen
-		if (mousePosX / Screen.width >= scrollDistance && !startRotation) {
+		if (mousePosX / Screen.width >= scrollDistance && !startRotation && !isGUIelement) {
 			mapCameraEnabled = true;
 			target = cameraTarget.transform;
 			/*
@@ -114,7 +117,7 @@ public class CameraRotationScript : MonoBehaviour {
 			}
 		}
 		//unten scrollen
-		if (mousePosY / Screen.height < 1 - scrollDistance && !startRotation) {
+		if (mousePosY / Screen.height < 1 - scrollDistance && !startRotation && !isGUIelement) {
 			mapCameraEnabled = true;
 			target = cameraTarget.transform;
 			/*
@@ -126,7 +129,7 @@ public class CameraRotationScript : MonoBehaviour {
 			}
 		}
 		//oben scrollen
-		if (mousePosY / Screen.height >= scrollDistance && !startRotation) {
+		if (mousePosY / Screen.height >= scrollDistance && !startRotation && !isGUIelement) {
 			mapCameraEnabled = true;
 			target = cameraTarget.transform;
 			/*
