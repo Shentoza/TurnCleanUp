@@ -9,7 +9,14 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     [SerializeField]
     Material notSelected;
     [SerializeField]
+    Material cantPlaceMat;
+    [SerializeField]
+    Material brushMaterial;
+
+    [SerializeField]
     LayerMask Cellmask;
+    [SerializeField]
+    LayerMask Farbmask;
 
     [SerializeField]
     GameObject testObjekt;
@@ -40,6 +47,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     bool killObject;
     bool placeMode;
     bool canPlace;
+    bool brushMode;
 
     bool placeRebSpwn;
     int countReb = 0;
@@ -76,7 +84,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 destroyTestObject();
             }
         }
-        else if(Input.GetMouseButtonDown(0) && highlightedCell && canPlace)
+        else if(Input.GetMouseButtonDown(0) && highlightedCell && canPlace && placeGovSpwn || placeRebSpwn)
         {
             testCOL.enabled = true;
             GameObject newObject = Instantiate(test);
@@ -94,61 +102,9 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 bfcLE.startPostionsP2.Add(new Vector2(highlightedCell.GetComponent<Cell>().xCoord, highlightedCell.GetComponent<Cell>().zCoord));
             }
         }
-
-        //Platziertes Objekt Zuerstören
-        if(Input.GetKeyDown("k"))
+        else if((Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)) && highlightedCell && brushMode)
         {
-            killObject = true;
-        }
-        if(Input.GetKeyDown("p"))
-        {
-            if (placeMode)
-            {
-                placeMode = false;
-                destroyTestObject();
-            }
-            else
-            {
-                placeMode = true;
-                setNewTest(testObjekt);
-                placingHelper();
-            }
-        }
-
-        //Spawnpunkte Platzieren
-        if(Input.GetKeyDown("b"))
-        {
-            if (!placeRebSpwn)
-            {
-                placeRebSpwn = true;
-                setNewTest(RebPlaceholder);
-                placingHelper();
-            }
-            else
-            {
-                placeRebSpwn = false;
-                destroyTestObject();
-            }
-        }
-        if(Input.GetKeyDown("v"))
-        {
-            if (!placeGovSpwn)
-            {
-                placeGovSpwn = true;
-                setNewTest(GovPlaceholder);
-                placingHelper();
-            }
-            else
-            {
-                placeGovSpwn = false;
-                destroyTestObject();
-            }
-        }
-
-        //rotieren von Objekten
-        if(placeMode && Input.GetKeyDown("u"))
-        {
-            rotateTest();
+            brushTool();
         }
 
 
@@ -222,7 +178,6 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 mr.material = notSelected;
                 highlightedCell = null;
             }
-            //destroyTestObject();
         }
     }
 
@@ -278,7 +233,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             }
             else if (moveable && !canPlace)
             {
-                testmr.material = notSelected;
+                testmr.material = cantPlaceMat;
 
                 Vector3 posi = Zellen[x + testOC.sizeX - 1, z + testOC.sizeZ - 1].transform.position - Zellen[x, z].transform.position;
                 posi /= 2;
@@ -288,26 +243,10 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             }
             if (!moveable)
             {
-                testmr.material = notSelected;
+                testmr.material = cantPlaceMat;
             }
         }
 
-    }
-
-    //Objekt rotieren Methode
-    void rotateTest()
-    {
-        int oldX;
-        int oldZ;
-
-        testTrans.Rotate(new Vector3(testTrans.rotation.x, testTrans.rotation.y + 90, testTrans.rotation.z));
-        oldX = testOC.sizeX;
-        oldZ = testOC.sizeZ;
-
-        testOC.sizeZ = oldX;
-        testOC.sizeX = oldZ;
-
-        placingHelper();
     }
 
     //Löschen Methode
@@ -348,6 +287,8 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         killObject = false;
     }
 
+
+    //Setzt ein neues Objekt als Platzierungobjekt
     void setNewTest(GameObject newObject)
     {
         test = Instantiate(newObject);
@@ -357,5 +298,156 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         testTrans = test.GetComponent<Transform>();
         originalMat = Instantiate(testmr.material);
     }
+
+    //Führt das Färben von Zellen aus
+    void brushTool()
+    {
+        if (!placeMode && !killObject && !placeGovSpwn && !placeRebSpwn)
+        {
+            Ray mouseOver = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit farbSelect;
+            Physics.Raycast(mouseOver, out farbSelect, Mathf.Infinity, Farbmask);
+
+            if (farbSelect.collider != null)
+            {
+                MeshRenderer farbMR = farbSelect.collider.gameObject.GetComponent<MeshRenderer>();
+                farbMR.material = brushMaterial;
+            }
+        }
+    }
+
+
+    //Alle Methoden zum Aktiviren von Modi
+    //Werden über UI aufgerufen
+
+    //Aktiviert BrushTool
+    public void activateBrushTool(Material newMat)
+    {
+        if(!placeMode && !killObject && !placeGovSpwn && !placeRebSpwn)
+        { 
+            if (brushMode)
+            {
+               brushMode = false;
+            }
+            else
+            {
+                brushMode = true;
+                brushMaterial = newMat;
+            }
+        }
+    }
+
+    //Aktiviert DestroyTool
+    public void activateDestroyTool()
+    {
+        if(!placeMode && !brushMode && !placeGovSpwn && !placeRebSpwn)
+        {
+            if(killObject)
+            {
+                killObject = false;
+            }
+            else
+            {
+                killObject = true;
+            }
+        }
+    }
+
+    //Aktiviert Platzierungsmodus
+    public void activatePlacingTool(GameObject newTestObjekt)
+    {
+
+        if (!killObject && !brushMode && !placeGovSpwn && !placeRebSpwn)
+        {
+            if (placeMode)
+            {
+                placeMode = false;
+                destroyTestObject();
+            }
+            else
+            {
+                placeMode = true;
+                setNewTest(newTestObjekt);
+                placingHelper();
+            }
+        }
+    }
+
+    //Methode zum Links rotieren
+    public void rotateLeft()
+    {
+        if (placeMode && !killObject && !brushMode && !placeGovSpwn && !placeRebSpwn)
+        {
+            int oldX;
+            int oldZ;
+
+            testTrans.Rotate(new Vector3(testTrans.rotation.x, testTrans.rotation.y + 90, testTrans.rotation.z));
+            oldX = testOC.sizeX;
+            oldZ = testOC.sizeZ;
+
+            testOC.sizeZ = oldX;
+            testOC.sizeX = oldZ;
+
+            placingHelper();
+        }
+    }
+
+    //Methode zum Rechts rotieren
+    public void rotateRight()
+    {
+        if (placeMode && !killObject && !brushMode && !placeGovSpwn && !placeRebSpwn)
+        {
+            int oldX;
+            int oldZ;
+
+            testTrans.Rotate(new Vector3(testTrans.rotation.x, testTrans.rotation.y - 90, testTrans.rotation.z));
+            oldX = testOC.sizeX;
+            oldZ = testOC.sizeZ;
+
+            testOC.sizeZ = oldX;
+            testOC.sizeX = oldZ;
+
+            placingHelper();
+        }
+    }
+
+    //Methode um Spawnplätze für Regierung zu Platzieren
+    public void activateGovSpawn()
+    {
+        if (!killObject && !placeMode && !brushMode && !placeRebSpwn)
+        {
+            if (!placeGovSpwn)
+            {
+                placeGovSpwn = true;
+                setNewTest(GovPlaceholder);
+                placingHelper();
+            }
+            else
+            {
+                placeGovSpwn = false;
+                destroyTestObject();
+            }
+        }
+    }
+
+    //Methode um Spawnplätze für Rebellen zu Platzieren
+    public void activateRebSpawn()
+    {
+        if (!killObject && !placeMode && !brushMode && !placeGovSpwn)
+        {
+            if (!placeRebSpwn)
+            {
+                placeRebSpwn = true;
+                setNewTest(RebPlaceholder);
+                placingHelper();
+            }
+            else
+            {
+                placeRebSpwn = false;
+                destroyTestObject();
+            }
+        }
+    }
+
 
 }
