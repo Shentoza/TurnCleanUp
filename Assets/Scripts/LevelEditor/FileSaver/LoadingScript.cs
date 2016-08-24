@@ -64,12 +64,14 @@ public class LoadingScript : MonoBehaviour {
             levelConfig.gridWidth = Constants.DEFAULT_GRID_WIDTH;
             levelConfig.gridHeight = Constants.DEFAULT_GRID_HEIGHT;
             levelConfig.objectCount = Constants.DEFAULT_OBJECT_COUNT;
+            levelConfig.cubeMaterial = Constants.DEFAULT_CUBE_MATERIAL;
         }
         else
         {
             levelConfig.gridWidth = m_reader.ReadInt32();
             levelConfig.gridHeight = m_reader.ReadInt32();
             levelConfig.objectCount = m_reader.ReadInt32();
+            levelConfig.cubeMaterial = LookUpTable.materials[m_reader.ReadString()];
         }
         return true;
     }
@@ -101,6 +103,7 @@ public class LoadingScript : MonoBehaviour {
                         readObjectSetter();
                         break;
                     }
+                /*
                 //KindObjekt gefunden, sollte letztes Komponentenflag sein
                 case Constants.FILE_COMPONENT_FLAGS.ChildObject: {
                         GameObject parent = m_currentGameObject;
@@ -109,6 +112,7 @@ public class LoadingScript : MonoBehaviour {
                         m_currentGameObject = parent;
                         break;
                     }
+                 */
                 case Constants.FILE_COMPONENT_FLAGS.EndOfObject:
                     break;
 
