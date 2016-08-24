@@ -139,7 +139,8 @@ public class BattlefieldCreatorLE : MonoBehaviour {
 		foreach (AttributeComponent abc in attribComp) 
 		{
 			ObjectSetterLE obs = (ObjectSetterLE) abc.gameObject.GetComponent (typeof(ObjectSetterLE));
-			//obs.move (Zellen);
+            //obs.move (Zellen);
+            Debug.Log(obs);
 		}
 
 		ObjectComponent[] objectComp = FindObjectsOfType (typeof(ObjectComponent)) as ObjectComponent[];

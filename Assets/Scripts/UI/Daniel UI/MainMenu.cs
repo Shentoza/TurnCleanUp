@@ -7,8 +7,6 @@ using System.Runtime.InteropServices;
 
 public class MainMenu : MonoBehaviour
 {
-    [DllImport("user32.dll")]
-    private static extern void OpenFileDialog(); //in your case : OpenFileDialog
     Dropdown drop;
     Button createB, loadB;
     //1. Dimension Höhe - 2. Dimension Breite
@@ -54,8 +52,8 @@ public class MainMenu : MonoBehaviour
         /*System.Diagnostics.Process p = new System.Diagnostics.Process();
         p.StartInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe");
         p.Start(); */
-        Debug.Log("Hallo");
-        System.Windows.Forms.OpenFileDialog sfd = new System.Windows.Forms.OpenFileDialog();
+        //Debug.Log("Hallo");
+        //System.Windows.Forms.OpenFileDialog sfd = new System.Windows.Forms.OpenFileDialog();
         //OpenFileDialog fileDialog = new OpenFileDialog();
     }
 

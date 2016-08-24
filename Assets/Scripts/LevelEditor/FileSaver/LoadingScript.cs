@@ -23,6 +23,7 @@ public class LoadingScript : MonoBehaviour {
         catch (FileNotFoundException ex)
         {
             Debug.Log(ex.Message);
+            ex.ToString();
         }
         bool reading = readHeader();
         while (reading)
@@ -83,6 +84,7 @@ public class LoadingScript : MonoBehaviour {
         m_currentGameObject.name = m_reader.ReadString();
         m_currentGameObject.tag = m_reader.ReadString();
     }
+
 
     public void readObject(GameObject parentObject = null)
     {
