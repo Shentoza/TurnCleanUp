@@ -82,6 +82,7 @@ public class CameraRotationScript : MonoBehaviour {
 		mousePosX = Input.mousePosition.x;
 		mousePosY = Input.mousePosition.y;
 
+        //Prüfe ob Cursor über UIElement liegt
         bool isGUIelement = UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(-1);
 
         //Führt die Kamerafahrt am Anfang durch

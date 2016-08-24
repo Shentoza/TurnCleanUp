@@ -9,8 +9,8 @@ public class LoadingScript : MonoBehaviour {
 
 
     private GameObject m_currentGameObject;
-    private Constants.OBJECT_FLAGS m_currentObjectFlag;
-    private Constants.COMPONENT_FLAGS m_currentComponentFlag;
+    private Constants.FILE_OBJECT_FLAGS m_currentObjectFlag;
+    private Constants.FILE_COMPONENT_FLAGS m_currentComponentFlag;
 
 
     public void loadLevel(string path)
@@ -22,21 +22,20 @@ public class LoadingScript : MonoBehaviour {
         }
         catch (FileNotFoundException ex)
         {
-            return;
+            Debug.Log(ex.Message);
         }
         bool reading = readHeader();
         while (reading)
         {
             try
             {
-                m_currentObjectFlag = (Constants.OBJECT_FLAGS)m_reader.ReadInt16();
+                m_currentObjectFlag = (Constants.FILE_OBJECT_FLAGS)m_reader.ReadInt16();
                 switch(m_currentObjectFlag) { 
-                    case Constants.OBJECT_FLAGS.NewObject: {
-                        m_currentGameObject = new GameObject();
+                    case Constants.FILE_OBJECT_FLAGS.NewObject: {
                         readObject();
                         break;
                     }
-                    case Constants.OBJECT_FLAGS.EndOfFile: {
+                    case Constants.FILE_OBJECT_FLAGS.EndOfFile: {
                         reading = false;
                         break;
                     }
@@ -53,7 +52,7 @@ public class LoadingScript : MonoBehaviour {
     public bool readHeader()
     {
         string beginning = m_reader.ReadString();
-        if(!beginning.Equals(Constants.MAP_FILE_BEGINNING))
+        if(!beginning.Equals(Constants.FILE_BEGINNING_TAG))
         {
             Debug.Log("Wrong File Start");
             //Falscher File Start
@@ -77,6 +76,10 @@ public class LoadingScript : MonoBehaviour {
 
     public void readObjectHeader()
     {
+        string prefabTag = m_reader.ReadString();
+        if(!prefabTag.Equals(Constants.FILE_NO_PREFAB_TAG)) {
+            
+        }
         m_currentGameObject.name = m_reader.ReadString();
         m_currentGameObject.tag = m_reader.ReadString();
     }
@@ -87,31 +90,32 @@ public class LoadingScript : MonoBehaviour {
         readTransform(parentObject);
         do
         {
-            m_currentComponentFlag = (Constants.COMPONENT_FLAGS) m_reader.ReadInt32();
+            m_currentComponentFlag = (Constants.FILE_COMPONENT_FLAGS) m_reader.ReadInt32();
             switch (m_currentComponentFlag)
             {
-                case Constants.COMPONENT_FLAGS.ObjectComponent: {
+                case Constants.FILE_COMPONENT_FLAGS.ObjectComponent: {
+                        readObjectComponent();
                         break;
                     }
-                case Constants.COMPONENT_FLAGS.ObjectSetter: {
+                case Constants.FILE_COMPONENT_FLAGS.ObjectSetter: {
                         readObjectSetter();
                         break;
                     }
                 //KindObjekt gefunden, sollte letztes Komponentenflag sein
-                case Constants.COMPONENT_FLAGS.ChildObject: {
+                case Constants.FILE_COMPONENT_FLAGS.ChildObject: {
                         GameObject parent = m_currentGameObject;
                         m_currentGameObject = new GameObject();
                         readObject(parent);
                         m_currentGameObject = parent;
                         break;
                     }
-                case Constants.COMPONENT_FLAGS.EndOfObject:
+                case Constants.FILE_COMPONENT_FLAGS.EndOfObject:
                     break;
 
                 default:
                     break;
             }
-        } while (m_currentComponentFlag != Constants.COMPONENT_FLAGS.EndOfObject);
+        } while (m_currentComponentFlag != Constants.FILE_COMPONENT_FLAGS.EndOfObject);
     }
 
     public void readTransform(GameObject parentObject = null)
