@@ -7,8 +7,8 @@ using System.Runtime.InteropServices;
 
 public class MainMenu : MonoBehaviour
 {
-    [DllImport("user32.dll")]
-    private static extern void OpenFileDialog(); //in your case : OpenFileDialog
+    //[DllImport("user32.dll")]
+    //private static extern void OpenFileDialog(); //in your case : OpenFileDialog
     Dropdown drop;
     Button createB, loadB;
     //1. Dimension Höhe - 2. Dimension Breite
@@ -51,12 +51,26 @@ public class MainMenu : MonoBehaviour
 
     public void handleLoad()
     {
+        /*
         /*System.Diagnostics.Process p = new System.Diagnostics.Process();
         p.StartInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe");
-        p.Start(); */
+        p.Start();
         Debug.Log("Hallo");
         System.Windows.Forms.OpenFileDialog sfd = new System.Windows.Forms.OpenFileDialog();
         //OpenFileDialog fileDialog = new OpenFileDialog();
+        */
+        System.Windows.Forms.OpenFileDialog dia = new System.Windows.Forms.OpenFileDialog();
+
+        dia.InitialDirectory = "c:\\";
+        dia.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+        dia.FilterIndex = 2;
+        dia.RestoreDirectory = true;
+
+        string path = "";
+        if(dia.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+            path = dia.FileName;
+            Debug.Log(path);
+        }
     }
 
     public string checkDaytime()

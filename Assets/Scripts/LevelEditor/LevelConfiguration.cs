@@ -10,6 +10,7 @@ public class LevelConfiguration {
     public int objectCount;
     public string filename;
     public string daytime;
+    public Material cubeMaterial;
 
     public static readonly LevelConfiguration instance = new LevelConfiguration();
 
