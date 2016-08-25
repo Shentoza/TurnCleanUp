@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using System.Runtime.InteropServices;
+using UnityEditor;
 
 
 public class MainMenu : MonoBehaviour
@@ -49,28 +50,13 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("LE Scene Builder");
     }
 
+
     public void handleLoad()
     {
-        /*
-        /*System.Diagnostics.Process p = new System.Diagnostics.Process();
-        p.StartInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe");
-        p.Start();
-        Debug.Log("Hallo");
-        System.Windows.Forms.OpenFileDialog sfd = new System.Windows.Forms.OpenFileDialog();
-        //OpenFileDialog fileDialog = new OpenFileDialog();
-        */
-        System.Windows.Forms.OpenFileDialog dia = new System.Windows.Forms.OpenFileDialog();
+        //string path = DialogManager.OpenFileDialog();
 
-        dia.InitialDirectory = "c:\\";
-        dia.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-        dia.FilterIndex = 2;
-        dia.RestoreDirectory = true;
+        //string path2 = DialogManager.SaveFileDialog();
 
-        string path = "";
-        if(dia.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-            path = dia.FileName;
-            Debug.Log(path);
-        }
     }
 
     public string checkDaytime()

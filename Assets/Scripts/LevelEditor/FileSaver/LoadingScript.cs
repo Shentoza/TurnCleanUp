@@ -45,6 +45,7 @@ public class LoadingScript : MonoBehaviour {
             catch (EndOfStreamException ex)
             {
                 reading = false;
+                ex.ToString();
             }
         }
         m_reader.Close();
