@@ -64,10 +64,7 @@ public class UIEditorManager : MonoBehaviour {
         if (!assetBar.activeSelf)
         {
             assetBar.SetActive(true);
-            switch (value)
-            {
-                
-            }
+
         }
     }
 
