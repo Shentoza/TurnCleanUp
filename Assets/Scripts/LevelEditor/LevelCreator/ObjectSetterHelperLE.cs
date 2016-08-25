@@ -176,6 +176,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             {
                 MeshRenderer mr = highlightedCell.GetComponent<MeshRenderer>();
                 mr.material = notSelected;
+                
                 highlightedCell = null;
             }
         }
@@ -223,7 +224,10 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             }
             if (canPlace && moveable)
             {
-                testmr.material = highlightedMat;
+                for (int i = 0; i < testmr.materials.Length; i++)
+                {
+                    testmr.materials[i] = highlightedMat;
+                }
 
                 Vector3 posi = Zellen[x + testOC.sizeX - 1, z + testOC.sizeZ - 1].transform.position - Zellen[x, z].transform.position;
                 posi /= 2;
@@ -233,7 +237,10 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             }
             else if (moveable && !canPlace)
             {
-                testmr.material = cantPlaceMat;
+                for (int i = 0; i < testmr.materials.Length; i++)
+                {
+                    testmr.materials[i] = cantPlaceMat;
+                }
 
                 Vector3 posi = Zellen[x + testOC.sizeX - 1, z + testOC.sizeZ - 1].transform.position - Zellen[x, z].transform.position;
                 posi /= 2;
@@ -243,7 +250,10 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             }
             if (!moveable)
             {
-                testmr.material = cantPlaceMat;
+                for (int i = 0; i < testmr.materials.Length; i++)
+                {
+                    testmr.materials[i] = cantPlaceMat;
+                }
             }
         }
 
@@ -293,7 +303,14 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     {
         test = Instantiate(newObject);
         testCOL = test.GetComponent<Collider>();
-        testmr = test.GetComponent<MeshRenderer>();
+        if(!test.GetComponent<MeshRenderer>())
+        {
+            testmr = test.GetComponentInChildren<MeshRenderer>();
+        }
+        else
+        {
+            testmr = test.GetComponent<MeshRenderer>();
+        }
         testOC = test.GetComponent<ObjectComponent>();
         testTrans = test.GetComponent<Transform>();
         originalMat = Instantiate(testmr.material);
@@ -311,6 +328,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             if (farbSelect.collider != null)
             {
                 MeshRenderer farbMR = farbSelect.collider.gameObject.GetComponent<MeshRenderer>();
+
                 farbMR.material = brushMaterial;
             }
         }

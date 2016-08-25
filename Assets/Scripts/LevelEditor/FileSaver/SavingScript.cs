@@ -70,6 +70,8 @@ public class SavingScript : MonoBehaviour {
         m_writer.Write(levelConfig.gridWidth);
         m_writer.Write(levelConfig.gridHeight);
         m_writer.Write(levelConfig.objectCount);
+        m_writer.Write(LookUpTable.materialsInverse[levelConfig.cubeMaterial]);
+        
     }
 
     public void writeObject(GameObject gameObject)
@@ -106,12 +108,14 @@ public class SavingScript : MonoBehaviour {
             }
         }
 
+        /*
         //Überprüfen ob GameObjekt Kindobjekte hat, sollte als letztes passieren
         for(int i = 0; i < gameObject.transform.childCount; ++i) {
             GameObject childObject = gameObject.transform.GetChild(i).gameObject;
             m_writer.Write((int)Constants.FILE_COMPONENT_FLAGS.ChildObject);
             writeObject(childObject);
         }
+        */
         m_writer.Write((int)Constants.FILE_COMPONENT_FLAGS.EndOfObject);
     }
 

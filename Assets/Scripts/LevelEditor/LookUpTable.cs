@@ -10,6 +10,13 @@ public class LookUpTable : MonoBehaviour {
         = new Dictionary<GameObject, string>();
 
 
+    public static Dictionary<string, Material> materials
+        = new Dictionary<string, Material>();
+
+    public static Dictionary<Material, string> materialsInverse
+        = new Dictionary<Material, string>();
+
+
 
     public void Start()
     {
@@ -20,6 +27,13 @@ public class LookUpTable : MonoBehaviour {
             string prefabName = prefab.name;
             prefabs.Add(prefabName, prefab);
             prefabsInverse.Add(prefab, prefabName);
+        }
+
+        //Lädt alle Materials
+        foreach(Material mat in Resources.LoadAll<Material>(Constants.MATERIAL_PREFAB_PATH)) {
+            string materialName = mat.name;
+            materials.Add(materialName, mat);
+            materialsInverse.Add(mat, materialName);
         }
     }
 }
