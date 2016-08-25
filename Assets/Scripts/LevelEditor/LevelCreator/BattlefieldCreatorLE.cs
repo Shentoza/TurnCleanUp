@@ -161,11 +161,13 @@ public class BattlefieldCreatorLE : MonoBehaviour {
 			obs.move (Zellen);
 		}*/
 
+        /*
 		AttributeComponent[] attribComp = FindObjectsOfType (typeof(AttributeComponent)) as AttributeComponent[];
 		foreach (AttributeComponent abc in attribComp) 
 		{
 			ObjectSetterLE obs = (ObjectSetterLE) abc.gameObject.GetComponent (typeof(ObjectSetterLE));
-			//obs.move (Zellen);
+            //obs.move (Zellen);
+            Debug.Log(obs);
 		}
 
 		ObjectComponent[] objectComp = FindObjectsOfType (typeof(ObjectComponent)) as ObjectComponent[];
@@ -173,7 +175,7 @@ public class BattlefieldCreatorLE : MonoBehaviour {
 		{
 			ObjectSetterLE obs = (ObjectSetterLE) obc.gameObject.GetComponent (typeof(ObjectSetterLE));
 			//obs.moveObject (Zellen);
-		}
+		}*/
 	}
 
 	public Cell getCell(int x, int y)
