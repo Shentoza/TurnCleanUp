@@ -384,7 +384,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
 
         if (!placeMode && !killObject && !placeGovSpwn && !placeRebSpwn)
         { 
-            if (brushMode)
+            if (brushMode && brushMaterial == newMat || brushMaterial == null)
             {
                brushMode = false;
             }
@@ -450,7 +450,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         }
         if (!killObject && !brushMode && !placeGovSpwn && !placeRebSpwn)
         {
-            if (placeMode)
+            if (placeMode && newTestObjekt == null || newTestObjekt == testObjekt)
             {
                 placeMode = false;
                 destroyTestObject();
