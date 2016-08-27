@@ -34,12 +34,13 @@ public class UIEditorManager : MonoBehaviour {
 
         
         objectPrefabs = new List<GameObject>(LookUpTable.prefabsInverse.Keys);
-
+        Debug.Log(LookUpTable.prefabsInverse.Count);
         int counter = 0;
         float startX = 50;
 
         foreach(GameObject key in objectPrefabs)
         {
+            Debug.Log("HURENSOHN");
             //Erstelle neues GameObject für Button
             GameObject temp = new GameObject();
             //Füge ImageComponent hinzu
@@ -59,7 +60,6 @@ public class UIEditorManager : MonoBehaviour {
             temp.AddComponent<Button>().onClick.AddListener(() =>
             {
                 osh.activatePlacingTool(objectPrefabs[objectButtons.IndexOf(temp)]);
-                Debug.Log("Uebermitteltes Asset: " + key.name);
             });
             if (counter == 0)
                 temp.transform.position = new Vector3(startX, 57.5f, 0);
