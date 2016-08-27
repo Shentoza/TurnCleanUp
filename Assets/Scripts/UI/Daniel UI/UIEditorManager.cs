@@ -42,7 +42,6 @@ public class UIEditorManager : MonoBehaviour {
         {
             //Erstelle neues GameObject für Button
             GameObject temp = new GameObject();
-            Debug.Log("Gameobject Name: " + key.name);
             //Füge ImageComponent hinzu
             temp.AddComponent<Image>();
             //Lese Bild aus Preview aus
@@ -55,26 +54,31 @@ public class UIEditorManager : MonoBehaviour {
             temp.GetComponent<RectTransform>().sizeDelta = new Vector2(60, 60);
             GameObject parent = GameObject.Find("ObjectBar");
             temp.transform.SetParent(parent.transform);
-            temp.AddComponent<Button>().onClick.AddListener(() => osh.activatePlacingTool(key));
+            objectButtons.Add(temp);
+            Debug.Log(counter);
+            temp.AddComponent<Button>().onClick.AddListener(() =>
+            {
+                osh.activatePlacingTool(objectPrefabs[objectButtons.IndexOf(temp)]);
+                Debug.Log("Uebermitteltes Asset: " + key.name);
+            });
             if (counter == 0)
                 temp.transform.position = new Vector3(startX, 57.5f, 0);
             else
                 temp.transform.position = new Vector3(startX + counter * 10, 57.5f, 0);
             temp.name = "Button " + counter;
             startX += 165;
-            counter++;
-            Debug.Log(temp.name);        
+            counter++;       
         }
 
 
-        objectBar = GameObject.Find("ObjectBar");
+        /*objectBar = GameObject.Find("ObjectBar");
 
         for (int i = 0; i < objectBar.transform.childCount; i++)
         {
             GameObject temp = objectBar.transform.GetChild(i).gameObject;
             temp.GetComponent<Button>().onClick.AddListener(() => osh.activatePlacingTool(objectPrefabs[i]));
             objectButtons.Add(temp);
-        }
+        } */
 
         assetBar = GameObject.Find("Assetbar");
         assetBar.SetActive(true);
