@@ -18,8 +18,6 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     [SerializeField]
     LayerMask Farbmask;
 
-    [SerializeField]
-    GameObject testObjekt;
     GameObject test;
 
     [SerializeField]
@@ -62,10 +60,12 @@ public class ObjectSetterHelperLE : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        bool isGUIelement = UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(-1);
+
         mouseHover();
 
         //Objekt im PlaceMode platzieren
-        if (Input.GetMouseButtonDown(0) && highlightedCell && placeMode && canPlace)
+        if (Input.GetMouseButtonDown(0) && highlightedCell && placeMode && canPlace && !isGUIelement)
         {
             testCOL.enabled = true;
             GameObject newObject = Instantiate(test);
@@ -76,7 +76,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             newObject.GetComponent<ObjectSetter>().x = highlightedCell.GetComponent<Cell>().xCoord;
             newObject.GetComponent<ObjectSetter>().z = highlightedCell.GetComponent<Cell>().zCoord;
 
-            newObject.GetComponent<ObjectComponent>().original = testObjekt;
+            newObject.GetComponent<ObjectComponent>().original = test;
 
             if(!Input.GetKey("left shift"))
             {
@@ -84,7 +84,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 destroyTestObject();
             }
         }
-        else if(Input.GetMouseButtonDown(0) && highlightedCell && canPlace && placeGovSpwn || placeRebSpwn)
+        else if(Input.GetMouseButtonDown(0) && highlightedCell && canPlace && placeGovSpwn || placeRebSpwn && !isGUIelement)
         {
             testCOL.enabled = true;
             GameObject newObject = Instantiate(test);
@@ -102,14 +102,14 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 bfcLE.startPostionsP2.Add(new Vector2(highlightedCell.GetComponent<Cell>().xCoord, highlightedCell.GetComponent<Cell>().zCoord));
             }
         }
-        else if((Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)) && highlightedCell && brushMode)
+        else if((Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)) && highlightedCell && brushMode && !isGUIelement)
         {
             brushTool();
         }
 
 
         //Für die Kamera
-        if(Input.GetMouseButtonDown(2))
+        if(Input.GetMouseButtonDown(2) && !isGUIelement)
         {
             crs.setStartRotation();
         }
@@ -286,39 +286,9 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Löschen Methode
     void destroyObject(RaycastHit toDestroy)
     {
-        ObjectComponent killOC = toDestroy.collider.gameObject.GetComponent<ObjectComponent>();
-        int x = killOC.cell.xCoord;
-        int z = killOC.cell.zCoord;
-        GameObject[,] Zellen = bfcLE.getZellen();
+        GameObject kollel = toDestroy.collider.gameObject;
 
-        if (toDestroy.collider.gameObject.tag == "RebPlaceholder") 
-        {
-            Vector2 coords = new Vector2(x, z);
-
-            bfcLE.startPostionsP1.Remove(coords);
-
-            countReb--;
-        }
-        if (toDestroy.collider.gameObject.tag == "GovPlacerholder") 
-        {
-            Vector2 coords = new Vector2(x, z);
-
-            bfcLE.startPostionsP2.Remove(coords);
-
-            countGov--;
-        }
-        for (int i = x; i < x + killOC.sizeX; i++)
-        {
-            for (int j = z; j < z + killOC.sizeZ; j++)
-            {
-                Zellen[i, j].GetComponent<Cell>().isOccupied = false;
-                Zellen[i, j].GetComponent<Cell>().hoheDeckung = false;
-                Zellen[i, j].GetComponent<Cell>().niedrigeDeckung = false;
-            }
-        }
-
-        Destroy(toDestroy.collider.gameObject);
-        killObject = false;
+        destroyObject(kollel);
     }
 
 
@@ -432,6 +402,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Aktiviert Platzierungsmodus
     public void activatePlacingTool(GameObject newTestObjekt)
     {
+        Debug.Log("Hallo");
         if (brushMode)
         {
             activateBrushTool(null);
@@ -450,7 +421,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         }
         if (!killObject && !brushMode && !placeGovSpwn && !placeRebSpwn)
         {
-            if (placeMode && newTestObjekt == null || newTestObjekt == testObjekt)
+            if (placeMode && newTestObjekt == null || newTestObjekt == test)
             {
                 placeMode = false;
                 destroyTestObject();
@@ -570,6 +541,42 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             {
                 placeRebSpwn = false;
                 destroyTestObject();
+            }
+        }
+    }
+
+
+    //Überladene Methoden für UndoRedo
+    void destroyObject(GameObject toDestroy)
+    {
+        ObjectComponent killOC = toDestroy.GetComponent<ObjectComponent>();
+        int x = killOC.cell.xCoord;
+        int z = killOC.cell.zCoord;
+        GameObject[,] Zellen = bfcLE.getZellen();
+
+        if (toDestroy.tag == "RebPlaceholder")
+        {
+            Vector2 coords = new Vector2(x, z);
+
+            bfcLE.startPostionsP1.Remove(coords);
+
+            countReb--;
+        }
+        if (toDestroy.tag == "GovPlacerholder")
+        {
+            Vector2 coords = new Vector2(x, z);
+
+            bfcLE.startPostionsP2.Remove(coords);
+
+            countGov--;
+        }
+        for (int i = x; i < x + killOC.sizeX; i++)
+        {
+            for (int j = z; j < z + killOC.sizeZ; j++)
+            {
+                Zellen[i, j].GetComponent<Cell>().isOccupied = false;
+                Zellen[i, j].GetComponent<Cell>().hoheDeckung = false;
+                Zellen[i, j].GetComponent<Cell>().niedrigeDeckung = false;
             }
         }
     }

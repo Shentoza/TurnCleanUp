@@ -10,10 +10,17 @@ public class UIEditorManager : MonoBehaviour {
     GameObject assetBar, objectBar;
     List<GameObject> objectButtons = new List<GameObject>();
     List<GameObject> objectPrefabs;
+    ObjectSetterHelperLE osh;
+
+    public static Dictionary<string, GameObject> prefabs
+        = new Dictionary<string, GameObject>();
+
+    public static Dictionary<GameObject, string> prefabsInverse
+        = new Dictionary<GameObject, string>();
 
     // Use this for initialization
     void Start () {
-        ObjectSetterHelperLE osh = GameObject.Find("Plane").GetComponent<ObjectSetterHelperLE>();
+        osh = GameObject.Find("Plane").GetComponent<ObjectSetterHelperLE>();
        // unitB = GameObject.Find("UnitB").GetComponent<Button>();
        // unitB.onClick.AddListener(() => Methode());
 
@@ -31,26 +38,40 @@ public class UIEditorManager : MonoBehaviour {
 
         removeB = GameObject.Find("RemoveB").GetComponent<Button>();
         removeB.onClick.AddListener(() => osh.activateDestroyTool());
-
         
-        objectPrefabs = new List<GameObject>(LookUpTable.prefabsInverse.Keys);
-        Debug.Log(LookUpTable.prefabsInverse.Count);
+        prefabs.Clear();
+        prefabsInverse.Clear();
+        //Lädt alle Leveleditor Prefabs aus Constants.PROPS_PREFAB_PATH und legt sie im Directory mit <Name, Gameobjekt> Key-Value Paaren ab.
+        foreach (GameObject prefab in Resources.LoadAll<GameObject>(Constants.PROPS_PREFAB_PATH))
+        {
+            string prefabName = prefab.name;
+            prefabs.Add(prefabName, prefab);
+            prefabsInverse.Add(prefab, prefabName);
+        }
+
+        objectPrefabs = new List<GameObject>(prefabsInverse.Keys);
+
+
         int counter = 0;
         float startX = 50;
 
         foreach(GameObject key in objectPrefabs)
         {
-            Debug.Log("HURENSOHN");
             //Erstelle neues GameObject für Button
             GameObject temp = new GameObject();
             //Füge ImageComponent hinzu
             temp.AddComponent<Image>();
             //Lese Bild aus Preview aus
-            Texture2D texture = AssetPreview.GetAssetPreview(key);
+            Texture2D texture = null;
+
+            while(texture == null)
+                texture = AssetPreview.GetAssetPreview(key);
+
+
             //Konvertiere Textur zu Sprite
             Sprite textureSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
             //Füge Textur hinzu
-            temp.GetComponent<Image>().sprite = textureSprite;
+             temp.GetComponent<Image>().sprite = textureSprite;
             //Passe Größe an
             temp.GetComponent<RectTransform>().sizeDelta = new Vector2(60, 60);
             GameObject parent = GameObject.Find("ObjectBar");
@@ -60,6 +81,7 @@ public class UIEditorManager : MonoBehaviour {
             temp.AddComponent<Button>().onClick.AddListener(() =>
             {
                 osh.activatePlacingTool(objectPrefabs[objectButtons.IndexOf(temp)]);
+                Debug.Log("Uebermitteltes Asset: " + key.name);
             });
             if (counter == 0)
                 temp.transform.position = new Vector3(startX, 57.5f, 0);
@@ -69,7 +91,7 @@ public class UIEditorManager : MonoBehaviour {
             startX += 165;
             counter++;       
         }
-
+        
 
         /*objectBar = GameObject.Find("ObjectBar");
 
@@ -100,6 +122,5 @@ public class UIEditorManager : MonoBehaviour {
 
         }*/
     } 
-
 
 }
