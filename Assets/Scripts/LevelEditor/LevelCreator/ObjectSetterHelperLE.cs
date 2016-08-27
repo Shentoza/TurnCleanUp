@@ -118,6 +118,30 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             crs.setStopRotation();
         }
 
+        //Deaktiviert alle Modi
+        if(Input.GetMouseButtonDown(1))
+        {
+            if (placeMode)
+            {
+                activatePlacingTool(null);
+            }
+            if (killObject)
+            {
+                activateDestroyTool();
+            }
+            if (placeGovSpwn)
+            {
+                activateGovSpawn();
+            }
+            if (placeRebSpwn)
+            {
+                activateRebSpawn();
+            }
+            if(brushMode)
+            {
+                activateBrushTool(null);
+            }
+        }
     }
 
     void mouseHover()
@@ -341,7 +365,24 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Aktiviert BrushTool
     public void activateBrushTool(Material newMat)
     {
-        if(!placeMode && !killObject && !placeGovSpwn && !placeRebSpwn)
+        if (placeMode)
+        {
+            activatePlacingTool(null);
+        }
+        if (killObject)
+        {
+            activateDestroyTool();
+        }
+        if (placeGovSpwn)
+        {
+            activateGovSpawn();
+        }
+        if (placeRebSpwn)
+        {
+            activateRebSpawn();
+        }
+
+        if (!placeMode && !killObject && !placeGovSpwn && !placeRebSpwn)
         { 
             if (brushMode)
             {
@@ -358,7 +399,24 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Aktiviert DestroyTool
     public void activateDestroyTool()
     {
-        if(!placeMode && !brushMode && !placeGovSpwn && !placeRebSpwn)
+        if (placeMode)
+        {
+            activatePlacingTool(null);
+        }
+        if (brushMode)
+        {
+            activateBrushTool(null);
+        }
+        if (placeGovSpwn)
+        {
+            activateGovSpawn();
+        }
+        if (placeRebSpwn)
+        {
+            activateRebSpawn();
+        }
+
+        if (!placeMode && !brushMode && !placeGovSpwn && !placeRebSpwn)
         {
             if(killObject)
             {
@@ -374,7 +432,22 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Aktiviert Platzierungsmodus
     public void activatePlacingTool(GameObject newTestObjekt)
     {
-
+        if (brushMode)
+        {
+            activateBrushTool(null);
+        }
+        if (killObject)
+        {
+            activateDestroyTool();
+        }
+        if (placeGovSpwn)
+        {
+            activateGovSpawn();
+        }
+        if (placeRebSpwn)
+        {
+            activateRebSpawn();
+        }
         if (!killObject && !brushMode && !placeGovSpwn && !placeRebSpwn)
         {
             if (placeMode)
@@ -432,6 +505,23 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Methode um Spawnplätze für Regierung zu Platzieren
     public void activateGovSpawn()
     {
+        if (placeMode)
+        {
+            activatePlacingTool(null);
+        }
+        if (killObject)
+        {
+            activateDestroyTool();
+        }
+        if (brushMode)
+        {
+            activateBrushTool(null);
+        }
+        if (placeRebSpwn)
+        {
+            activateRebSpawn();
+        }
+
         if (!killObject && !placeMode && !brushMode && !placeRebSpwn)
         {
             if (!placeGovSpwn)
@@ -451,6 +541,23 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Methode um Spawnplätze für Rebellen zu Platzieren
     public void activateRebSpawn()
     {
+        if (placeMode)
+        {
+            activatePlacingTool(null);
+        }
+        if (killObject)
+        {
+            activateDestroyTool();
+        }
+        if (placeGovSpwn)
+        {
+            activateGovSpawn();
+        }
+        if (brushMode)
+        {
+            activateBrushTool(null);
+        }
+
         if (!killObject && !placeMode && !brushMode && !placeGovSpwn)
         {
             if (!placeRebSpwn)
