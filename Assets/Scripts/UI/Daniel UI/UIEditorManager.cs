@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 
 public class UIEditorManager : MonoBehaviour {
 
@@ -31,12 +32,40 @@ public class UIEditorManager : MonoBehaviour {
         removeB = GameObject.Find("RemoveB").GetComponent<Button>();
         removeB.onClick.AddListener(() => osh.activateDestroyTool());
 
-        objectPrefabs = new List<GameObject>();
+        
+        objectPrefabs = new List<GameObject>(LookUpTable.prefabsInverse.Keys);
 
-        foreach(GameObject key in LookUpTable.prefabsInverse.Keys)
+        int counter = 0;
+        float startX = 50;
+
+        foreach(GameObject key in objectPrefabs)
         {
-            objectPrefabs.Add(key);
+            //Erstelle neues GameObject für Button
+            GameObject temp = new GameObject();
+            Debug.Log("Gameobject Name: " + key.name);
+            //Füge ImageComponent hinzu
+            temp.AddComponent<Image>();
+            //Lese Bild aus Preview aus
+            Texture2D texture = AssetPreview.GetAssetPreview(key);
+            //Konvertiere Textur zu Sprite
+            Sprite textureSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            //Füge Textur hinzu
+            temp.GetComponent<Image>().sprite = textureSprite;
+            //Passe Größe an
+            temp.GetComponent<RectTransform>().sizeDelta = new Vector2(60, 60);
+            GameObject parent = GameObject.Find("ObjectBar");
+            temp.transform.SetParent(parent.transform);
+            temp.AddComponent<Button>().onClick.AddListener(() => osh.activatePlacingTool(key));
+            if (counter == 0)
+                temp.transform.position = new Vector3(startX, 57.5f, 0);
+            else
+                temp.transform.position = new Vector3(startX + counter * 10, 57.5f, 0);
+            temp.name = "Button " + counter;
+            startX += 165;
+            counter++;
+            Debug.Log(temp.name);        
         }
+
 
         objectBar = GameObject.Find("ObjectBar");
 
@@ -48,7 +77,7 @@ public class UIEditorManager : MonoBehaviour {
         }
 
         assetBar = GameObject.Find("Assetbar");
-        assetBar.SetActive(false);
+        assetBar.SetActive(true);
 
 
     }
@@ -61,12 +90,12 @@ public class UIEditorManager : MonoBehaviour {
 
     void showAssetBar(int value)
     {
-        if (!assetBar.activeSelf)
+        /*if (!assetBar.activeSelf)
         {
             assetBar.SetActive(true);
 
-        }
-    }
+        }*/
+    } 
 
 
 }
