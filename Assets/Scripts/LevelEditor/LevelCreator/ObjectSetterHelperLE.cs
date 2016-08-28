@@ -4,6 +4,8 @@ using System.Collections;
 public class ObjectSetterHelperLE : MonoBehaviour {
 
     Collider highlightedCell;
+
+    //Materials
     [SerializeField]
     Material highlightedMat;
     [SerializeField]
@@ -19,6 +21,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     LayerMask Farbmask;
 
     GameObject test;
+    GameObject aktuellesNewObjekt = null;
 
     [SerializeField]
     GameObject RebPlaceholder;
@@ -37,7 +40,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     MeshRenderer testmr;
     ObjectComponent testOC;
     Transform testTrans;
-    Material originalMat;
+    Material[] originalMats;
 
     //Zellen des Battlefields
     GameObject[,] Zellen;
@@ -69,7 +72,14 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         {
             testCOL.enabled = true;
             GameObject newObject = Instantiate(test);
-            newObject.GetComponent<MeshRenderer>().material = originalMat;
+            if (!newObject.GetComponent<MeshRenderer>())
+            {
+                newObject.GetComponentInChildren<MeshRenderer>().materials = originalMats;
+            }
+            else
+            {
+                newObject.GetComponent<MeshRenderer>().materials = originalMats;
+            }
             testCOL.enabled = false;
             obsLE.moveObject(bfcLE.getZellen(), highlightedCell.GetComponent<Cell>().xCoord,
                 highlightedCell.GetComponent<Cell>().zCoord, newObject, true);
@@ -88,7 +98,14 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         {
             testCOL.enabled = true;
             GameObject newObject = Instantiate(test);
-            newObject.GetComponent<MeshRenderer>().material = originalMat;
+            if (!newObject.GetComponent<MeshRenderer>())
+            {
+                newObject.GetComponentInChildren<MeshRenderer>().materials = originalMats;
+            }
+            else
+            {
+                newObject.GetComponent<MeshRenderer>().materials = originalMats;
+            }
             testCOL.enabled = false;
             obsLE.moveObject(bfcLE.getZellen(), highlightedCell.GetComponent<Cell>().xCoord,
                 highlightedCell.GetComponent<Cell>().zCoord, newObject, true);
@@ -177,6 +194,14 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                     highlightedCell = hover.collider;
                 }
             }
+            //Löscht objekt
+            else if (hover.collider.gameObject.tag != "Cell" && Input.GetMouseButton(0) && killObject)
+            {
+                if (killObject)
+                {
+                    destroyObject(hover);
+                }
+            }
             //Cursor über selber Zelle
             else if(hover.collider.gameObject.tag != "Cell")
             {
@@ -185,11 +210,6 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                     MeshRenderer mr = highlightedCell.GetComponent<MeshRenderer>();
                     mr.material = notSelected;
                     highlightedCell = null;
-                    //Löscht Objekt
-                    if (killObject)
-                    {
-                        destroyObject(hover);
-                    }
                 }
             }
         }
@@ -213,7 +233,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         testCOL = null;
         testmr = null;
         testOC = null;
-        originalMat = null;
+        originalMats = null;
     }
 
     //Hilft beim platzieren von Objekten("Geistobjekt")
@@ -250,7 +270,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             {
                 for (int i = 0; i < testmr.materials.Length; i++)
                 {
-                    testmr.materials[i] = highlightedMat;
+                    testmr.materials = materialSetter(highlightedMat);
                 }
 
                 Vector3 posi = Zellen[x + testOC.sizeX - 1, z + testOC.sizeZ - 1].transform.position - Zellen[x, z].transform.position;
@@ -263,7 +283,8 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             {
                 for (int i = 0; i < testmr.materials.Length; i++)
                 {
-                    testmr.materials[i] = cantPlaceMat;
+                    Debug.Log(testmr.materials[i]);
+                    testmr.materials = materialSetter(cantPlaceMat);
                 }
 
                 Vector3 posi = Zellen[x + testOC.sizeX - 1, z + testOC.sizeZ - 1].transform.position - Zellen[x, z].transform.position;
@@ -276,7 +297,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             {
                 for (int i = 0; i < testmr.materials.Length; i++)
                 {
-                    testmr.materials[i] = cantPlaceMat;
+                    testmr.materials = materialSetter(cantPlaceMat);
                 }
             }
         }
@@ -296,8 +317,17 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     void setNewTest(GameObject newObject)
     {
         test = Instantiate(newObject);
-        testCOL = test.GetComponent<Collider>();
-        if(!test.GetComponent<MeshRenderer>())
+
+        if (!test.GetComponent<Collider>())
+        {
+            testCOL = test.GetComponentInChildren<Collider>();
+        }
+        else
+        {
+            testCOL = test.GetComponent<Collider>();
+        }
+
+        if (!test.GetComponent<MeshRenderer>())
         {
             testmr = test.GetComponentInChildren<MeshRenderer>();
         }
@@ -307,7 +337,26 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         }
         testOC = test.GetComponent<ObjectComponent>();
         testTrans = test.GetComponent<Transform>();
-        originalMat = Instantiate(testmr.material);
+
+        originalMats = new Material[testmr.materials.Length];
+
+        for(int i = 0; i < testmr.materials.Length; i++)
+        {
+            originalMats[i] = testmr.materials[i];
+        }
+    }
+
+    Material[] materialSetter(Material aktMat)
+    {
+
+        Material[] mats = new Material[testmr.materials.Length];
+
+        for(int i = 0; i < testmr.materials.Length; i++)
+        {
+            mats[i] = aktMat;
+        }
+
+        return mats;
     }
 
     //Führt das Färben von Zellen aus
@@ -402,7 +451,6 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Aktiviert Platzierungsmodus
     public void activatePlacingTool(GameObject newTestObjekt)
     {
-        Debug.Log("Hallo");
         if (brushMode)
         {
             activateBrushTool(null);
@@ -421,14 +469,23 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         }
         if (!killObject && !brushMode && !placeGovSpwn && !placeRebSpwn)
         {
-            if (placeMode && newTestObjekt == null || newTestObjekt == test)
+            if (placeMode && newTestObjekt == null || newTestObjekt == aktuellesNewObjekt)
             {
                 placeMode = false;
+                aktuellesNewObjekt = null;
                 destroyTestObject();
+            }
+            else if (placeMode && newTestObjekt != aktuellesNewObjekt)
+            {
+                destroyTestObject();
+                aktuellesNewObjekt = newTestObjekt;
+                setNewTest(newTestObjekt);
+                placingHelper();
             }
             else
             {
                 placeMode = true;
+                aktuellesNewObjekt = newTestObjekt;
                 setNewTest(newTestObjekt);
                 placingHelper();
             }
@@ -549,6 +606,11 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Überladene Methoden für UndoRedo
     void destroyObject(GameObject toDestroy)
     {
+        if (toDestroy.transform.parent != null)
+        {
+            toDestroy = toDestroy.transform.parent.gameObject;
+        }
+
         ObjectComponent killOC = toDestroy.GetComponent<ObjectComponent>();
         int x = killOC.cell.xCoord;
         int z = killOC.cell.zCoord;
@@ -579,6 +641,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 Zellen[i, j].GetComponent<Cell>().niedrigeDeckung = false;
             }
         }
+        Destroy(toDestroy);
     }
 
 
