@@ -53,9 +53,13 @@ public class UIEditorManager : MonoBehaviour {
 
 
         int counter = 0;
-        float startX = 50;
+        float startX = 0;
+        objectBar = GameObject.Find("ObjectBar");
+        RectTransform objectRect = objectBar.GetComponent<RectTransform>();
+        objectRect.sizeDelta = new Vector2(objectPrefabs.Count * 800, 0);
 
-        foreach(GameObject key in objectPrefabs)
+
+        foreach (GameObject key in objectPrefabs)
         {
             //Erstelle neues GameObject für Button
             GameObject temp = new GameObject();
