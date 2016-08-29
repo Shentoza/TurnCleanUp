@@ -91,10 +91,11 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             if(!Input.GetKey("left shift"))
             {
                 placeMode = false;
+                aktuellesNewObjekt = null;
                 destroyTestObject();
             }
         }
-        else if(Input.GetMouseButtonDown(0) && highlightedCell && canPlace && placeGovSpwn || placeRebSpwn && !isGUIelement)
+        else if(Input.GetMouseButtonDown(0) && highlightedCell && canPlace && (placeGovSpwn || placeRebSpwn) && !isGUIelement)
         {
             testCOL.enabled = true;
             GameObject newObject = Instantiate(test);
@@ -113,10 +114,14 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             if (placeRebSpwn)
             {
                 bfcLE.startPostionsP1.Add(new Vector2(highlightedCell.GetComponent<Cell>().xCoord, highlightedCell.GetComponent<Cell>().zCoord));
+                placeRebSpwn = false;
+                destroyTestObject();
             }
             if (placeGovSpwn)
             {
                 bfcLE.startPostionsP2.Add(new Vector2(highlightedCell.GetComponent<Cell>().xCoord, highlightedCell.GetComponent<Cell>().zCoord));
+                placeGovSpwn = false;
+                destroyTestObject();
             }
         }
         else if((Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)) && highlightedCell && brushMode && !isGUIelement)
