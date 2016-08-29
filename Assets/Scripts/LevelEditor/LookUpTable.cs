@@ -41,11 +41,11 @@ public class LookUpTable : MonoBehaviour {
             materialsInverse.Add(mat, materialName);
         }
 
-        foreach(Material mat in Resources.LoadAll<Material>(Constants.GROUND_MATERIAL_PATH))
+        /*foreach(Material mat in Resources.LoadAll<Material>(Constants.GROUND_MATERIAL_PATH))
         {
             string materialName = mat.name;
             materials.Add(materialName, mat);
             materialsInverse.Add(mat, materialName);
-        }
+        } */
     }
 }

@@ -81,9 +81,8 @@ public class UIEditorManager : MonoBehaviour {
         foreach (Material mat in Resources.LoadAll<Material>(Constants.GROUND_MATERIAL_PATH))
         {
             string name = mat.name;
-            groundMaterials.Add(name, mat);
+            //groundMaterials.Add(name, mat);
             groundMaterialsInverse.Add(mat, name);
-            Debug.Log("HURENSOHN");
         }
 
         materials = new List<Material>(groundMaterialsInverse.Keys);
@@ -123,7 +122,7 @@ public class UIEditorManager : MonoBehaviour {
             temp.AddComponent<Button>().onClick.AddListener(() =>
             {
                 osh.activateBrushTool(materials[materialButtons.IndexOf(temp)]);
-                Debug.Log("Uebermitteltes Asset: " + key.name);
+                Debug.Log("Uebermitteltes Asset: " + temp.name);
             });
             if (counter == 0)
                 temp.transform.position = new Vector3(startX, 57.5f, 0);
