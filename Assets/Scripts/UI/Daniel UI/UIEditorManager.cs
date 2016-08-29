@@ -7,9 +7,11 @@ using UnityEditor;
 public class UIEditorManager : MonoBehaviour {
 
     Button unitB, objectB, brushB, leftRotateB, rightRotateB, removeB;
-    GameObject assetBar, objectBar;
+    GameObject assetBar, objectView, materialView;
     List<GameObject> objectButtons = new List<GameObject>();
     List<GameObject> objectPrefabs;
+    List<GameObject> materialButtons = new List<GameObject>();
+    List<Material> materials;
     ObjectSetterHelperLE osh;
 
     public static Dictionary<string, GameObject> prefabs
@@ -18,6 +20,12 @@ public class UIEditorManager : MonoBehaviour {
     public static Dictionary<GameObject, string> prefabsInverse
         = new Dictionary<GameObject, string>();
 
+    public static Dictionary<string, Material> groundMaterials
+        = new Dictionary<string, Material>();
+
+    public static Dictionary<Material, string> groundMaterialsInverse
+        = new Dictionary<Material, string>();
+
     // Use this for initialization
     void Start () {
         osh = GameObject.Find("Plane").GetComponent<ObjectSetterHelperLE>();
@@ -25,10 +33,10 @@ public class UIEditorManager : MonoBehaviour {
        // unitB.onClick.AddListener(() => Methode());
 
         objectB = GameObject.Find("ObjectB").GetComponent<Button>();
-        objectB.onClick.AddListener(() => showAssetBar(1));
+        objectB.onClick.AddListener(() => showAssetBar("objects"));
 
         brushB = GameObject.Find("BrushB").GetComponent<Button>();
-       // brushB.onClick.AddListener(() => );
+        brushB.onClick.AddListener(() => showAssetBar("materials"));
 
         leftRotateB = GameObject.Find("RotateLeftB").GetComponent<Button>();
         leftRotateB.onClick.AddListener(() => osh.rotateLeft());
@@ -38,7 +46,97 @@ public class UIEditorManager : MonoBehaviour {
 
         removeB = GameObject.Find("RemoveB").GetComponent<Button>();
         removeB.onClick.AddListener(() => osh.activateDestroyTool());
+
+
+        objectView = GameObject.Find("ObjectView");
+        materialView = GameObject.Find("MaterialView");
+        assetBar = GameObject.Find("Assetbar");
+
         
+
+        initializeObjectView();
+        initializeMaterialView();
+        assetBar.SetActive(false);
+
+        /*objectBar = GameObject.Find("ObjectBar");
+
+        for (int i = 0; i < objectBar.transform.childCount; i++)
+        {
+            GameObject temp = objectBar.transform.GetChild(i).gameObject;
+            temp.GetComponent<Button>().onClick.AddListener(() => osh.activatePlacingTool(objectPrefabs[i]));
+            objectButtons.Add(temp);
+        } */
+    }
+
+    // Update is called once per frame
+    void Update () {
+	
+	}
+
+    void initializeMaterialView()
+    {
+        groundMaterials.Clear();
+        groundMaterialsInverse.Clear();
+        //Lädt alle Leveleditor Prefabs aus Constants.PROPS_PREFAB_PATH und legt sie im Directory mit <Name, Gameobjekt> Key-Value Paaren ab.
+        foreach (Material mat in Resources.LoadAll<Material>(Constants.GROUND_MATERIAL_PATH))
+        {
+            string name = mat.name;
+            groundMaterials.Add(name, mat);
+            groundMaterialsInverse.Add(mat, name);
+            Debug.Log("HURENSOHN");
+        }
+
+        materials = new List<Material>(groundMaterialsInverse.Keys);
+
+
+        int counter = 0;
+        float startX = 0;
+        //materialView = GameObject.Find("MaterialView");
+        RectTransform materialRect = materialView.GetComponent<RectTransform>();
+        materialRect.sizeDelta = new Vector2(materials.Count * 800, 0);
+
+
+        foreach (Material key in materials)
+        {
+            
+            //Erstelle neues GameObject für Button
+            GameObject temp = new GameObject();
+            //Füge ImageComponent hinzu
+            temp.AddComponent<Image>();
+            //Lese Bild aus Preview aus
+            Texture2D texture = null;
+
+            while (texture == null)
+                texture = AssetPreview.GetAssetPreview(key);
+
+
+            //Konvertiere Textur zu Sprite
+            Sprite textureSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            //Füge Textur hinzu
+            temp.GetComponent<Image>().sprite = textureSprite;
+            //Passe Größe an
+            temp.GetComponent<RectTransform>().sizeDelta = new Vector2(60, 60);
+            GameObject parent = GameObject.Find("MaterialBar");
+            temp.transform.SetParent(parent.transform);
+            materialButtons.Add(temp);
+            Debug.Log(counter);
+            temp.AddComponent<Button>().onClick.AddListener(() =>
+            {
+                osh.activateBrushTool(materials[materialButtons.IndexOf(temp)]);
+                Debug.Log("Uebermitteltes Asset: " + key.name);
+            });
+            if (counter == 0)
+                temp.transform.position = new Vector3(startX, 57.5f, 0);
+            else
+                temp.transform.position = new Vector3(startX + counter * 10, 57.5f, 0);
+            temp.name = "Button " + counter;
+            startX += 165;
+            counter++;
+        }
+    }
+
+    void initializeObjectView()
+    {
         prefabs.Clear();
         prefabsInverse.Clear();
         //Lädt alle Leveleditor Prefabs aus Constants.PROPS_PREFAB_PATH und legt sie im Directory mit <Name, Gameobjekt> Key-Value Paaren ab.
@@ -54,8 +152,8 @@ public class UIEditorManager : MonoBehaviour {
 
         int counter = 0;
         float startX = 0;
-        objectBar = GameObject.Find("ObjectBar");
-        RectTransform objectRect = objectBar.GetComponent<RectTransform>();
+        
+        RectTransform objectRect = objectView.GetComponent<RectTransform>();
         objectRect.sizeDelta = new Vector2(objectPrefabs.Count * 800, 0);
 
 
@@ -68,24 +166,23 @@ public class UIEditorManager : MonoBehaviour {
             //Lese Bild aus Preview aus
             Texture2D texture = null;
 
-            while(texture == null)
+            while (texture == null)
                 texture = AssetPreview.GetAssetPreview(key);
 
 
             //Konvertiere Textur zu Sprite
             Sprite textureSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
             //Füge Textur hinzu
-             temp.GetComponent<Image>().sprite = textureSprite;
+            temp.GetComponent<Image>().sprite = textureSprite;
             //Passe Größe an
             temp.GetComponent<RectTransform>().sizeDelta = new Vector2(60, 60);
             GameObject parent = GameObject.Find("ObjectBar");
             temp.transform.SetParent(parent.transform);
             objectButtons.Add(temp);
-            Debug.Log(counter);
             temp.AddComponent<Button>().onClick.AddListener(() =>
             {
                 osh.activatePlacingTool(objectPrefabs[objectButtons.IndexOf(temp)]);
-                Debug.Log("Uebermitteltes Asset: " + key.name);
+                Debug.Log("Uebermitteltes Objekt: " + key.name);
             });
             if (counter == 0)
                 temp.transform.position = new Vector3(startX, 57.5f, 0);
@@ -93,38 +190,33 @@ public class UIEditorManager : MonoBehaviour {
                 temp.transform.position = new Vector3(startX + counter * 10, 57.5f, 0);
             temp.name = "Button " + counter;
             startX += 165;
-            counter++;       
+            counter++;
         }
-        
-
-        /*objectBar = GameObject.Find("ObjectBar");
-
-        for (int i = 0; i < objectBar.transform.childCount; i++)
-        {
-            GameObject temp = objectBar.transform.GetChild(i).gameObject;
-            temp.GetComponent<Button>().onClick.AddListener(() => osh.activatePlacingTool(objectPrefabs[i]));
-            objectButtons.Add(temp);
-        } */
-
-        assetBar = GameObject.Find("Assetbar");
-        assetBar.SetActive(true);
-
-
     }
 
-    // Update is called once per frame
-    void Update () {
-	
-	}
 
 
-    void showAssetBar(int value)
+    void showAssetBar(string viewName)
     {
-        /*if (!assetBar.activeSelf)
-        {
+        if (!assetBar.activeSelf)
             assetBar.SetActive(true);
 
-        }*/
-    } 
+        switch (viewName)
+        {
+            case "objects":
+                objectView.SetActive(true);
+                materialView.SetActive(false);
+                break;
+
+            case "materials":
+                objectView.SetActive(false);
+                materialView.SetActive(true);
+                break;
+
+            default:
+                break;
+        }
+    }
+    
 
 }
