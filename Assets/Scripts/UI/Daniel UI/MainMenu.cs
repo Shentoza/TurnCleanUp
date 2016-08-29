@@ -53,10 +53,14 @@ public class MainMenu : MonoBehaviour
 
     public void handleLoad()
     {
-        //string path = DialogManager.OpenFileDialog();
+        string loadingPath = DialogManager.OpenFileDialog();
+        if(loadingPath != null && !loadingPath.Equals(string.Empty)) {
+            LoadingScript ls = FindObjectOfType<LoadingScript>();
+            ls.filePath = loadingPath;
+            ls.editorMode = true;
 
-        //string path2 = DialogManager.SaveFileDialog();
-
+            SceneManager.LoadScene("EmptyLevel");
+        }
     }
 
     public string checkDaytime()
