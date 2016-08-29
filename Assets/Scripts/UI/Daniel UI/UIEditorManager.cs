@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class UIEditorManager : MonoBehaviour {
 
@@ -56,14 +57,35 @@ public class UIEditorManager : MonoBehaviour {
         removeB = GameObject.Find("RemoveB").GetComponent<Button>();
         removeB.onClick.AddListener(() => osh.activateDestroyTool());
 
-       /* saveFileB = GameObject.Find("SaveFileB").GetComponent<Button>();
-        saveFileB.onClick.AddListener(() => insertMethode());
+        saveFileB = GameObject.Find("SaveFileB").GetComponent<Button>();
+        saveFileB.onClick.AddListener(() => {
+                string path = DialogManager.SaveFileDialog();
+                SavingScript save = FindObjectOfType<SavingScript>();
+                if(save != null) {
+                    save.saveLevel(path);
+                }
+            });
 
         openFileB = GameObject.Find("OpenFileB").GetComponent<Button>();
-        openFileB.onClick.AddListener(() => insertMethode());
+        openFileB.onClick.AddListener(() => {
+            string path = DialogManager.OpenFileDialog();
+            LoadingScript load = FindObjectOfType<LoadingScript>();
+            if(load != null) {
+                load.filePath = path;
+                load.editorMode = true;
+                SceneManager.LoadScene("Empty Level");
+            }
+        });
 
         newFileB = GameObject.Find("NewFileB").GetComponent<Button>();
-        newFileB.onClick.AddListener(() => insertMethode()); */
+        newFileB.onClick.AddListener(() => {
+            LoadingScript load = FindObjectOfType<LoadingScript>();
+            if(null != load) {
+                load.filePath = null;
+                load.editorMode = true;
+                SceneManager.LoadScene("Empty Level");
+            }
+        });
 
 
         objectView = GameObject.Find("ObjectView");

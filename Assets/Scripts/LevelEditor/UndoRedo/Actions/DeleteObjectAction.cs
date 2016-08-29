@@ -8,6 +8,7 @@ public class DeleteObjectAction : URAction
     private GameObject currentInstance;
     private string oldTag;
 
+
     public DeleteObjectAction(GameObject deletedObject)
     {
         savedInstance = GameObject.Instantiate<GameObject>(deletedObject);
