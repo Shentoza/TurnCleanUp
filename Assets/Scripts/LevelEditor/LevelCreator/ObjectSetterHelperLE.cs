@@ -403,7 +403,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
 
         if (!placeMode && !killObject && !placeGovSpwn && !placeRebSpwn)
         { 
-            if (brushMode && brushMaterial == newMat || brushMaterial == null)
+            if (brushMode && brushMaterial == newMat || newMat == null)
             {
                brushMode = false;
             }

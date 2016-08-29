@@ -7,6 +7,7 @@ using UnityEditor;
 public class UIEditorManager : MonoBehaviour {
 
     Button unitB, objectB, brushB, leftRotateB, rightRotateB, removeB;
+    Button newFileB, openFileB, saveFileB;
     GameObject assetBar, objectView, materialView;
     List<GameObject> objectButtons = new List<GameObject>();
     List<GameObject> objectPrefabs;
@@ -46,6 +47,15 @@ public class UIEditorManager : MonoBehaviour {
 
         removeB = GameObject.Find("RemoveB").GetComponent<Button>();
         removeB.onClick.AddListener(() => osh.activateDestroyTool());
+
+       /* saveFileB = GameObject.Find("SaveFileB").GetComponent<Button>();
+        saveFileB.onClick.AddListener(() => insertMethode());
+
+        openFileB = GameObject.Find("OpenFileB").GetComponent<Button>();
+        openFileB.onClick.AddListener(() => insertMethode());
+
+        newFileB = GameObject.Find("NewFileB").GetComponent<Button>();
+        newFileB.onClick.AddListener(() => insertMethode()); */
 
 
         objectView = GameObject.Find("ObjectView");
