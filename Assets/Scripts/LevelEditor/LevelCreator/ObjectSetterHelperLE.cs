@@ -4,6 +4,8 @@ using System.Collections;
 public class ObjectSetterHelperLE : MonoBehaviour {
 
     Collider highlightedCell;
+
+    //Materials
     [SerializeField]
     Material highlightedMat;
     [SerializeField]
@@ -18,9 +20,8 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     [SerializeField]
     LayerMask Farbmask;
 
-    [SerializeField]
-    GameObject testObjekt;
     GameObject test;
+    GameObject aktuellesNewObjekt = null;
 
     [SerializeField]
     GameObject RebPlaceholder;
@@ -39,7 +40,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     MeshRenderer testmr;
     ObjectComponent testOC;
     Transform testTrans;
-    Material originalMat;
+    Material[] originalMats;
 
     //Zellen des Battlefields
     GameObject[,] Zellen;
@@ -62,21 +63,30 @@ public class ObjectSetterHelperLE : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        bool isGUIelement = UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject(-1);
+
         mouseHover();
 
         //Objekt im PlaceMode platzieren
-        if (Input.GetMouseButtonDown(0) && highlightedCell && placeMode && canPlace)
+        if (Input.GetMouseButtonDown(0) && highlightedCell && placeMode && canPlace && !isGUIelement)
         {
             testCOL.enabled = true;
             GameObject newObject = Instantiate(test);
-            newObject.GetComponent<MeshRenderer>().material = originalMat;
+            if (!newObject.GetComponent<MeshRenderer>())
+            {
+                newObject.GetComponentInChildren<MeshRenderer>().materials = originalMats;
+            }
+            else
+            {
+                newObject.GetComponent<MeshRenderer>().materials = originalMats;
+            }
             testCOL.enabled = false;
             obsLE.moveObject(bfcLE.getZellen(), highlightedCell.GetComponent<Cell>().xCoord,
                 highlightedCell.GetComponent<Cell>().zCoord, newObject, true);
             newObject.GetComponent<ObjectSetter>().x = highlightedCell.GetComponent<Cell>().xCoord;
             newObject.GetComponent<ObjectSetter>().z = highlightedCell.GetComponent<Cell>().zCoord;
 
-            newObject.GetComponent<ObjectComponent>().original = testObjekt;
+            newObject.GetComponent<ObjectComponent>().original = test;
 
             if(!Input.GetKey("left shift"))
             {
@@ -84,11 +94,18 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 destroyTestObject();
             }
         }
-        else if(Input.GetMouseButtonDown(0) && highlightedCell && canPlace && placeGovSpwn || placeRebSpwn)
+        else if(Input.GetMouseButtonDown(0) && highlightedCell && canPlace && placeGovSpwn || placeRebSpwn && !isGUIelement)
         {
             testCOL.enabled = true;
             GameObject newObject = Instantiate(test);
-            newObject.GetComponent<MeshRenderer>().material = originalMat;
+            if (!newObject.GetComponent<MeshRenderer>())
+            {
+                newObject.GetComponentInChildren<MeshRenderer>().materials = originalMats;
+            }
+            else
+            {
+                newObject.GetComponent<MeshRenderer>().materials = originalMats;
+            }
             testCOL.enabled = false;
             obsLE.moveObject(bfcLE.getZellen(), highlightedCell.GetComponent<Cell>().xCoord,
                 highlightedCell.GetComponent<Cell>().zCoord, newObject, true);
@@ -102,14 +119,14 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 bfcLE.startPostionsP2.Add(new Vector2(highlightedCell.GetComponent<Cell>().xCoord, highlightedCell.GetComponent<Cell>().zCoord));
             }
         }
-        else if((Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)) && highlightedCell && brushMode)
+        else if((Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)) && highlightedCell && brushMode && !isGUIelement)
         {
             brushTool();
         }
 
 
         //Für die Kamera
-        if(Input.GetMouseButtonDown(2))
+        if(Input.GetMouseButtonDown(2) && !isGUIelement)
         {
             crs.setStartRotation();
         }
@@ -118,6 +135,30 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             crs.setStopRotation();
         }
 
+        //Deaktiviert alle Modi
+        if(Input.GetMouseButtonDown(1))
+        {
+            if (placeMode)
+            {
+                activatePlacingTool(null);
+            }
+            if (killObject)
+            {
+                activateDestroyTool();
+            }
+            if (placeGovSpwn)
+            {
+                activateGovSpawn();
+            }
+            if (placeRebSpwn)
+            {
+                activateRebSpawn();
+            }
+            if(brushMode)
+            {
+                activateBrushTool(null);
+            }
+        }
     }
 
     void mouseHover()
@@ -153,6 +194,14 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                     highlightedCell = hover.collider;
                 }
             }
+            //Löscht objekt
+            else if (hover.collider.gameObject.tag != "Cell" && Input.GetMouseButton(0) && killObject)
+            {
+                if (killObject)
+                {
+                    destroyObject(hover);
+                }
+            }
             //Cursor über selber Zelle
             else if(hover.collider.gameObject.tag != "Cell")
             {
@@ -161,11 +210,6 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                     MeshRenderer mr = highlightedCell.GetComponent<MeshRenderer>();
                     mr.material = notSelected;
                     highlightedCell = null;
-                    //Löscht Objekt
-                    if (killObject)
-                    {
-                        destroyObject(hover);
-                    }
                 }
             }
         }
@@ -189,7 +233,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         testCOL = null;
         testmr = null;
         testOC = null;
-        originalMat = null;
+        originalMats = null;
     }
 
     //Hilft beim platzieren von Objekten("Geistobjekt")
@@ -226,7 +270,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             {
                 for (int i = 0; i < testmr.materials.Length; i++)
                 {
-                    testmr.materials[i] = highlightedMat;
+                    testmr.materials = materialSetter(highlightedMat);
                 }
 
                 Vector3 posi = Zellen[x + testOC.sizeX - 1, z + testOC.sizeZ - 1].transform.position - Zellen[x, z].transform.position;
@@ -239,7 +283,8 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             {
                 for (int i = 0; i < testmr.materials.Length; i++)
                 {
-                    testmr.materials[i] = cantPlaceMat;
+                    Debug.Log(testmr.materials[i]);
+                    testmr.materials = materialSetter(cantPlaceMat);
                 }
 
                 Vector3 posi = Zellen[x + testOC.sizeX - 1, z + testOC.sizeZ - 1].transform.position - Zellen[x, z].transform.position;
@@ -252,7 +297,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             {
                 for (int i = 0; i < testmr.materials.Length; i++)
                 {
-                    testmr.materials[i] = cantPlaceMat;
+                    testmr.materials = materialSetter(cantPlaceMat);
                 }
             }
         }
@@ -262,39 +307,9 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Löschen Methode
     void destroyObject(RaycastHit toDestroy)
     {
-        ObjectComponent killOC = toDestroy.collider.gameObject.GetComponent<ObjectComponent>();
-        int x = killOC.cell.xCoord;
-        int z = killOC.cell.zCoord;
-        GameObject[,] Zellen = bfcLE.getZellen();
+        GameObject kollel = toDestroy.collider.gameObject;
 
-        if (toDestroy.collider.gameObject.tag == "RebPlaceholder") 
-        {
-            Vector2 coords = new Vector2(x, z);
-
-            bfcLE.startPostionsP1.Remove(coords);
-
-            countReb--;
-        }
-        if (toDestroy.collider.gameObject.tag == "GovPlacerholder") 
-        {
-            Vector2 coords = new Vector2(x, z);
-
-            bfcLE.startPostionsP2.Remove(coords);
-
-            countGov--;
-        }
-        for (int i = x; i < x + killOC.sizeX; i++)
-        {
-            for (int j = z; j < z + killOC.sizeZ; j++)
-            {
-                Zellen[i, j].GetComponent<Cell>().isOccupied = false;
-                Zellen[i, j].GetComponent<Cell>().hoheDeckung = false;
-                Zellen[i, j].GetComponent<Cell>().niedrigeDeckung = false;
-            }
-        }
-
-        Destroy(toDestroy.collider.gameObject);
-        killObject = false;
+        destroyObject(kollel);
     }
 
 
@@ -302,8 +317,17 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     void setNewTest(GameObject newObject)
     {
         test = Instantiate(newObject);
-        testCOL = test.GetComponent<Collider>();
-        if(!test.GetComponent<MeshRenderer>())
+
+        if (!test.GetComponent<Collider>())
+        {
+            testCOL = test.GetComponentInChildren<Collider>();
+        }
+        else
+        {
+            testCOL = test.GetComponent<Collider>();
+        }
+
+        if (!test.GetComponent<MeshRenderer>())
         {
             testmr = test.GetComponentInChildren<MeshRenderer>();
         }
@@ -313,7 +337,26 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         }
         testOC = test.GetComponent<ObjectComponent>();
         testTrans = test.GetComponent<Transform>();
-        originalMat = Instantiate(testmr.material);
+
+        originalMats = new Material[testmr.materials.Length];
+
+        for(int i = 0; i < testmr.materials.Length; i++)
+        {
+            originalMats[i] = testmr.materials[i];
+        }
+    }
+
+    Material[] materialSetter(Material aktMat)
+    {
+
+        Material[] mats = new Material[testmr.materials.Length];
+
+        for(int i = 0; i < testmr.materials.Length; i++)
+        {
+            mats[i] = aktMat;
+        }
+
+        return mats;
     }
 
     //Führt das Färben von Zellen aus
@@ -341,9 +384,26 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Aktiviert BrushTool
     public void activateBrushTool(Material newMat)
     {
-        if(!placeMode && !killObject && !placeGovSpwn && !placeRebSpwn)
+        if (placeMode)
+        {
+            activatePlacingTool(null);
+        }
+        if (killObject)
+        {
+            activateDestroyTool();
+        }
+        if (placeGovSpwn)
+        {
+            activateGovSpawn();
+        }
+        if (placeRebSpwn)
+        {
+            activateRebSpawn();
+        }
+
+        if (!placeMode && !killObject && !placeGovSpwn && !placeRebSpwn)
         { 
-            if (brushMode)
+            if (brushMode && brushMaterial == newMat || brushMaterial == null)
             {
                brushMode = false;
             }
@@ -358,7 +418,24 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Aktiviert DestroyTool
     public void activateDestroyTool()
     {
-        if(!placeMode && !brushMode && !placeGovSpwn && !placeRebSpwn)
+        if (placeMode)
+        {
+            activatePlacingTool(null);
+        }
+        if (brushMode)
+        {
+            activateBrushTool(null);
+        }
+        if (placeGovSpwn)
+        {
+            activateGovSpawn();
+        }
+        if (placeRebSpwn)
+        {
+            activateRebSpawn();
+        }
+
+        if (!placeMode && !brushMode && !placeGovSpwn && !placeRebSpwn)
         {
             if(killObject)
             {
@@ -374,17 +451,41 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Aktiviert Platzierungsmodus
     public void activatePlacingTool(GameObject newTestObjekt)
     {
-
+        if (brushMode)
+        {
+            activateBrushTool(null);
+        }
+        if (killObject)
+        {
+            activateDestroyTool();
+        }
+        if (placeGovSpwn)
+        {
+            activateGovSpawn();
+        }
+        if (placeRebSpwn)
+        {
+            activateRebSpawn();
+        }
         if (!killObject && !brushMode && !placeGovSpwn && !placeRebSpwn)
         {
-            if (placeMode)
+            if (placeMode && newTestObjekt == null || newTestObjekt == aktuellesNewObjekt)
             {
                 placeMode = false;
+                aktuellesNewObjekt = null;
                 destroyTestObject();
+            }
+            else if (placeMode && newTestObjekt != aktuellesNewObjekt)
+            {
+                destroyTestObject();
+                aktuellesNewObjekt = newTestObjekt;
+                setNewTest(newTestObjekt);
+                placingHelper();
             }
             else
             {
                 placeMode = true;
+                aktuellesNewObjekt = newTestObjekt;
                 setNewTest(newTestObjekt);
                 placingHelper();
             }
@@ -432,6 +533,23 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Methode um Spawnplätze für Regierung zu Platzieren
     public void activateGovSpawn()
     {
+        if (placeMode)
+        {
+            activatePlacingTool(null);
+        }
+        if (killObject)
+        {
+            activateDestroyTool();
+        }
+        if (brushMode)
+        {
+            activateBrushTool(null);
+        }
+        if (placeRebSpwn)
+        {
+            activateRebSpawn();
+        }
+
         if (!killObject && !placeMode && !brushMode && !placeRebSpwn)
         {
             if (!placeGovSpwn)
@@ -451,6 +569,23 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     //Methode um Spawnplätze für Rebellen zu Platzieren
     public void activateRebSpawn()
     {
+        if (placeMode)
+        {
+            activatePlacingTool(null);
+        }
+        if (killObject)
+        {
+            activateDestroyTool();
+        }
+        if (placeGovSpwn)
+        {
+            activateGovSpawn();
+        }
+        if (brushMode)
+        {
+            activateBrushTool(null);
+        }
+
         if (!killObject && !placeMode && !brushMode && !placeGovSpwn)
         {
             if (!placeRebSpwn)
@@ -464,6 +599,51 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 placeRebSpwn = false;
                 destroyTestObject();
             }
+        }
+    }
+
+
+    //Überladene Methoden für UndoRedo
+    void destroyObject(GameObject toDestroy)
+    {
+        if (toDestroy.transform.parent != null)
+        {
+            toDestroy = toDestroy.transform.parent.gameObject;
+        }
+
+        if (toDestroy.GetComponent<ObjectComponent>())
+        {
+            ObjectComponent killOC = toDestroy.GetComponent<ObjectComponent>();
+            int x = killOC.cell.xCoord;
+            int z = killOC.cell.zCoord;
+            GameObject[,] Zellen = bfcLE.getZellen();
+
+            if (toDestroy.tag == "RebPlaceholder")
+            {
+                Vector2 coords = new Vector2(x, z);
+
+                bfcLE.startPostionsP1.Remove(coords);
+                
+                countReb--;
+            }
+            if (toDestroy.tag == "GovPlacerholder")
+            {
+                Vector2 coords = new Vector2(x, z);
+
+                bfcLE.startPostionsP2.Remove(coords);
+
+                countGov--;
+            }
+            for (int i = x; i < x + killOC.sizeX; i++)
+            {
+                for (int j = z; j < z + killOC.sizeZ; j++)
+                {
+                    Zellen[i, j].GetComponent<Cell>().isOccupied = false;
+                    Zellen[i, j].GetComponent<Cell>().hoheDeckung = false;
+                    Zellen[i, j].GetComponent<Cell>().niedrigeDeckung = false;
+                }
+            }
+            Destroy(toDestroy);
         }
     }
 
