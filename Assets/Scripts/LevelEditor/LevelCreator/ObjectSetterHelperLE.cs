@@ -68,7 +68,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         mouseHover();
 
         //Objekt im PlaceMode platzieren
-        if (Input.GetMouseButtonDown(0) && highlightedCell && placeMode && canPlace && !isGUIelement)
+        if (Input.GetMouseButtonDown(0) && highlightedCell && (placeMode || placeGovSpwn || placeRebSpwn) && canPlace && !isGUIelement)
         {
             testCOL.enabled = true;
             GameObject newObject = Instantiate(test);
@@ -88,30 +88,6 @@ public class ObjectSetterHelperLE : MonoBehaviour {
 
             newObject.GetComponent<ObjectComponent>().original = test;
 
-            URManager.addAction(new AddObjectAction(newObject));
-            if(!Input.GetKey("left shift"))
-            {
-                placeMode = false;
-                aktuellesNewObjekt = null;
-                destroyTestObject();
-            }
-        }
-        else if(Input.GetMouseButtonDown(0) && highlightedCell && canPlace && (placeGovSpwn || placeRebSpwn) && !isGUIelement)
-        {
-            testCOL.enabled = true;
-            GameObject newObject = Instantiate(test);
-            if (!newObject.GetComponent<MeshRenderer>())
-            {
-                newObject.GetComponentInChildren<MeshRenderer>().materials = originalMats;
-            }
-            else
-            {
-                newObject.GetComponent<MeshRenderer>().materials = originalMats;
-            }
-            testCOL.enabled = false;
-            obsLE.moveObject(bfcLE.getZellen(), highlightedCell.GetComponent<Cell>().xCoord,
-                highlightedCell.GetComponent<Cell>().zCoord, newObject, true);
-
             if (placeRebSpwn)
             {
                 bfcLE.startPostionsP1.Add(new Vector2(highlightedCell.GetComponent<Cell>().xCoord, highlightedCell.GetComponent<Cell>().zCoord));
@@ -124,7 +100,16 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 placeGovSpwn = false;
                 destroyTestObject();
             }
+
+            URManager.addAction(new AddObjectAction(newObject));
+            if(!Input.GetKey("left shift"))
+            {
+                placeMode = false;
+                aktuellesNewObjekt = null;
+                destroyTestObject();
+            }
         }
+        
         else if((Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)) && highlightedCell && brushMode && !isGUIelement)
         {
             brushTool();
