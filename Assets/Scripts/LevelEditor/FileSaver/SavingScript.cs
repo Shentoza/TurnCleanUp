@@ -86,7 +86,7 @@ public class SavingScript : MonoBehaviour {
             switch (componentFlag) {
                 case Constants.FILE_COMPONENT_FLAGS.ObjectComponent: {
                         ObjectComponent currentObjectComponent = gameObject.GetComponent<ObjectComponent>();
-                        if (!currentObjectComponent.Equals(null)) {
+                        if (null != currentObjectComponent) {
                             m_writer.Write((int)componentFlag);
                             writeObjectComponent(currentObjectComponent);
                         }
@@ -95,7 +95,7 @@ public class SavingScript : MonoBehaviour {
 
                 case Constants.FILE_COMPONENT_FLAGS.ObjectSetter: {
                         ObjectSetter currentObjectSetter = gameObject.GetComponent<ObjectSetter>();
-                        if (!currentObjectSetter.Equals(null)) {
+                        if (null != currentObjectSetter) {
                             m_writer.Write((int)componentFlag);
                             writeObjectSetter(currentObjectSetter);
                         }
@@ -122,13 +122,12 @@ public class SavingScript : MonoBehaviour {
     public void writeObjectHeader(GameObject gameObject)
     {
         ObjectComponent objComp = gameObject.GetComponent<ObjectComponent>();
-        if (!objComp.Equals(null)) {
-            if (!objComp.original.Equals(null)) {
-                m_writer.Write(LookUpTable.prefabsInverse[objComp.original]);
-            }
-            else
-                m_writer.Write(Constants.FILE_NO_PREFAB_TAG);
-        }
+        if (null != objComp && null != objComp.original) 
+            m_writer.Write(LookUpTable.prefabsInverse[objComp.original]);
+        else
+            m_writer.Write(Constants.FILE_NO_PREFAB_TAG);
+
+
         m_writer.Write(gameObject.name);
         m_writer.Write(gameObject.tag);
     }

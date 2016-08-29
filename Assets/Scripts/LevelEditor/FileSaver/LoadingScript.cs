@@ -7,11 +7,21 @@ public class LoadingScript : MonoBehaviour {
     LevelConfiguration levelConfig;
     private BinaryReader m_reader;
 
+    public string filePath;
+    public bool editorMode;
+
 
     private GameObject m_currentGameObject;
     private Constants.FILE_OBJECT_FLAGS m_currentObjectFlag;
     private Constants.FILE_COMPONENT_FLAGS m_currentComponentFlag;
 
+    public void OnLevelWasLoaded()
+    {
+        if(filePath != null) {
+            loadLevel(filePath);
+        }
+        filePath = null;
+    }
 
     public void loadLevel(string path)
     {
@@ -82,7 +92,10 @@ public class LoadingScript : MonoBehaviour {
     {
         string prefabTag = m_reader.ReadString();
         if(!prefabTag.Equals(Constants.FILE_NO_PREFAB_TAG)) {
-            
+            m_currentGameObject = Instantiate<GameObject>(LookUpTable.prefabs[prefabTag]);
+        }
+        else {
+            m_currentGameObject = new GameObject();
         }
         m_currentGameObject.name = m_reader.ReadString();
         m_currentGameObject.tag = m_reader.ReadString();
