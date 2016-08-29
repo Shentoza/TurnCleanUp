@@ -11,7 +11,7 @@ public class Constants
     public static string UNDO_REDO_TAG = "UndoRedo";
     public const string PROPS_PREFAB_PATH = "Prefabs/PrefabsFinalTest/FinalProbs/";
     public const string MATERIAL_PREFAB_PATH = "Materials/";
-
+    public const string GROUND_MATERIAL_PATH = "Materials/IngameMats/";
     public enum FILE_COMPONENT_FLAGS
     {
         EndOfObject,

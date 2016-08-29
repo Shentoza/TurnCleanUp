@@ -16,6 +16,11 @@ public class LookUpTable : MonoBehaviour {
     public static Dictionary<Material, string> materialsInverse
         = new Dictionary<Material, string>();
 
+    public static Dictionary<Material, string> groundMaterials
+        = new Dictionary<Material, string>();
+
+    public static Dictionary<Material, string> groundMaterialsInverse
+        = new Dictionary<Material, string>();
 
 
     public void Start()
@@ -35,5 +40,12 @@ public class LookUpTable : MonoBehaviour {
             materials.Add(materialName, mat);
             materialsInverse.Add(mat, materialName);
         }
+
+        /*foreach(Material mat in Resources.LoadAll<Material>(Constants.GROUND_MATERIAL_PATH))
+        {
+            string materialName = mat.name;
+            materials.Add(materialName, mat);
+            materialsInverse.Add(mat, materialName);
+        } */
     }
 }
