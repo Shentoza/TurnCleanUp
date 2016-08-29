@@ -88,6 +88,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
 
             newObject.GetComponent<ObjectComponent>().original = test;
 
+            URManager.addAction(new AddObjectAction(newObject));
             if(!Input.GetKey("left shift"))
             {
                 placeMode = false;
@@ -195,10 +196,11 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 }
             }
             //Löscht objekt
-            else if (hover.collider.gameObject.tag != "Cell" && Input.GetMouseButton(0) && killObject)
+            else if (hover.collider.gameObject.tag != "Cell" && Input.GetMouseButtonDown(0) && killObject)
             {
                 if (killObject)
                 {
+                    URManager.addAction(new DeleteObjectAction(hover.collider.gameObject));
                     destroyObject(hover);
                 }
             }
@@ -372,7 +374,19 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             {
                 MeshRenderer farbMR = farbSelect.collider.gameObject.GetComponent<MeshRenderer>();
 
-                farbMR.material = brushMaterial;
+                if(farbMR.material != brushMaterial) { 
+
+                    //Undo Redo Action... in dem Frame wo der button gedrückt wird, wird eine neue Action erzeugt
+                    //danach wird in die selbe Action hinzugefügt
+                    if(Input.GetMouseButtonDown(0)) {
+                        URManager.addAction(new BrushAction(brushMaterial));
+                    }
+                    if(URManager.getCurrentAction().GetType() == typeof(BrushAction)) {
+                        BrushAction brushAction = (BrushAction) URManager.getCurrentAction();
+                        brushAction.addCell(farbMR);
+                    }
+                    farbMR.material = brushMaterial;
+                }
             }
         }
     }
