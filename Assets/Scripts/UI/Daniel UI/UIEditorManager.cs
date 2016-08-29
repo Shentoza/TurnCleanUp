@@ -6,7 +6,7 @@ using UnityEditor;
 
 public class UIEditorManager : MonoBehaviour {
 
-    Button unitB, objectB, brushB, leftRotateB, rightRotateB, removeB;
+    Button unitB, objectB, brushB, leftRotateB, rightRotateB, removeB, spawnGovB, spawnRebB;
     Button newFileB, openFileB, saveFileB;
     GameObject assetBar, objectView, materialView;
     List<GameObject> objectButtons = new List<GameObject>();
@@ -44,6 +44,14 @@ public class UIEditorManager : MonoBehaviour {
 
         rightRotateB = GameObject.Find("RotateRightB").GetComponent<Button>();
         rightRotateB.onClick.AddListener(() => osh.rotateRight());
+
+        spawnGovB = GameObject.Find("SpawnGovB").GetComponent<Button>();
+        spawnGovB.onClick.AddListener(() => osh.activateGovSpawn());
+
+        spawnRebB = GameObject.Find("SpawnRebB").GetComponent<Button>();
+        spawnRebB.onClick.AddListener(() => osh.activateRebSpawn());
+
+
 
         removeB = GameObject.Find("RemoveB").GetComponent<Button>();
         removeB.onClick.AddListener(() => osh.activateDestroyTool());
