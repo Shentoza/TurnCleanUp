@@ -611,37 +611,40 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             toDestroy = toDestroy.transform.parent.gameObject;
         }
 
-        ObjectComponent killOC = toDestroy.GetComponent<ObjectComponent>();
-        int x = killOC.cell.xCoord;
-        int z = killOC.cell.zCoord;
-        GameObject[,] Zellen = bfcLE.getZellen();
-
-        if (toDestroy.tag == "RebPlaceholder")
+        if (toDestroy.GetComponent<ObjectComponent>())
         {
-            Vector2 coords = new Vector2(x, z);
+            ObjectComponent killOC = toDestroy.GetComponent<ObjectComponent>();
+            int x = killOC.cell.xCoord;
+            int z = killOC.cell.zCoord;
+            GameObject[,] Zellen = bfcLE.getZellen();
 
-            bfcLE.startPostionsP1.Remove(coords);
-
-            countReb--;
-        }
-        if (toDestroy.tag == "GovPlacerholder")
-        {
-            Vector2 coords = new Vector2(x, z);
-
-            bfcLE.startPostionsP2.Remove(coords);
-
-            countGov--;
-        }
-        for (int i = x; i < x + killOC.sizeX; i++)
-        {
-            for (int j = z; j < z + killOC.sizeZ; j++)
+            if (toDestroy.tag == "RebPlaceholder")
             {
-                Zellen[i, j].GetComponent<Cell>().isOccupied = false;
-                Zellen[i, j].GetComponent<Cell>().hoheDeckung = false;
-                Zellen[i, j].GetComponent<Cell>().niedrigeDeckung = false;
+                Vector2 coords = new Vector2(x, z);
+
+                bfcLE.startPostionsP1.Remove(coords);
+                
+                countReb--;
             }
+            if (toDestroy.tag == "GovPlacerholder")
+            {
+                Vector2 coords = new Vector2(x, z);
+
+                bfcLE.startPostionsP2.Remove(coords);
+
+                countGov--;
+            }
+            for (int i = x; i < x + killOC.sizeX; i++)
+            {
+                for (int j = z; j < z + killOC.sizeZ; j++)
+                {
+                    Zellen[i, j].GetComponent<Cell>().isOccupied = false;
+                    Zellen[i, j].GetComponent<Cell>().hoheDeckung = false;
+                    Zellen[i, j].GetComponent<Cell>().niedrigeDeckung = false;
+                }
+            }
+            Destroy(toDestroy);
         }
-        Destroy(toDestroy);
     }
 
 
