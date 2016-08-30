@@ -3,8 +3,7 @@ using System.Collections;
 
 public interface URAction{
 
-    void undo();
-    void redo();
-
-    void delete();
+    void Undo();
+    void Redo();
+    void Delete();
 }

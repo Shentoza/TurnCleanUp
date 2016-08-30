@@ -68,7 +68,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         mouseHover();
 
         //Objekt im PlaceMode platzieren
-        if (Input.GetMouseButtonDown(0) && highlightedCell && placeMode && canPlace && !isGUIelement)
+        if (Input.GetMouseButtonDown(0) && highlightedCell && (placeMode || placeGovSpwn || placeRebSpwn) && canPlace && !isGUIelement)
         {
             testCOL.enabled = true;
             GameObject newObject = Instantiate(test);
@@ -88,37 +88,28 @@ public class ObjectSetterHelperLE : MonoBehaviour {
 
             newObject.GetComponent<ObjectComponent>().original = test;
 
-            if(!Input.GetKey("left shift"))
-            {
-                placeMode = false;
-                destroyTestObject();
-            }
-        }
-        else if(Input.GetMouseButtonDown(0) && highlightedCell && canPlace && placeGovSpwn || placeRebSpwn && !isGUIelement)
-        {
-            testCOL.enabled = true;
-            GameObject newObject = Instantiate(test);
-            if (!newObject.GetComponent<MeshRenderer>())
-            {
-                newObject.GetComponentInChildren<MeshRenderer>().materials = originalMats;
-            }
-            else
-            {
-                newObject.GetComponent<MeshRenderer>().materials = originalMats;
-            }
-            testCOL.enabled = false;
-            obsLE.moveObject(bfcLE.getZellen(), highlightedCell.GetComponent<Cell>().xCoord,
-                highlightedCell.GetComponent<Cell>().zCoord, newObject, true);
-
             if (placeRebSpwn)
             {
                 bfcLE.startPostionsP1.Add(new Vector2(highlightedCell.GetComponent<Cell>().xCoord, highlightedCell.GetComponent<Cell>().zCoord));
+                placeRebSpwn = false;
+                destroyTestObject();
             }
             if (placeGovSpwn)
             {
                 bfcLE.startPostionsP2.Add(new Vector2(highlightedCell.GetComponent<Cell>().xCoord, highlightedCell.GetComponent<Cell>().zCoord));
+                placeGovSpwn = false;
+                destroyTestObject();
+            }
+
+            URManager.addAction(new AddObjectAction(newObject));
+            if(!Input.GetKey("left shift"))
+            {
+                placeMode = false;
+                aktuellesNewObjekt = null;
+                destroyTestObject();
             }
         }
+        
         else if((Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)) && highlightedCell && brushMode && !isGUIelement)
         {
             brushTool();
@@ -195,10 +186,11 @@ public class ObjectSetterHelperLE : MonoBehaviour {
                 }
             }
             //Löscht objekt
-            else if (hover.collider.gameObject.tag != "Cell" && Input.GetMouseButton(0) && killObject)
+            else if (hover.collider.gameObject.tag != "Cell" && Input.GetMouseButtonDown(0) && killObject)
             {
                 if (killObject)
                 {
+                    URManager.addAction(new DeleteObjectAction(hover.collider.gameObject));
                     destroyObject(hover);
                 }
             }
@@ -372,7 +364,19 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             {
                 MeshRenderer farbMR = farbSelect.collider.gameObject.GetComponent<MeshRenderer>();
 
-                farbMR.material = brushMaterial;
+                if(farbMR.material != brushMaterial) { 
+
+                    //Undo Redo Action... in dem Frame wo der button gedrückt wird, wird eine neue Action erzeugt
+                    //danach wird in die selbe Action hinzugefügt
+                    if(Input.GetMouseButtonDown(0)) {
+                        URManager.addAction(new BrushAction(brushMaterial));
+                    }
+                    if(URManager.getCurrentAction().GetType() == typeof(BrushAction)) {
+                        BrushAction brushAction = (BrushAction) URManager.getCurrentAction();
+                        brushAction.addCell(farbMR);
+                    }
+                    farbMR.material = brushMaterial;
+                }
             }
         }
     }

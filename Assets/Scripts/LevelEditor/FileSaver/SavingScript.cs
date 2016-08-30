@@ -59,7 +59,7 @@ public class SavingScript : MonoBehaviour {
         m_writer.Close();
     }
 
-    public void writeHeader()
+    private void writeHeader()
     {
         m_writer.Write(Constants.FILE_BEGINNING_TAG);
         m_writer.Write(levelConfig.defaultValues);
@@ -71,10 +71,29 @@ public class SavingScript : MonoBehaviour {
         m_writer.Write(levelConfig.gridHeight);
         m_writer.Write(levelConfig.objectCount);
         m_writer.Write(LookUpTable.materialsInverse[levelConfig.cubeMaterial]);
-        
+
+
+        writeStartPositions();
     }
 
-    public void writeObject(GameObject gameObject)
+    private void writeStartPositions()
+    {
+        //Startpositionen der Spieler
+        BattlefieldCreatorLE bfle = FindObjectOfType<BattlefieldCreatorLE>();
+        m_writer.Write(bfle.startPostionsP1.Count);
+        for (int i = 0; i < bfle.startPostionsP1.Count; ++i) {
+            m_writer.Write(bfle.startPostionsP1[i].x);
+            m_writer.Write(bfle.startPostionsP1[i].y);
+        }
+
+        m_writer.Write(bfle.startPostionsP2.Count);
+        for (int i = 0; i < bfle.startPostionsP2.Count; ++i) {
+            m_writer.Write(bfle.startPostionsP2[i].x);
+            m_writer.Write(bfle.startPostionsP2[i].y);
+        }
+    }
+
+    private void writeObject(GameObject gameObject)
     {
         writeObjectHeader(gameObject);
         writeTransform(gameObject.transform);
@@ -92,7 +111,6 @@ public class SavingScript : MonoBehaviour {
                         }
                         break;
                     }
-
                 case Constants.FILE_COMPONENT_FLAGS.ObjectSetter: {
                         ObjectSetter currentObjectSetter = gameObject.GetComponent<ObjectSetter>();
                         if (null != currentObjectSetter) {
@@ -119,7 +137,7 @@ public class SavingScript : MonoBehaviour {
         m_writer.Write((int)Constants.FILE_COMPONENT_FLAGS.EndOfObject);
     }
 
-    public void writeObjectHeader(GameObject gameObject)
+    private void writeObjectHeader(GameObject gameObject)
     {
         ObjectComponent objComp = gameObject.GetComponent<ObjectComponent>();
         if (null != objComp && null != objComp.original) 
@@ -132,7 +150,7 @@ public class SavingScript : MonoBehaviour {
         m_writer.Write(gameObject.tag);
     }
 
-    public void writeTransform(Transform transform)
+    private void writeTransform(Transform transform)
     {
         m_writer.Write(transform.position.x);
         m_writer.Write(transform.position.y);
@@ -145,13 +163,13 @@ public class SavingScript : MonoBehaviour {
         m_writer.Write(transform.localScale.y);
         m_writer.Write(transform.localScale.z);
     }
-    public void writeObjectSetter(ObjectSetter component)
+    private void writeObjectSetter(ObjectSetter component)
     {
         m_writer.Write(component.x);
         m_writer.Write(component.z);
     }
 
-    public void writeObjectComponent(ObjectComponent component)
+    private void writeObjectComponent(ObjectComponent component)
     {
         m_writer.Write(component.sizeX);
         m_writer.Write(component.sizeZ);

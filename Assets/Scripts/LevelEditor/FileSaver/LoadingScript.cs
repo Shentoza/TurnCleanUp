@@ -10,6 +10,8 @@ public class LoadingScript : MonoBehaviour {
     public string filePath;
     public bool editorMode;
 
+    private ObjectSetterLE m_objectSetterLE;
+    private BattlefieldCreatorLE m_battlefieldCreator;
 
     private GameObject m_currentGameObject;
     private Constants.FILE_OBJECT_FLAGS m_currentObjectFlag;
@@ -26,6 +28,20 @@ public class LoadingScript : MonoBehaviour {
     public void loadLevel(string path)
     {
         levelConfig = LevelConfiguration.instance;
+
+        m_objectSetterLE = FindObjectOfType<ObjectSetterLE>();
+        if (m_objectSetterLE == null) {
+            Debug.Log("Object Setter ist null!");
+            return;
+        }
+
+        m_battlefieldCreator = FindObjectOfType<BattlefieldCreatorLE>();
+        if(m_battlefieldCreator == null) {
+            Debug.Log("Battlefield Creator ist null!");
+            return;
+        }
+
+
         try
         {
             m_reader = new BinaryReader(new FileStream(path, FileMode.Open));
@@ -64,27 +80,52 @@ public class LoadingScript : MonoBehaviour {
     public bool readHeader()
     {
         string beginning = m_reader.ReadString();
-        if(!beginning.Equals(Constants.FILE_BEGINNING_TAG))
-        {
+        if (!beginning.Equals(Constants.FILE_BEGINNING_TAG)) {
             Debug.Log("Wrong File Start");
             //Falscher File Start
             return false;
         }
         levelConfig.defaultValues = m_reader.ReadBoolean();
-        if(levelConfig.defaultValues)
-        {
+        if (levelConfig.defaultValues) {
             levelConfig.gridWidth = Constants.DEFAULT_GRID_WIDTH;
             levelConfig.gridHeight = Constants.DEFAULT_GRID_HEIGHT;
             levelConfig.objectCount = Constants.DEFAULT_OBJECT_COUNT;
             levelConfig.cubeMaterial = Constants.DEFAULT_CUBE_MATERIAL;
         }
-        else
-        {
+        else {
             levelConfig.gridWidth = m_reader.ReadInt32();
             levelConfig.gridHeight = m_reader.ReadInt32();
             levelConfig.objectCount = m_reader.ReadInt32();
             levelConfig.cubeMaterial = LookUpTable.materials[m_reader.ReadString()];
         }
+
+
+
+
+
+        System.Collections.Generic.List<Vector2> p1;
+        System.Collections.Generic.List<Vector2> p2;
+        if (editorMode) {
+            BattlefieldCreatorLE bfle = FindObjectOfType<BattlefieldCreatorLE>();
+            p1 = bfle.startPostionsP1;
+            p2 = bfle.startPostionsP2;
+        }
+        else {
+            BattlefieldCreater bc = FindObjectOfType<BattlefieldCreater>();
+            p1 = bc.startPostionsP1;
+            p2 = bc.startPostionsP2;
+        }
+
+            int count = m_reader.ReadInt32();
+            for (int i = 0; i < count; ++i)
+                p1.Add(new Vector2(m_reader.ReadSingle(), m_reader.ReadSingle()));
+
+            count = m_reader.ReadInt32();
+            for (int i = 0; i < count; ++i)
+                p2.Add(new Vector2(m_reader.ReadSingle(), m_reader.ReadSingle()));
+
+
+
         return true;
     }
 
@@ -136,6 +177,16 @@ public class LoadingScript : MonoBehaviour {
                     break;
             }
         } while (m_currentComponentFlag != Constants.FILE_COMPONENT_FLAGS.EndOfObject);
+
+        if(!editorMode)
+            foreach(string tag in Constants.IGNORE_IN_PLAY_MODE_TAGS) {
+                if (m_currentGameObject.tag.Equals(tag))
+                    Destroy(m_currentGameObject);
+            }
+        else {
+            ObjectComponent objComp = m_currentGameObject.GetComponent<ObjectComponent>();
+            m_objectSetterLE.moveObject(m_battlefieldCreator.getZellen(), objComp.cell.xCoord, objComp.cell.zCoord, m_currentGameObject, true);
+        }
     }
 
     public void readTransform(GameObject parentObject = null)

@@ -36,6 +36,7 @@ public class LookUpTable : MonoBehaviour {
 
         //Lädt alle Materials
         foreach(Material mat in Resources.LoadAll<Material>(Constants.MATERIAL_PREFAB_PATH)) {
+            Debug.Log(mat.name);
             string materialName = mat.name;
             materials.Add(materialName, mat);
             materialsInverse.Add(mat, materialName);
