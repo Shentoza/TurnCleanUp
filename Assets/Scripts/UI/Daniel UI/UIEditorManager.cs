@@ -7,7 +7,7 @@ using UnityEditor;
 public class UIEditorManager : MonoBehaviour {
 
     Button unitB, objectB, brushB, leftRotateB, rightRotateB, removeB, spawnGovB, spawnRebB;
-    Button newFileB, openFileB, saveFileB;
+    Button newFileB, openFileB, saveFileB, undoB, redoB;
     GameObject assetBar, objectView, materialView;
     List<GameObject> objectButtons = new List<GameObject>();
     List<GameObject> objectPrefabs;
@@ -56,14 +56,23 @@ public class UIEditorManager : MonoBehaviour {
         removeB = GameObject.Find("RemoveB").GetComponent<Button>();
         removeB.onClick.AddListener(() => osh.activateDestroyTool());
 
-       /* saveFileB = GameObject.Find("SaveFileB").GetComponent<Button>();
-        saveFileB.onClick.AddListener(() => insertMethode());
+        //Für dich JOSCHA!!! HIER INSERtEN YAAAAAAY
 
-        openFileB = GameObject.Find("OpenFileB").GetComponent<Button>();
-        openFileB.onClick.AddListener(() => insertMethode());
+        /* saveFileB = GameObject.Find("SaveFileB").GetComponent<Button>();
+         saveFileB.onClick.AddListener(() => insertMethode());
 
-        newFileB = GameObject.Find("NewFileB").GetComponent<Button>();
-        newFileB.onClick.AddListener(() => insertMethode()); */
+         openFileB = GameObject.Find("OpenFileB").GetComponent<Button>();
+         openFileB.onClick.AddListener(() => insertMethode());
+
+         newFileB = GameObject.Find("NewFileB").GetComponent<Button>();
+         newFileB.onClick.AddListener(() => insertMethode()); 
+
+        undoB = GameObject.Find("UndoB").GetComponent<Button>();
+        undoB.onClick.AddListener(() => insertMethode());
+
+        redoB = GameObject.Find("RedoB").GetComponent<Button>();
+        redoB.onClick.AddListener(() => insertMethode()); */
+
 
 
         objectView = GameObject.Find("ObjectView");
@@ -107,10 +116,10 @@ public class UIEditorManager : MonoBehaviour {
 
 
         int counter = 0;
-        float startX = 0;
+        float startX = -50;
         //materialView = GameObject.Find("MaterialView");
-        RectTransform materialRect = materialView.GetComponent<RectTransform>();
-        materialRect.sizeDelta = new Vector2(materials.Count * 800, 0);
+        RectTransform materialRect = GameObject.Find("MaterialBar").GetComponent<RectTransform>();
+        //materialRect.sizeDelta = new Vector2(materials.Count * 300, 0);
 
 
         foreach (Material key in materials)
@@ -170,8 +179,8 @@ public class UIEditorManager : MonoBehaviour {
         int counter = 0;
         float startX = 0;
         
-        RectTransform objectRect = objectView.GetComponent<RectTransform>();
-        objectRect.sizeDelta = new Vector2(objectPrefabs.Count * 800, 0);
+        RectTransform objectRect = GameObject.Find("ObjectBar").GetComponent<RectTransform>();
+        objectRect.sizeDelta = new Vector2(objectPrefabs.Count * 250, 0);
 
 
         foreach (GameObject key in objectPrefabs)
@@ -208,6 +217,9 @@ public class UIEditorManager : MonoBehaviour {
             temp.name = "Button " + counter;
             startX += 165;
             counter++;
+
+          
+            
         }
     }
 
@@ -233,6 +245,8 @@ public class UIEditorManager : MonoBehaviour {
             default:
                 break;
         }
+        Scrollbar scrollbar = GameObject.Find("Scrollbar").GetComponent<Scrollbar>();
+        scrollbar.value = 0.0f;
     }
     
 
