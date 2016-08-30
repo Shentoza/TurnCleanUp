@@ -38,11 +38,11 @@ public class DialogManager {
         string result = null;
         if(saveFileDialog.ShowDialog() == DialogResult.OK) {
             result = saveFileDialog.FileName;
+            if (result.Equals(string.Empty)) {
+                result = null;
+            }
         }
-        if (result.Equals(string.Empty)) {
-            result = null;
-        }
-
+        
         saveFileDialog = null;
         return result;
     }
