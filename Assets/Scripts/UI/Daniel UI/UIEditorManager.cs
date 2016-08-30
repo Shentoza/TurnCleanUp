@@ -9,7 +9,7 @@ public class UIEditorManager : MonoBehaviour {
 
     Button unitB, objectB, brushB, leftRotateB, rightRotateB, removeB, spawnGovB, spawnRebB;
     Button newFileB, openFileB, saveFileB, undoB, redoB;
-    public GameObject assetBar, objectView, materialView;
+    GameObject assetBar, objectView, materialView;
     List<GameObject> objectButtons = new List<GameObject>();
     List<GameObject> objectPrefabs;
     List<GameObject> materialButtons = new List<GameObject>();
@@ -46,10 +46,10 @@ public class UIEditorManager : MonoBehaviour {
         rightRotateB = GameObject.Find("RotateRightB").GetComponent<Button>();
         rightRotateB.onClick.AddListener(() => osh.rotateRight());
 
-        spawnGovB = GameObject.Find("SpawnGov").GetComponent<Button>();
+        spawnGovB = GameObject.Find("SpawnGovB").GetComponent<Button>();
         spawnGovB.onClick.AddListener(() => osh.activateGovSpawn());
-
-        spawnRebB = GameObject.Find("SpawnReb").GetComponent<Button>();
+       
+        spawnRebB = GameObject.Find("SpawnRebB").GetComponent<Button>();
         spawnRebB.onClick.AddListener(() => osh.activateRebSpawn());
 
 
