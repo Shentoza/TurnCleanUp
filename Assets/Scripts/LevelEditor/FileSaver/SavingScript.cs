@@ -62,7 +62,9 @@ public class SavingScript : MonoBehaviour {
     private void writeHeader()
     {
         m_writer.Write(Constants.FILE_BEGINNING_TAG);
+        writeLevelConfig();
         writeSpawnpoints();
+        writeCellTextures();
     }
 
     private void writeLevelConfig()
@@ -93,6 +95,21 @@ public class SavingScript : MonoBehaviour {
             m_writer.Write(bfle.startPostionsP2[i].x);
             m_writer.Write(bfle.startPostionsP2[i].y);
         }
+    }
+
+    private void writeCellTextures()
+    {
+        BattlefieldCreatorLE bfle = FindObjectOfType<BattlefieldCreatorLE>();
+        MeshRenderer currentMR;
+        if(bfle != null) {
+            for(int z = 0; z < LevelConfiguration.instance.gridHeight; ++z) {
+                for(int x = 0; x < LevelConfiguration.instance.gridWidth; ++x) {
+                    currentMR = bfle.Farbzellen[x, z].GetComponent<MeshRenderer>();
+                    m_writer.Write(LookUpTable.materialsInverse[currentMR.sharedMaterial]);
+                }
+            }
+        }
+        m_writer.Write(Constants.FILE_END_OF_TEXTURE_CELLS);
     }
 
     private void writeObject(GameObject gameObject)

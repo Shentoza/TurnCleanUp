@@ -6,6 +6,7 @@ public class Constants
     public const string FILE_BEGINNING_TAG = "CivilWarNationMap";
     public const string FILE_EXTENSION = ".cwmap";
     public const string FILE_NO_PREFAB_TAG = "?NoPrefab?";
+    public const string FILE_END_OF_TEXTURE_CELLS = "?END_OF_TEXTURE_CELLS?";
     public static readonly string[] FILE_LEVEL_ITEM_TAGS = { "LevelItem", "CosmeticItem", "RebPlaceholder", "GovPlaceholder"};
 
     public static readonly string[] IGNORE_IN_PLAY_MODE_TAGS = { "RebPlaceholder", "GovPlaceholder" };
