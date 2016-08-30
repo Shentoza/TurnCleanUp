@@ -359,17 +359,14 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             Ray mouseOver = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit farbSelect;
             Physics.Raycast(mouseOver, out farbSelect, Mathf.Infinity, Farbmask);
-
             if (farbSelect.collider != null)
             {
                 MeshRenderer farbMR = farbSelect.collider.gameObject.GetComponent<MeshRenderer>();
-
-                if(farbMR.material != brushMaterial) { 
-
+                if (farbMR.sharedMaterial != brushMaterial) {
                     //Undo Redo Action... in dem Frame wo der button gedrückt wird, wird eine neue Action erzeugt
                     //danach wird in die selbe Action hinzugefügt
-                    if(Input.GetMouseButtonDown(0)) {
-                        URManager.addAction(new BrushAction(brushMaterial));
+                    if (Input.GetMouseButtonDown(0)) {
+                          URManager.addAction(new BrushAction(brushMaterial));
                     }
                     if(URManager.getCurrentAction().GetType() == typeof(BrushAction)) {
                         BrushAction brushAction = (BrushAction) URManager.getCurrentAction();
