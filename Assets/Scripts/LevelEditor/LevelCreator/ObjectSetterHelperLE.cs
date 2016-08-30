@@ -72,6 +72,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
         {
             testCOL.enabled = true;
             GameObject newObject = Instantiate(test);
+            newObject.name = test.name;
             if (!newObject.GetComponent<MeshRenderer>())
             {
                 newObject.GetComponentInChildren<MeshRenderer>().materials = originalMats;
@@ -86,7 +87,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             newObject.GetComponent<ObjectSetter>().x = highlightedCell.GetComponent<Cell>().xCoord;
             newObject.GetComponent<ObjectSetter>().z = highlightedCell.GetComponent<Cell>().zCoord;
 
-            newObject.GetComponent<ObjectComponent>().original = test;
+            newObject.GetComponent<ObjectComponent>().original = aktuellesNewObjekt;
 
             if (placeRebSpwn)
             {
@@ -309,6 +310,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
     void setNewTest(GameObject newObject)
     {
         test = Instantiate(newObject);
+        test.name = newObject.name;
 
         if (!test.GetComponent<Collider>())
         {
@@ -556,6 +558,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             if (!placeGovSpwn)
             {
                 placeGovSpwn = true;
+                aktuellesNewObjekt = GovPlaceholder;
                 setNewTest(GovPlaceholder);
                 placingHelper();
             }
@@ -592,6 +595,7 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             if (!placeRebSpwn)
             {
                 placeRebSpwn = true;
+                aktuellesNewObjekt = RebPlaceholder;
                 setNewTest(RebPlaceholder);
                 placingHelper();
             }

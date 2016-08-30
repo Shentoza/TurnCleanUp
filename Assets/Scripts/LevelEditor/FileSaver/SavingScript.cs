@@ -56,6 +56,7 @@ public class SavingScript : MonoBehaviour {
         //Flag dass Ende des Files erreicht ist
         m_writer.Write((short)Constants.FILE_OBJECT_FLAGS.EndOfFile);
         Debug.Log("Close");
+        m_writer.BaseStream.Close();
         m_writer.Close();
     }
 
@@ -102,8 +103,8 @@ public class SavingScript : MonoBehaviour {
         BattlefieldCreatorLE bfle = FindObjectOfType<BattlefieldCreatorLE>();
         MeshRenderer currentMR;
         if(bfle != null) {
-            for(int z = 0; z < LevelConfiguration.instance.gridHeight; ++z) {
-                for(int x = 0; x < LevelConfiguration.instance.gridWidth; ++x) {
+            for(int z = 0; z < bfle.sizeZ * 10; ++z) {
+                for(int x = 0; x < bfle.sizeX * 10; ++x) {
                     currentMR = bfle.Farbzellen[x, z].GetComponent<MeshRenderer>();
                     m_writer.Write(LookUpTable.materialsInverse[currentMR.sharedMaterial]);
                 }

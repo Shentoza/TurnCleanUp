@@ -66,14 +66,14 @@ public class UIEditorManager : MonoBehaviour {
                 }
             });
 
-         openFileB = GameObject.Find("OpenFileB").GetComponent<Button>();
-        openFileB.onClick.AddListener(() => {
+            openFileB = GameObject.Find("OpenFileB").GetComponent<Button>();
+            openFileB.onClick.AddListener(() => {
             string path = DialogManager.OpenFileDialog();
             LoadingScript load = FindObjectOfType<LoadingScript>();
             if(load != null) {
                 load.filePath = path;
                 load.editorMode = true;
-                SceneManager.LoadScene("Empty Level");
+                SceneManager.LoadScene("EmptyLevel 1");
             }
         });
 
@@ -83,7 +83,7 @@ public class UIEditorManager : MonoBehaviour {
             if(null != load) {
                 load.filePath = null;
                 load.editorMode = true;
-                SceneManager.LoadScene("Empty Level");
+                SceneManager.LoadScene("EmptyLevel 1");
             }
         });
 
@@ -164,7 +164,6 @@ public class UIEditorManager : MonoBehaviour {
             GameObject parent = GameObject.Find("MaterialBar");
             temp.transform.SetParent(parent.transform);
             materialButtons.Add(temp);
-            Debug.Log(counter);
             temp.AddComponent<Button>().onClick.AddListener(() =>
             {
                 osh.activateBrushTool(materials[materialButtons.IndexOf(temp)]);
@@ -188,6 +187,20 @@ public class UIEditorManager : MonoBehaviour {
         foreach (GameObject prefab in Resources.LoadAll<GameObject>(Constants.PROPS_PREFAB_PATH))
         {
             string prefabName = prefab.name;
+            bool correctTag = false;
+            for (int i = 0; i < 2; ++i)
+            {
+                string str = Constants.FILE_LEVEL_ITEM_TAGS[i];
+                if (prefab.tag.Equals(str))
+                {
+                    correctTag = true;
+                    break;
+                }
+            }
+            if (!correctTag)
+            {
+                continue;
+            }
             prefabs.Add(prefabName, prefab);
             prefabsInverse.Add(prefab, prefabName);
         }

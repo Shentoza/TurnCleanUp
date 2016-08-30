@@ -47,7 +47,7 @@ public class MainMenu : MonoBehaviour
         LevelConfiguration.instance.gridWidth = mapSizeArray[1, index];
         LevelConfiguration.instance.daytime = checkDaytime();
         LevelConfiguration.instance.filename = GameObject.Find("InputField").GetComponent<InputField>().text;
-        SceneManager.LoadScene("LE Scene Builder");
+        SceneManager.LoadScene("EmptyLevel 1");
     }
 
 
@@ -59,7 +59,7 @@ public class MainMenu : MonoBehaviour
             ls.filePath = loadingPath;
             ls.editorMode = true;
 
-            SceneManager.LoadScene("EmptyLevel");
+            SceneManager.LoadScene("EmptyLevel 1");
         }
     }
 

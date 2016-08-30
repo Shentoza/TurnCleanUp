@@ -9,19 +9,20 @@ public class LoadingScript : MonoBehaviour {
 
     public string filePath;
     public bool editorMode;
-
+    
     private ObjectSetterLE m_objectSetterLE;
     private BattlefieldCreatorLE m_battlefieldCreator;
 
+    private GameObject m_currentPrefab;
     private GameObject m_currentGameObject;
     private Constants.FILE_OBJECT_FLAGS m_currentObjectFlag;
     private Constants.FILE_COMPONENT_FLAGS m_currentComponentFlag;
 
     public void OnLevelWasLoaded()
     {
-        if(filePath != null) {
-            loadLevel(filePath);
-        }
+        if (string.IsNullOrEmpty(filePath))
+            return;
+        loadLevel(filePath);
         filePath = null;
     }
 
@@ -74,6 +75,7 @@ public class LoadingScript : MonoBehaviour {
                 ex.ToString();
             }
         }
+        m_reader.BaseStream.Close();
         m_reader.Close();
     }
 
@@ -141,14 +143,17 @@ public class LoadingScript : MonoBehaviour {
         if (editorMode) {
             BattlefieldCreatorLE bfle = FindObjectOfType<BattlefieldCreatorLE>();
             MeshRenderer currentMR;
-            for (int z = 0; z < levelConfig.gridHeight; ++z) { 
-                for(int x = 0; x < levelConfig.gridWidth; ++x) {
+            for (int z = 0; z < bfle.sizeZ * 10; ++z) { 
+                for(int x = 0; x < bfle.sizeX * 10; ++x) {
                     currentMR = bfle.Farbzellen[x, z].GetComponent<MeshRenderer>();
-                    currentMR.material = LookUpTable.materials[m_reader.ReadString()];
+                    string matstr = m_reader.ReadString();
+                    currentMR.material = LookUpTable.materials[matstr];
                 }
             }
             m_reader.ReadString();
         }
+
+        //Nicht im Editor Modus -> keine Farbzellen -> lies solange aus, bis du am Ende bist.
         else {
             string tmp = m_reader.ReadString();
             while (tmp != Constants.FILE_END_OF_TEXTURE_CELLS)
@@ -160,7 +165,8 @@ public class LoadingScript : MonoBehaviour {
     {
         string prefabTag = m_reader.ReadString();
         if(!prefabTag.Equals(Constants.FILE_NO_PREFAB_TAG)) {
-            m_currentGameObject = Instantiate<GameObject>(LookUpTable.prefabs[prefabTag]);
+            m_currentPrefab = LookUpTable.prefabs[prefabTag];
+            m_currentGameObject = Instantiate<GameObject>(m_currentPrefab);
         }
         else {
             m_currentGameObject = new GameObject();
@@ -210,8 +216,9 @@ public class LoadingScript : MonoBehaviour {
                     Destroy(m_currentGameObject);
             }
         else {
-            ObjectComponent objComp = m_currentGameObject.GetComponent<ObjectComponent>();
-            m_objectSetterLE.moveObject(m_battlefieldCreator.getZellen(), objComp.cell.xCoord, objComp.cell.zCoord, m_currentGameObject, true);
+            ObjectSetter objSet = m_currentGameObject.GetComponent<ObjectSetter>();
+            if(objSet != null)
+                m_objectSetterLE.moveObject(m_battlefieldCreator.getZellen(), objSet.x, objSet.z, m_currentGameObject, true);
         }
     }
 
@@ -228,7 +235,7 @@ public class LoadingScript : MonoBehaviour {
     private void readObjectSetter()
     {
         ObjectSetter defaultObjectSetter = m_currentGameObject.GetComponent<ObjectSetter>();
-        if(!defaultObjectSetter.Equals(null)) {
+        if(null != defaultObjectSetter) {
             defaultObjectSetter.x = m_reader.ReadInt32();
             defaultObjectSetter.z = m_reader.ReadInt32();
         }
@@ -237,9 +244,10 @@ public class LoadingScript : MonoBehaviour {
     private void readObjectComponent()
     {
         ObjectComponent defaultObjectComponent = m_currentGameObject.GetComponent<ObjectComponent>();
-        if(!defaultObjectComponent.Equals(null)) {
+        if(null != defaultObjectComponent) {
             defaultObjectComponent.sizeX = m_reader.ReadInt32();
             defaultObjectComponent.sizeZ = m_reader.ReadInt32();
+            defaultObjectComponent.original = m_currentPrefab;
         }
     }
 }

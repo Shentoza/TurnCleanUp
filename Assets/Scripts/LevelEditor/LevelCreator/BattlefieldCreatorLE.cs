@@ -35,7 +35,7 @@ public class BattlefieldCreatorLE : MonoBehaviour
         return true;
     }
 
-    void Start()
+    void Awake()
     {
         if (instance != null)
             Destroy(instance);
