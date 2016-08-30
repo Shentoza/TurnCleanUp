@@ -10,11 +10,12 @@ public class UIEditorManager : MonoBehaviour {
     Button unitB, objectB, brushB, leftRotateB, rightRotateB, removeB, spawnGovB, spawnRebB;
     Button newFileB, openFileB, saveFileB, undoB, redoB;
     GameObject assetBar, objectView, materialView;
-    List<GameObject> objectButtons = new List<GameObject>();
-    List<GameObject> objectPrefabs;
-    List<GameObject> materialButtons = new List<GameObject>();
-    List<Material> materials;
+    List<GameObject> objectButtons = new List<GameObject>();    //Liste aller Buttons, welche in der PropsLeiste angezeigt werden
+    List<GameObject> objectPrefabs; //Liste der vorher als Prefabs festgelegten Props
+    List<GameObject> materialButtons = new List<GameObject>();  //Liste aller Buttons, welche in der MaterialLeiste angezeigt werden
+    List<Material> materials;   //Liste der vorher als Prefabs festgelegten Bodentexturen
     ObjectSetterHelperLE osh;
+    Button pressedButton;
 
     public static Dictionary<string, GameObject> prefabs
         = new Dictionary<string, GameObject>();
@@ -35,10 +36,17 @@ public class UIEditorManager : MonoBehaviour {
        // unitB.onClick.AddListener(() => Methode());
 
         objectB = GameObject.Find("ObjectB").GetComponent<Button>();
-        objectB.onClick.AddListener(() => showAssetBar("objects"));
+        objectB.onClick.AddListener(() => {
+            showAssetBar("objects");
+            changeButtonColor(objectB);
+            });
 
         brushB = GameObject.Find("BrushB").GetComponent<Button>();
-        brushB.onClick.AddListener(() => showAssetBar("materials"));
+        brushB.onClick.AddListener(() =>
+        {
+            showAssetBar("materials");
+            changeButtonColor(brushB);
+        });
 
         leftRotateB = GameObject.Find("RotateLeftB").GetComponent<Button>();
         leftRotateB.onClick.AddListener(() => osh.rotateLeft());
@@ -47,15 +55,24 @@ public class UIEditorManager : MonoBehaviour {
         rightRotateB.onClick.AddListener(() => osh.rotateRight());
 
         spawnGovB = GameObject.Find("SpawnGovB").GetComponent<Button>();
-        spawnGovB.onClick.AddListener(() => osh.activateGovSpawn());
+        spawnGovB.onClick.AddListener(() => {
+            osh.activateGovSpawn();
+            changeButtonColor(spawnGovB);
+        });
        
         spawnRebB = GameObject.Find("SpawnRebB").GetComponent<Button>();
-        spawnRebB.onClick.AddListener(() => osh.activateRebSpawn());
-
-
+        spawnRebB.onClick.AddListener(() =>
+        {
+            osh.activateRebSpawn();
+            changeButtonColor(spawnRebB);
+        });
 
         removeB = GameObject.Find("RemoveB").GetComponent<Button>();
-        removeB.onClick.AddListener(() => osh.activateDestroyTool());
+        removeB.onClick.AddListener(() =>
+        {
+            osh.activateDestroyTool();
+            changeButtonColor(removeB);
+        });
 
         saveFileB = GameObject.Find("SaveFileB").GetComponent<Button>();
         saveFileB.onClick.AddListener(() => {
@@ -66,7 +83,7 @@ public class UIEditorManager : MonoBehaviour {
                 }
             });
 
-         openFileB = GameObject.Find("OpenFileB").GetComponent<Button>();
+        openFileB = GameObject.Find("OpenFileB").GetComponent<Button>();
         openFileB.onClick.AddListener(() => {
             string path = DialogManager.OpenFileDialog();
             LoadingScript load = FindObjectOfType<LoadingScript>();
@@ -77,7 +94,7 @@ public class UIEditorManager : MonoBehaviour {
             }
         });
 
-         newFileB = GameObject.Find("NewFileB").GetComponent<Button>();
+        newFileB = GameObject.Find("NewFileB").GetComponent<Button>();
         newFileB.onClick.AddListener(() => {
             LoadingScript load = FindObjectOfType<LoadingScript>();
             if(null != load) {
@@ -87,25 +104,18 @@ public class UIEditorManager : MonoBehaviour {
             }
         });
 
-
         objectView = GameObject.Find("ObjectView");
         materialView = GameObject.Find("MaterialView");
         assetBar = GameObject.Find("Assetbar");
 
-        
-
+        //Initialisiere die ObjektLeiste
         initializeObjectView();
+
+        //Initialisiere die MaterialLeiste
         initializeMaterialView();
+
+        //Blende gesamte assetBar aus
         assetBar.SetActive(false);
-
-        /*objectBar = GameObject.Find("ObjectBar");
-
-        for (int i = 0; i < objectBar.transform.childCount; i++)
-        {
-            GameObject temp = objectBar.transform.GetChild(i).gameObject;
-            temp.GetComponent<Button>().onClick.AddListener(() => osh.activatePlacingTool(objectPrefabs[i]));
-            objectButtons.Add(temp);
-        } */
     }
 
     // Update is called once per frame
@@ -121,19 +131,15 @@ public class UIEditorManager : MonoBehaviour {
         foreach (Material mat in Resources.LoadAll<Material>(Constants.GROUND_MATERIAL_PATH))
         {
             string name = mat.name;
-            //groundMaterials.Add(name, mat);
             groundMaterialsInverse.Add(mat, name);
         }
-
+        //Speichere alle Materials in die Liste
         materials = new List<Material>(groundMaterialsInverse.Keys);
 
-
         int counter = 0;
-        float startX = -50;
-        //materialView = GameObject.Find("MaterialView");
+        //X-Startposition
+        float startX = -636;
         RectTransform materialRect = GameObject.Find("MaterialBar").GetComponent<RectTransform>();
-        //materialRect.sizeDelta = new Vector2(materials.Count * 300, 0);
-
 
         foreach (Material key in materials)
         {
@@ -145,6 +151,7 @@ public class UIEditorManager : MonoBehaviour {
             //Lese Bild aus Preview aus
             Texture2D texture = null;
 
+            //Liest die Textur aus der AssetPreview im Editor aus und setzt diese
             while (texture == null)
                 texture = AssetPreview.GetAssetPreview(key);
 
@@ -155,25 +162,26 @@ public class UIEditorManager : MonoBehaviour {
             temp.GetComponent<Image>().sprite = textureSprite;
             //Passe Größe an
             temp.GetComponent<RectTransform>().sizeDelta = new Vector2(60, 60);
-            GameObject parent = GameObject.Find("MaterialBar");
-            temp.transform.SetParent(parent.transform);
+            temp.transform.SetParent(GameObject.Find("MaterialBar").GetComponent<Transform>());
+
+            //Füge Button seiner zugehörigen ButtonListe hinzu
             materialButtons.Add(temp);
-            Debug.Log(counter);
+
             temp.AddComponent<Button>().onClick.AddListener(() =>
             {
                 osh.activateBrushTool(materials[materialButtons.IndexOf(temp)]);
-                Debug.Log("Uebermitteltes Asset: " + temp.name);
             });
             if (counter == 0)
-                temp.transform.position = new Vector3(startX, 57.5f, 0);
+                temp.transform.localPosition = new Vector2(startX, 0);
             else
-                temp.transform.position = new Vector3(startX + counter * 10, 57.5f, 0);
+                temp.transform.localPosition = new Vector2(startX + counter * 10, 0);
             temp.name = "Button " + counter;
             startX += 165;
             counter++;
         }
     }
 
+    //Verhält sich wie initializeMaterialsView
     void initializeObjectView()
     {
         prefabs.Clear();
@@ -190,7 +198,7 @@ public class UIEditorManager : MonoBehaviour {
 
 
         int counter = 0;
-        float startX = 0;
+        float startX = -2100;
         
         RectTransform objectRect = GameObject.Find("ObjectBar").GetComponent<RectTransform>();
         objectRect.sizeDelta = new Vector2(objectPrefabs.Count * 250, 0);
@@ -204,6 +212,7 @@ public class UIEditorManager : MonoBehaviour {
             temp.AddComponent<Image>();
             //Lese Bild aus Preview aus
             Texture2D texture = null;
+            
 
             while (texture == null)
                 texture = AssetPreview.GetAssetPreview(key);
@@ -216,7 +225,10 @@ public class UIEditorManager : MonoBehaviour {
             //Passe Größe an
             temp.GetComponent<RectTransform>().sizeDelta = new Vector2(60, 60);
             GameObject parent = GameObject.Find("ObjectBar");
-            temp.transform.SetParent(parent.transform);
+            temp.transform.SetParent(parent.transform, false);
+            RectTransform tempRect = temp.GetComponent<RectTransform>();
+            //tempRect.anchorMin = new Vector2(0, 1);
+            //tempRect.anchorMax = new Vector2(0, 1);
             objectButtons.Add(temp);
             temp.AddComponent<Button>().onClick.AddListener(() =>
             {
@@ -224,10 +236,12 @@ public class UIEditorManager : MonoBehaviour {
                 Debug.Log("Uebermitteltes Objekt: " + key.name);
             });
             if (counter == 0)
-                temp.transform.position = new Vector3(startX, 57.5f, 0);
-            else
-                temp.transform.position = new Vector3(startX + counter * 10, 57.5f, 0);
+            {
+                tempRect.localPosition = new Vector2(startX,0);
+            }
+           tempRect.localPosition = new Vector2(startX + counter * 10, 0);
             temp.name = "Button " + counter;
+            Debug.Log("Parent von: " + temp.name + " = " + temp.transform.parent.name);
             startX += 165;
             counter++;
 
@@ -236,8 +250,7 @@ public class UIEditorManager : MonoBehaviour {
         }
     }
 
-
-
+    //Wird aufgerufen um die unterste Leiste ein- und auszublenden
     void showAssetBar(string viewName)
     {
         if(null != assetBar)
@@ -260,7 +273,30 @@ public class UIEditorManager : MonoBehaviour {
                 break;
         }
         Scrollbar scrollbar = GameObject.Find("Scrollbar").GetComponent<Scrollbar>();
+
+        //Schiebe den Value der Scrollbar nach links (0.0f)
         scrollbar.value = 0.0f;
+    }
+
+    //Ändert die Farbe eines Buttons, falls er angewählt wurde und setzt die Farbe auf seine ursprünglichen Werte
+    //falls er wieder abgewählt wurde
+    void changeButtonColor(Button btn)
+    {
+        if (btn != pressedButton)
+        {
+            btn.GetComponent<Image>().color = Color.yellow;
+            if(pressedButton != null)
+                pressedButton.GetComponent<Image>().color = new Color(225, 225, 225, 255);
+            pressedButton = btn;
+        }
+        else
+        {
+            btn.GetComponent<Image>().color = new Color(225, 225, 225, 255);
+            pressedButton = null;
+            assetBar.SetActive(false);
+        }
+
+        
     }
     
 
