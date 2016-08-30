@@ -62,6 +62,11 @@ public class SavingScript : MonoBehaviour {
     private void writeHeader()
     {
         m_writer.Write(Constants.FILE_BEGINNING_TAG);
+        writeSpawnpoints();
+    }
+
+    private void writeLevelConfig()
+    {
         m_writer.Write(levelConfig.defaultValues);
         //Default Values benutzt
         if (levelConfig.defaultValues)
@@ -70,13 +75,10 @@ public class SavingScript : MonoBehaviour {
         m_writer.Write(levelConfig.gridWidth);
         m_writer.Write(levelConfig.gridHeight);
         m_writer.Write(levelConfig.objectCount);
-        m_writer.Write(LookUpTable.materialsInverse[levelConfig.cubeMaterial]);
-
-
-        writeStartPositions();
+        //m_writer.Write(LookUpTable.materialsInverse[levelConfig.cubeMaterial]);
     }
 
-    private void writeStartPositions()
+    private void writeSpawnpoints()
     {
         //Startpositionen der Spieler
         BattlefieldCreatorLE bfle = FindObjectOfType<BattlefieldCreatorLE>();

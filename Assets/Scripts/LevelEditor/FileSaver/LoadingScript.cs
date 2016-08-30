@@ -77,7 +77,7 @@ public class LoadingScript : MonoBehaviour {
         m_reader.Close();
     }
 
-    public bool readHeader()
+    private bool readHeader()
     {
         string beginning = m_reader.ReadString();
         if (!beginning.Equals(Constants.FILE_BEGINNING_TAG)) {
@@ -85,6 +85,16 @@ public class LoadingScript : MonoBehaviour {
             //Falscher File Start
             return false;
         }
+        readLevelConfig();
+        readSpawnpoints();
+
+
+
+        return true;
+    }
+
+    private void readLevelConfig()
+    {
         levelConfig.defaultValues = m_reader.ReadBoolean();
         if (levelConfig.defaultValues) {
             levelConfig.gridWidth = Constants.DEFAULT_GRID_WIDTH;
@@ -96,13 +106,12 @@ public class LoadingScript : MonoBehaviour {
             levelConfig.gridWidth = m_reader.ReadInt32();
             levelConfig.gridHeight = m_reader.ReadInt32();
             levelConfig.objectCount = m_reader.ReadInt32();
-            levelConfig.cubeMaterial = LookUpTable.materials[m_reader.ReadString()];
+            //levelConfig.cubeMaterial = LookUpTable.materials[m_reader.ReadString()];
         }
+    }
 
-
-
-
-
+    private void readSpawnpoints()
+    {
         System.Collections.Generic.List<Vector2> p1;
         System.Collections.Generic.List<Vector2> p2;
         if (editorMode) {
@@ -116,20 +125,16 @@ public class LoadingScript : MonoBehaviour {
             p2 = bc.startPostionsP2;
         }
 
-            int count = m_reader.ReadInt32();
-            for (int i = 0; i < count; ++i)
-                p1.Add(new Vector2(m_reader.ReadSingle(), m_reader.ReadSingle()));
+        int count = m_reader.ReadInt32();
+        for (int i = 0; i < count; ++i)
+            p1.Add(new Vector2(m_reader.ReadSingle(), m_reader.ReadSingle()));
 
-            count = m_reader.ReadInt32();
-            for (int i = 0; i < count; ++i)
-                p2.Add(new Vector2(m_reader.ReadSingle(), m_reader.ReadSingle()));
-
-
-
-        return true;
+        count = m_reader.ReadInt32();
+        for (int i = 0; i < count; ++i)
+            p2.Add(new Vector2(m_reader.ReadSingle(), m_reader.ReadSingle()));
     }
 
-    public void readObjectHeader()
+    private void readObjectHeader()
     {
         string prefabTag = m_reader.ReadString();
         if(!prefabTag.Equals(Constants.FILE_NO_PREFAB_TAG)) {
@@ -142,8 +147,7 @@ public class LoadingScript : MonoBehaviour {
         m_currentGameObject.tag = m_reader.ReadString();
     }
 
-
-    public void readObject(GameObject parentObject = null)
+    private void readObject(GameObject parentObject = null)
     {
         readObjectHeader();
         readTransform(parentObject);
@@ -189,7 +193,7 @@ public class LoadingScript : MonoBehaviour {
         }
     }
 
-    public void readTransform(GameObject parentObject = null)
+    private void readTransform(GameObject parentObject = null)
     {
         if (parentObject != null)
             m_currentGameObject.transform.SetParent(parentObject.transform);
@@ -199,7 +203,7 @@ public class LoadingScript : MonoBehaviour {
         m_currentGameObject.transform.localScale = new Vector3(m_reader.ReadSingle(), m_reader.ReadSingle(), m_reader.ReadSingle());
     }
 
-    public void readObjectSetter()
+    private void readObjectSetter()
     {
         ObjectSetter defaultObjectSetter = m_currentGameObject.GetComponent<ObjectSetter>();
         if(!defaultObjectSetter.Equals(null)) {
@@ -208,7 +212,7 @@ public class LoadingScript : MonoBehaviour {
         }
     }
 
-    public void readObjectComponent()
+    private void readObjectComponent()
     {
         ObjectComponent defaultObjectComponent = m_currentGameObject.GetComponent<ObjectComponent>();
         if(!defaultObjectComponent.Equals(null)) {
