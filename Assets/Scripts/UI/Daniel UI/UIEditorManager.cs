@@ -104,6 +104,12 @@ public class UIEditorManager : MonoBehaviour {
             }
         });
 
+        undoB = GameObject.Find("UndoB").GetComponent<Button>();
+        undoB.onClick.AddListener(() => URManager.undo());
+
+        redoB = GameObject.Find("RedoB").GetComponent<Button>();
+        redoB.onClick.AddListener(() => URManager.redo());
+        
         objectView = GameObject.Find("ObjectView");
         materialView = GameObject.Find("MaterialView");
         assetBar = GameObject.Find("Assetbar");

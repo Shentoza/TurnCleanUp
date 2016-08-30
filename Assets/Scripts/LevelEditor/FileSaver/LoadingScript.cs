@@ -87,6 +87,7 @@ public class LoadingScript : MonoBehaviour {
         }
         readLevelConfig();
         readSpawnpoints();
+        readCellTextures();
 
 
 
@@ -132,6 +133,27 @@ public class LoadingScript : MonoBehaviour {
         count = m_reader.ReadInt32();
         for (int i = 0; i < count; ++i)
             p2.Add(new Vector2(m_reader.ReadSingle(), m_reader.ReadSingle()));
+    }
+
+    private void readCellTextures()
+    {
+
+        if (editorMode) {
+            BattlefieldCreatorLE bfle = FindObjectOfType<BattlefieldCreatorLE>();
+            MeshRenderer currentMR;
+            for (int z = 0; z < levelConfig.gridHeight; ++z) { 
+                for(int x = 0; x < levelConfig.gridWidth; ++x) {
+                    currentMR = bfle.Farbzellen[x, z].GetComponent<MeshRenderer>();
+                    currentMR.material = LookUpTable.materials[m_reader.ReadString()];
+                }
+            }
+            m_reader.ReadString();
+        }
+        else {
+            string tmp = m_reader.ReadString();
+            while (tmp != Constants.FILE_END_OF_TEXTURE_CELLS)
+                tmp = m_reader.ReadString();
+        }
     }
 
     private void readObjectHeader()

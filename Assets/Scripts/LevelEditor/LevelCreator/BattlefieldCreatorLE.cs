@@ -2,18 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class BattlefieldCreatorLE : MonoBehaviour {
+public class BattlefieldCreatorLE : MonoBehaviour
+{
 
     public static BattlefieldCreatorLE instance { get; private set; }
 
-	Transform transformPlane;
-	public float sizeX;
-	public float sizeZ;
-	GameObject[,] Zellen;
-    GameObject[,] Farbzellen;
-	public Material material;
+    Transform transformPlane;
+    public float sizeX;
+    public float sizeZ;
+    GameObject[,] Zellen;
+    public GameObject[,] Farbzellen { get; private set; }
+    public Material material;
     public Material farbMat;
-	public Material woodCubeMaterial;
+    public Material woodCubeMaterial;
     public float gridHeight;
 
     static public int mapSizeX;
@@ -75,23 +76,21 @@ public class BattlefieldCreatorLE : MonoBehaviour {
         Zellen = new GameObject[(int)(sizeXint), (int)(sizeZint)];
         Farbzellen = new GameObject[(int)(sizeXint), (int)(sizeZint)];
 
-		//Verschiebt Plane in den 0 Punkt(Oben links)
-		transformPlane.position = new Vector3 (sizeX * 5, 0, sizeZ * -5);
+        //Verschiebt Plane in den 0 Punkt(Oben links)
+        transformPlane.position = new Vector3(sizeX * 5, 0, sizeZ * -5);
 
         LayerMask cellLayer = LayerMask.NameToLayer("Cell");
         LayerMask farbLayer = LayerMask.NameToLayer("Farbzelle");
 
-		GameObject brett = GameObject.CreatePrimitive (PrimitiveType.Cube);
-		brett.transform.position = new Vector3 (transformPlane.position.x, transformPlane.position.y - 1.05f, transformPlane.position.z);
-		brett.transform.localScale = new Vector3 ((float)sizeX * 10, 2, (float)sizeZ * 10);
-		brett.GetComponent<MeshRenderer> ().material = woodCubeMaterial;
+        GameObject brett = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        brett.transform.position = new Vector3(transformPlane.position.x, transformPlane.position.y - 1.05f, transformPlane.position.z);
+        brett.transform.localScale = new Vector3((float)sizeX * 10, 2, (float)sizeZ * 10);
+        brett.GetComponent<MeshRenderer>().material = woodCubeMaterial;
 
 
         //Initialisiert alle Zellen
-        for (float z = 0; z > -(sizeZint); z--)
-        {
-            for (float x = 0; x < (sizeXint); x++)
-            {
+        for (float z = 0; z > -(sizeZint); z--) {
+            for (float x = 0; x < (sizeXint); x++) {
                 GameObject zelle = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 zelle.transform.Rotate(new Vector3(90, 0, 0));
                 zelle.AddComponent<Cell>();
@@ -133,27 +132,25 @@ public class BattlefieldCreatorLE : MonoBehaviour {
                 farbbox.size = new Vector3(1, 1, .25f);
                 farbbox.center = new Vector3(0, 0, farbbox.size.z / 2.0f);
                 farbbox.isTrigger = true;
-                
+
                 Farbzellen[(int)x, (int)-z] = farbzelle;
             }
         }
 
         //Setzt die Nachbarn der Zellen
-        for (int i = 0; i < (sizeZint); i++)
-		{
-			for(int j = 0; j < (sizeXint); j++)
-			{
-				Cell currentCell = (Cell) Zellen[j, i].GetComponent(typeof(Cell));
-				GameObject upper = i - 1 >= 0 ? Zellen[j, (i-1)]:null;
-				GameObject lower = i + 1 < (sizeZint) ? Zellen[j, (i+1)]:null;
-				GameObject left = j - 1 >= 0 ? Zellen[(j-1), i]:null;
-				GameObject right = j + 1 < (sizeXint) ? Zellen[(j+1), i]:null;
+        for (int i = 0; i < (sizeZint); i++) {
+            for (int j = 0; j < (sizeXint); j++) {
+                Cell currentCell = (Cell)Zellen[j, i].GetComponent(typeof(Cell));
+                GameObject upper = i - 1 >= 0 ? Zellen[j, (i - 1)] : null;
+                GameObject lower = i + 1 < (sizeZint) ? Zellen[j, (i + 1)] : null;
+                GameObject left = j - 1 >= 0 ? Zellen[(j - 1), i] : null;
+                GameObject right = j + 1 < (sizeXint) ? Zellen[(j + 1), i] : null;
 
-				currentCell.setNeighbours(upper, left, right, lower);
-			}
-		}
+                currentCell.setNeighbours(upper, left, right, lower);
+            }
+        }
 
-		/*
+        /*
 		//Setzt Objekte an richtiche Stelle
 		ObjectSetter[] os = FindObjectsOfType (typeof(ObjectSetter)) as ObjectSetter[];
 		foreach (ObjectSetter obs in os) 
@@ -176,12 +173,12 @@ public class BattlefieldCreatorLE : MonoBehaviour {
 			ObjectSetterLE obs = (ObjectSetterLE) obc.gameObject.GetComponent (typeof(ObjectSetterLE));
 			//obs.moveObject (Zellen);
 		}*/
-	}
+    }
 
-	public Cell getCell(int x, int y)
-	{
-		return (Cell)Zellen [x, y].GetComponent (typeof(Cell));
-	}
+    public Cell getCell(int x, int y)
+    {
+        return (Cell)Zellen[x, y].GetComponent(typeof(Cell));
+    }
 
     public GameObject[,] getZellen()
     {
