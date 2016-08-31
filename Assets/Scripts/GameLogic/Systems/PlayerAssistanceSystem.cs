@@ -8,7 +8,6 @@ public class PlayerAssistanceSystem : MonoBehaviour {
     bool drawingWalkPath;
     ArrayList walkPath = new ArrayList();
     bool drawingThrowPath;
-    ArrayList throwPath = new ArrayList();
 
     [SerializeField]
     private Material defaultMat;

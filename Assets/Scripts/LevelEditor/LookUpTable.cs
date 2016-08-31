@@ -29,12 +29,11 @@ public class LookUpTable : MonoBehaviour {
         if (prefabs.Count == 0) {
             foreach (GameObject prefab in Resources.LoadAll<GameObject>(Constants.PROPS_PREFAB_PATH)) {
                 string prefabName = prefab.name;
-                Debug.Log(prefabName);
                 prefabs.Add(prefabName, prefab);
                 prefabsInverse.Add(prefab, prefabName);
             }
         }   
-
+        
         //Lädt alle Materials
         if(materials.Count == 0)
             foreach(Material mat in Resources.LoadAll<Material>(Constants.MATERIAL_PREFAB_PATH)) {

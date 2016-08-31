@@ -70,7 +70,7 @@ public class BattlefieldCreatorLE : MonoBehaviour
 
         mapSizeX = sizeXint;
         mapSizeZ = sizeZint;
-
+        
         transformPlane.localScale = new Vector3(sizeX, 1, sizeZ);
 
         Zellen = new GameObject[(int)(sizeXint), (int)(sizeZint)];

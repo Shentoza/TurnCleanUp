@@ -276,7 +276,6 @@ public class ObjectSetterHelperLE : MonoBehaviour {
             {
                 for (int i = 0; i < testmr.materials.Length; i++)
                 {
-                    Debug.Log(testmr.materials[i]);
                     testmr.materials = materialSetter(cantPlaceMat);
                 }
 

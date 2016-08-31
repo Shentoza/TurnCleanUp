@@ -20,16 +20,13 @@ public class MovementSystem : MonoBehaviour {
 
     //Seconds to turn 360°
     private float turning_secondsNeeded = 1.0f;
-    private bool turning_started;
     private float turning_direction;
     
 	// Use this for initialization
 	void Start () {
         secondsPerCell = 0.5f;
         playerAttr = (AttributeComponent)this.gameObject.GetComponent(typeof(AttributeComponent));
-        turning_started = false;
     }
-
 	
 	// Update is called once per frame
 	void Update () {
