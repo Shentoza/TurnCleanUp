@@ -33,7 +33,7 @@ public class LookUpTable : MonoBehaviour {
                 prefabsInverse.Add(prefab, prefabName);
             }
         }   
-
+        
         //Lädt alle Materials
         if(materials.Count == 0)
             foreach(Material mat in Resources.LoadAll<Material>(Constants.MATERIAL_PREFAB_PATH)) {

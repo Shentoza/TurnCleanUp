@@ -162,7 +162,6 @@ public class UIEditorManager : MonoBehaviour {
         int counter = 0;
         //X-Startposition
         float startX = -636;
-        RectTransform materialRect = GameObject.Find("MaterialBar").GetComponent<RectTransform>();
 
         foreach (Material key in materials)
         {
@@ -269,7 +268,6 @@ public class UIEditorManager : MonoBehaviour {
             temp.AddComponent<Button>().onClick.AddListener(() =>
             {
                 osh.activatePlacingTool(objectPrefabs[objectButtons.IndexOf(temp)]);
-                Debug.Log("Uebermitteltes Objekt: " + key.name);
             });
             if (counter == 0)
             {
@@ -277,7 +275,6 @@ public class UIEditorManager : MonoBehaviour {
             }
            tempRect.localPosition = new Vector2(startX + counter * 10, 0);
             temp.name = "Button " + counter;
-            //Debug.Log("Parent von: " + temp.name + " = " + temp.transform.parent.name);
             startX += 165;
             counter++;
 

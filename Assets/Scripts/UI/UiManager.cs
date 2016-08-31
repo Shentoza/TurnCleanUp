@@ -23,7 +23,7 @@ public class UiManager : MonoBehaviour {
 
     public Enums.Actions activeSkill = 0;
 
-    private bool figureSelected = false;
+
 
     GameObject selected_Unit;
     AttributeComponent selected_Attributes;
@@ -73,15 +73,13 @@ public class UiManager : MonoBehaviour {
     void UnitEvent(GameObject unit)
     {
         selected_Unit = unit;
-        figureSelected = false;
         if(selected_Unit != null)
         { 
             selected_Attributes = selected_Unit.GetComponent<AttributeComponent>();
             selected_Skills = selected_Attributes.skills;
-            figureSelected = true;
         }
     }
-
+    
     void SpendAP(int amount, PlayerComponent player)
     {
         if(player.gameObject == player1)

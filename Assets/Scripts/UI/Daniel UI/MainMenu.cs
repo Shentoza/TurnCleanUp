@@ -32,8 +32,6 @@ public class MainMenu : MonoBehaviour
     public void handleCreate()
     {
         int index = drop.value;
-        Dropdown.OptionData selectedItem = drop.options[index];
-        string mapsize = selectedItem.text;
 
        // Debug.Log("Dateiname: " + filename + "\n" + "Tageszeit: " + daytime + "\n" + "Mapgröße: " + mapsize);
 
@@ -42,6 +40,7 @@ public class MainMenu : MonoBehaviour
         LevelConfiguration.instance.daytime = checkDaytime();
         LevelConfiguration.instance.filename = GameObject.Find("InputField").GetComponent<InputField>().text;
         if (LevelConfiguration.instance.gridHeight == 20 && LevelConfiguration.instance.gridWidth == 20) {
+        {
             SceneManager.LoadScene("EmptyLevel 1");
         }
         else if (LevelConfiguration.instance.gridWidth == 20 && LevelConfiguration.instance.gridWidth == 40) {
