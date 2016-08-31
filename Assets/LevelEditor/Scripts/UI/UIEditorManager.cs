@@ -113,8 +113,6 @@ public class UIEditorManager : MonoBehaviour {
             if(null != load) {
                 load.filePath = null;
                 load.editorMode = true;
-                Debug.Log(LevelConfiguration.instance.gridHeight);
-                Debug.Log(LevelConfiguration.instance.gridWidth);
                 if (LevelConfiguration.instance.gridHeight == 20 && LevelConfiguration.instance.gridWidth == 20) {
                     SceneManager.LoadScene("EmptyLevel 1");
                 }
