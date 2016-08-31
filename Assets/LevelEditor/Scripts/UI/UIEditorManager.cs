@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine.SceneManagement;
 
 public class UIEditorManager : MonoBehaviour {
@@ -16,8 +15,6 @@ public class UIEditorManager : MonoBehaviour {
     List<Material> materials;   //Liste der vorher als Prefabs festgelegten Bodentexturen
     ObjectSetterHelperLE osh;
     Button pressedButton;
-    public Sprite mat0, mat1, mat2, mat3;
-    public Sprite prop0, prop1, prop2, prop3, prop4, prop5, prop6, prop7, prop8, prop9, prop10, prop11;
     
     
 
