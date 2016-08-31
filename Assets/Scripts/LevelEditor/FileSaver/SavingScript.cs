@@ -13,11 +13,6 @@ public class SavingScript : MonoBehaviour {
     public void saveLevel(string path)
     {
         levelConfig = LevelConfiguration.instance;
-        if(!path.EndsWith(Constants.FILE_EXTENSION))
-        {
-            path += Constants.FILE_EXTENSION;
-        }
-
 
         m_writer = new BinaryWriter(new FileStream(path, FileMode.Create));
         savedGameObjects.Clear();
@@ -47,7 +42,9 @@ public class SavingScript : MonoBehaviour {
         }
         writeHeader();
 
-        foreach(GameObject currentGameObject in savedGameObjects)
+        writeCellTextures();
+
+        foreach (GameObject currentGameObject in savedGameObjects)
         {
             //Flag, dass ein neues Objekt kommt
             m_writer.Write((short)Constants.FILE_OBJECT_FLAGS.NewObject);
@@ -65,7 +62,7 @@ public class SavingScript : MonoBehaviour {
         m_writer.Write(Constants.FILE_BEGINNING_TAG);
         writeLevelConfig();
         writeSpawnpoints();
-        writeCellTextures();
+        m_writer.Write(Constants.FILE_END_OF_HEADER);
     }
 
     private void writeLevelConfig()
@@ -106,6 +103,7 @@ public class SavingScript : MonoBehaviour {
             for(int z = 0; z < bfle.sizeZ * 10; ++z) {
                 for(int x = 0; x < bfle.sizeX * 10; ++x) {
                     currentMR = bfle.Farbzellen[x, z].GetComponent<MeshRenderer>();
+                    Debug.Log(currentMR.sharedMaterial.name);
                     m_writer.Write(LookUpTable.materialsInverse[currentMR.sharedMaterial]);
                 }
             }

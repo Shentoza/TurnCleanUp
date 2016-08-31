@@ -88,9 +88,18 @@ public class UIEditorManager : MonoBehaviour {
             string path = DialogManager.OpenFileDialog();
             LoadingScript load = FindObjectOfType<LoadingScript>();
             if(load != null) {
+                LevelConfiguration peekedHeader = load.peekHeader(path);
                 load.filePath = path;
                 load.editorMode = true;
-                SceneManager.LoadScene("EmptyLevel 1");
+                if(peekedHeader.gridHeight == 20 && peekedHeader.gridWidth == 20) {
+                        SceneManager.LoadScene("EmptyLevel 1");
+                    }
+                else if(peekedHeader.gridWidth == 20 && peekedHeader.gridWidth == 40) {
+                        SceneManager.LoadScene("EmptyLevel 2");
+                    }
+                else if(peekedHeader.gridWidth == 40 && peekedHeader.gridWidth == 80) {
+                        SceneManager.LoadScene("EmptyLevel 3");
+                    }
             }
         });
 
@@ -100,7 +109,15 @@ public class UIEditorManager : MonoBehaviour {
             if(null != load) {
                 load.filePath = null;
                 load.editorMode = true;
-                SceneManager.LoadScene("EmptyLevel 1");
+                if (LevelConfiguration.instance.gridHeight == 20 && LevelConfiguration.instance.gridWidth == 20) {
+                    SceneManager.LoadScene("EmptyLevel 1");
+                }
+                else if (LevelConfiguration.instance.gridWidth == 20 && LevelConfiguration.instance.gridWidth == 40) {
+                    SceneManager.LoadScene("EmptyLevel 2");
+                }
+                else if (LevelConfiguration.instance.gridWidth == 40 && LevelConfiguration.instance.gridWidth == 80) {
+                    SceneManager.LoadScene("EmptyLevel 3");
+                }
             }
         });
 
@@ -260,7 +277,7 @@ public class UIEditorManager : MonoBehaviour {
             }
            tempRect.localPosition = new Vector2(startX + counter * 10, 0);
             temp.name = "Button " + counter;
-            Debug.Log("Parent von: " + temp.name + " = " + temp.transform.parent.name);
+            //Debug.Log("Parent von: " + temp.name + " = " + temp.transform.parent.name);
             startX += 165;
             counter++;
 

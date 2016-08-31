@@ -53,6 +53,11 @@ public class LoadingScript : MonoBehaviour {
             ex.ToString();
         }
         bool reading = readHeader();
+        if (!reading)
+            Debug.Log("Falscher Header!");
+
+
+        readCellTextures();
         while (reading)
         {
             try
@@ -87,28 +92,27 @@ public class LoadingScript : MonoBehaviour {
             //Falscher File Start
             return false;
         }
-        readLevelConfig();
+        readLevelConfig(levelConfig);
         readSpawnpoints();
-        readCellTextures();
-
-
-
-        return true;
+        
+        if(m_reader.ReadString().Equals(Constants.FILE_END_OF_HEADER))
+            return true;
+        return false;
     }
 
-    private void readLevelConfig()
+    private void readLevelConfig(LevelConfiguration config)
     {
-        levelConfig.defaultValues = m_reader.ReadBoolean();
-        if (levelConfig.defaultValues) {
-            levelConfig.gridWidth = Constants.DEFAULT_GRID_WIDTH;
-            levelConfig.gridHeight = Constants.DEFAULT_GRID_HEIGHT;
-            levelConfig.objectCount = Constants.DEFAULT_OBJECT_COUNT;
-            levelConfig.cubeMaterial = Constants.DEFAULT_CUBE_MATERIAL;
+        config.defaultValues = m_reader.ReadBoolean();
+        if (config.defaultValues) {
+            config.gridWidth = Constants.DEFAULT_GRID_WIDTH;
+            config.gridHeight = Constants.DEFAULT_GRID_HEIGHT;
+            config.objectCount = Constants.DEFAULT_OBJECT_COUNT;
+            config.cubeMaterial = Constants.DEFAULT_CUBE_MATERIAL;
         }
         else {
-            levelConfig.gridWidth = m_reader.ReadInt32();
-            levelConfig.gridHeight = m_reader.ReadInt32();
-            levelConfig.objectCount = m_reader.ReadInt32();
+            config.gridWidth = m_reader.ReadInt32();
+            config.gridHeight = m_reader.ReadInt32();
+            config.objectCount = m_reader.ReadInt32();
             //levelConfig.cubeMaterial = LookUpTable.materials[m_reader.ReadString()];
         }
     }
@@ -250,4 +254,26 @@ public class LoadingScript : MonoBehaviour {
             defaultObjectComponent.original = m_currentPrefab;
         }
     }
+
+    public LevelConfiguration peekHeader(string path)
+    {
+
+        try {
+            m_reader = new BinaryReader(new FileStream(path, FileMode.Open));
+        }
+        catch (FileNotFoundException ex) {
+            Debug.Log(ex.Message);
+            ex.ToString();
+        }
+
+        if (!m_reader.ReadString().Equals(Constants.FILE_BEGINNING_TAG)) {
+            Debug.Log("Wrong File Start");
+            //Falscher File Start
+            return null;
+        }
+        LevelConfiguration result = new LevelConfiguration(0, 0);
+        readLevelConfig(result);
+        return result;
+    }
+
 }

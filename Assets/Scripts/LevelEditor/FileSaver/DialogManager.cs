@@ -10,7 +10,7 @@ public class DialogManager {
     {
         openDialog = new OpenFileDialog();
         openDialog.InitialDirectory = UnityEngine.Application.dataPath;
-        openDialog.Filter = "CivilWar Maps(*.cwmap)|*.CWMAP;|Alle Dateien (*.*)|*.*";
+        openDialog.Filter = "CivilWar Maps(*.cwmap)|*.cwmap;|Alle Dateien (*.*)|*.*";
         openDialog.Title = "Karte zum öffnen auswählen";
         openDialog.Multiselect = false;
         string result = "";
@@ -29,7 +29,7 @@ public class DialogManager {
     public static string SaveFileDialog()
     {
         saveFileDialog = new SaveFileDialog();
-        saveFileDialog.Filter = "CivilWar Maps(*.cwmap)|*.CWMAP;|Alle Dateien (*.*)|*.*";
+        saveFileDialog.Filter = "CivilWar Maps(*.cwmap)|*.cwmap;|Alle Dateien (*.*)|*.*";
         saveFileDialog.Title = "Karte speichern unter...";
         saveFileDialog.AddExtension = true;
         saveFileDialog.DefaultExt = Constants.FILE_EXTENSION;
@@ -42,7 +42,6 @@ public class DialogManager {
                 result = null;
             }
         }
-        
         saveFileDialog = null;
         return result;
     }

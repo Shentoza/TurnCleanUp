@@ -8,8 +8,6 @@ using UnityEditor;
 
 public class MainMenu : MonoBehaviour
 {
-    //[DllImport("user32.dll")]
-    //private static extern void OpenFileDialog(); //in your case : OpenFileDialog
     Dropdown drop;
     Button createB, loadB;
     //1. Dimension Höhe - 2. Dimension Breite
@@ -30,10 +28,6 @@ public class MainMenu : MonoBehaviour
         loadB = GameObject.Find("LoadB").GetComponent<Button>();
         loadB.onClick.AddListener(() => handleLoad());
     }
-    void OnGUI()
-    {
-
-    }
 
     public void handleCreate()
     {
@@ -47,7 +41,15 @@ public class MainMenu : MonoBehaviour
         LevelConfiguration.instance.gridWidth = mapSizeArray[1, index];
         LevelConfiguration.instance.daytime = checkDaytime();
         LevelConfiguration.instance.filename = GameObject.Find("InputField").GetComponent<InputField>().text;
-        SceneManager.LoadScene("EmptyLevel 1");
+        if (LevelConfiguration.instance.gridHeight == 20 && LevelConfiguration.instance.gridWidth == 20) {
+            SceneManager.LoadScene("EmptyLevel 1");
+        }
+        else if (LevelConfiguration.instance.gridWidth == 20 && LevelConfiguration.instance.gridWidth == 40) {
+            SceneManager.LoadScene("EmptyLevel 2");
+        }
+        else if (LevelConfiguration.instance.gridWidth == 40 && LevelConfiguration.instance.gridWidth == 80) {
+            SceneManager.LoadScene("EmptyLevel 3");
+        }
     }
 
 
@@ -58,8 +60,16 @@ public class MainMenu : MonoBehaviour
             LoadingScript ls = FindObjectOfType<LoadingScript>();
             ls.filePath = loadingPath;
             ls.editorMode = true;
-
-            SceneManager.LoadScene("EmptyLevel 1");
+            LevelConfiguration peekedHeader = ls.peekHeader(loadingPath);
+            if (peekedHeader.gridHeight == 20 && peekedHeader.gridWidth == 20) {
+                SceneManager.LoadScene("EmptyLevel 1");
+            }
+            else if (peekedHeader.gridWidth == 20 && peekedHeader.gridWidth == 40) {
+                SceneManager.LoadScene("EmptyLevel 2");
+            }
+            else if (peekedHeader.gridWidth == 40 && peekedHeader.gridWidth == 80) {
+                SceneManager.LoadScene("EmptyLevel 3");
+            }
         }
     }
 

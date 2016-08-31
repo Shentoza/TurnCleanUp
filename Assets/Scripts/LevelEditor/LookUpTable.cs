@@ -29,7 +29,6 @@ public class LookUpTable : MonoBehaviour {
         if (prefabs.Count == 0) {
             foreach (GameObject prefab in Resources.LoadAll<GameObject>(Constants.PROPS_PREFAB_PATH)) {
                 string prefabName = prefab.name;
-                Debug.Log(prefabName);
                 prefabs.Add(prefabName, prefab);
                 prefabsInverse.Add(prefab, prefabName);
             }

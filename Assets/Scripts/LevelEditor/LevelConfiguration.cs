@@ -25,4 +25,11 @@ public class LevelConfiguration {
         gridHeight = Constants.DEFAULT_GRID_HEIGHT;
         objectCount = Constants.DEFAULT_OBJECT_COUNT;
     }
+
+    public LevelConfiguration(int width, int height)
+    {
+        defaultValues = false;
+        gridWidth = width;
+        gridHeight = height;
+    }
 }

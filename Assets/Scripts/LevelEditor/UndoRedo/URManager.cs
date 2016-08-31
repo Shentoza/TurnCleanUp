@@ -35,7 +35,7 @@ public class URManager : MonoBehaviour{
     public static void redo()
     {
         if(currentIndex < (list.Count-1)) {
-            list[currentIndex++].Redo();
+            list[++currentIndex].Redo();
         }
     }
 
