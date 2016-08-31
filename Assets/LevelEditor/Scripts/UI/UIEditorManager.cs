@@ -16,6 +16,10 @@ public class UIEditorManager : MonoBehaviour {
     List<Material> materials;   //Liste der vorher als Prefabs festgelegten Bodentexturen
     ObjectSetterHelperLE osh;
     Button pressedButton;
+    public Sprite mat0, mat1, mat2, mat3;
+    public Sprite prop0, prop1, prop2, prop3, prop4, prop5, prop6, prop7, prop8, prop9, prop10, prop11;
+    
+    
 
     public static Dictionary<string, GameObject> prefabs
         = new Dictionary<string, GameObject>();
@@ -170,27 +174,13 @@ public class UIEditorManager : MonoBehaviour {
             //Füge ImageComponent hinzu
             temp.AddComponent<Image>();
             //Lese Bild aus Preview aus
-            Texture2D texture = null;
-
-            /*
-            //Liest die Textur aus der AssetPreview im Editor aus und setzt diese
-            while (texture == null)
-                texture = AssetPreview.GetAssetPreview(key);
-                */
-
-
-            texture = Resources.Load<Texture2D>("Assets/Resources/Textures/GUI/LevelEditorButtons/Brushes" + "icon" + counter + 1 + ".png");
-
-            /*
-            string fileName = "Assets/Resources/Textures/GUI/LevelEditorButtons/Props" + counter + 1 + ".png";
-            texture = (Texture2D)Resources.LoadAssetAtPath(fileName, typeof(Texture2D)); */
-
-
+            Texture2D texture = (Texture2D)Resources.Load("Textures/GUI/LevelEditorButtons/Brushes/" + "mat" + (counter+1));
 
             //Konvertiere Textur zu Sprite
             Sprite textureSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
             //Füge Textur hinzu
             temp.GetComponent<Image>().sprite = textureSprite;
+    
             //Passe Größe an
             temp.GetComponent<RectTransform>().sizeDelta = new Vector2(60, 60);
             temp.transform.SetParent(GameObject.Find("MaterialBar").GetComponent<Transform>());
@@ -255,11 +245,7 @@ public class UIEditorManager : MonoBehaviour {
             //Füge ImageComponent hinzu
             temp.AddComponent<Image>();
             //Lese Bild aus Preview aus
-            Texture2D texture = null;
-            
-
-            while (texture == null)
-                texture = AssetPreview.GetAssetPreview(key);
+            Texture2D texture = (Texture2D)Resources.Load("Textures/GUI/LevelEditorButtons/Props/" + "prop" + (counter + 1));
 
 
             //Konvertiere Textur zu Sprite
