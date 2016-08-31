@@ -273,6 +273,9 @@ public class LoadingScript : MonoBehaviour {
         }
         LevelConfiguration result = new LevelConfiguration(0, 0);
         readLevelConfig(result);
+
+        m_reader.BaseStream.Close();
+        m_reader.Close();
         return result;
     }
 

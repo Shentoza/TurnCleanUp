@@ -83,39 +83,45 @@ public class UIEditorManager : MonoBehaviour {
                 }
             });
 
-            openFileB = GameObject.Find("OpenFileB").GetComponent<Button>();
-            openFileB.onClick.AddListener(() => {
-            string path = DialogManager.OpenFileDialog();
-            LoadingScript load = FindObjectOfType<LoadingScript>();
-            if(load != null) {
-                LevelConfiguration peekedHeader = load.peekHeader(path);
-                load.filePath = path;
-                load.editorMode = true;
-                if(peekedHeader.gridHeight == 20 && peekedHeader.gridWidth == 20) {
-                        SceneManager.LoadScene("EmptyLevel 1");
-                    }
-                else if(peekedHeader.gridWidth == 20 && peekedHeader.gridWidth == 40) {
-                        SceneManager.LoadScene("EmptyLevel 2");
-                    }
-                else if(peekedHeader.gridWidth == 40 && peekedHeader.gridWidth == 80) {
-                        SceneManager.LoadScene("EmptyLevel 3");
-                    }
-            }
-        });
 
+        openFileB = GameObject.Find("OpenFileB").GetComponent<Button>();
+        openFileB.onClick.AddListener(() => {
+        string path = DialogManager.OpenFileDialog();
+        LoadingScript load = FindObjectOfType<LoadingScript>();
+        if(load != null && !string.IsNullOrEmpty(path)) {
+            LevelConfiguration peekedHeader = load.peekHeader(path);
+            load.filePath = path;
+            load.editorMode = true;
+            if(peekedHeader.gridHeight == 20 && peekedHeader.gridWidth == 20) {
+                    SceneManager.LoadScene("EmptyLevel 1");
+                }
+            else if(peekedHeader.gridHeight == 20 && peekedHeader.gridWidth == 40) {
+                    SceneManager.LoadScene("EmptyLevel 2");
+                }
+            else if(peekedHeader.gridHeight == 40 && peekedHeader.gridWidth == 80) {
+                    SceneManager.LoadScene("EmptyLevel 3");
+                }
+                LevelConfiguration.instance.gridHeight = peekedHeader.gridHeight;
+                LevelConfiguration.instance.gridWidth = peekedHeader.gridWidth;
+                LevelConfiguration.instance.defaultValues = false;
+        }
+    });
+        
         newFileB = GameObject.Find("NewFileB").GetComponent<Button>();
         newFileB.onClick.AddListener(() => {
             LoadingScript load = FindObjectOfType<LoadingScript>();
             if(null != load) {
                 load.filePath = null;
                 load.editorMode = true;
+                Debug.Log(LevelConfiguration.instance.gridHeight);
+                Debug.Log(LevelConfiguration.instance.gridWidth);
                 if (LevelConfiguration.instance.gridHeight == 20 && LevelConfiguration.instance.gridWidth == 20) {
                     SceneManager.LoadScene("EmptyLevel 1");
                 }
-                else if (LevelConfiguration.instance.gridWidth == 20 && LevelConfiguration.instance.gridWidth == 40) {
+                else if (LevelConfiguration.instance.gridHeight == 20 && LevelConfiguration.instance.gridWidth == 40) {
                     SceneManager.LoadScene("EmptyLevel 2");
                 }
-                else if (LevelConfiguration.instance.gridWidth == 40 && LevelConfiguration.instance.gridWidth == 80) {
+                else if (LevelConfiguration.instance.gridHeight == 40 && LevelConfiguration.instance.gridWidth == 80) {
                     SceneManager.LoadScene("EmptyLevel 3");
                 }
             }
@@ -140,11 +146,6 @@ public class UIEditorManager : MonoBehaviour {
         //Blende gesamte assetBar aus
         assetBar.SetActive(false);
     }
-
-    // Update is called once per frame
-    void Update () {
-	
-	}
 
     void initializeMaterialView()
     {

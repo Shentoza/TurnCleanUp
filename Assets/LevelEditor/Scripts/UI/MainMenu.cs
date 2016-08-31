@@ -33,20 +33,18 @@ public class MainMenu : MonoBehaviour
     {
         int index = drop.value;
 
-       // Debug.Log("Dateiname: " + filename + "\n" + "Tageszeit: " + daytime + "\n" + "Mapgröße: " + mapsize);
 
+        LevelConfiguration.instance.defaultValues = false;
         LevelConfiguration.instance.gridHeight = mapSizeArray[0,index];
         LevelConfiguration.instance.gridWidth = mapSizeArray[1, index];
-        LevelConfiguration.instance.daytime = checkDaytime();
         LevelConfiguration.instance.filename = GameObject.Find("InputField").GetComponent<InputField>().text;
         if (LevelConfiguration.instance.gridHeight == 20 && LevelConfiguration.instance.gridWidth == 20) {
-        {
             SceneManager.LoadScene("EmptyLevel 1");
         }
-        else if (LevelConfiguration.instance.gridWidth == 20 && LevelConfiguration.instance.gridWidth == 40) {
+        else if (LevelConfiguration.instance.gridHeight == 20 && LevelConfiguration.instance.gridWidth == 40) {
             SceneManager.LoadScene("EmptyLevel 2");
         }
-        else if (LevelConfiguration.instance.gridWidth == 40 && LevelConfiguration.instance.gridWidth == 80) {
+        else if (LevelConfiguration.instance.gridHeight == 40 && LevelConfiguration.instance.gridWidth == 80) {
             SceneManager.LoadScene("EmptyLevel 3");
         }
     }
@@ -63,33 +61,15 @@ public class MainMenu : MonoBehaviour
             if (peekedHeader.gridHeight == 20 && peekedHeader.gridWidth == 20) {
                 SceneManager.LoadScene("EmptyLevel 1");
             }
-            else if (peekedHeader.gridWidth == 20 && peekedHeader.gridWidth == 40) {
+            else if (peekedHeader.gridHeight == 20 && peekedHeader.gridWidth == 40) {
                 SceneManager.LoadScene("EmptyLevel 2");
             }
-            else if (peekedHeader.gridWidth == 40 && peekedHeader.gridWidth == 80) {
+            else if (peekedHeader.gridHeight == 40 && peekedHeader.gridWidth == 80) {
                 SceneManager.LoadScene("EmptyLevel 3");
             }
         }
     }
-
-    public string checkDaytime()
-    {
-        Toggle dusk = GameObject.Find("DuskT").GetComponent<Toggle>();
-        Toggle day = GameObject.Find("DayT").GetComponent<Toggle>();
-        Toggle night = GameObject.Find("NightT").GetComponent<Toggle>();
-
-        if (dusk.isOn)
-            return "dusk";
-
-        else if (day.isOn)
-            return "day";
-
-        else if (night.isOn)
-            return "night";
-
-        return null;
-    }
-
+    
     void Destroy()
     {
         createB.onClick.RemoveListener(() => handleCreate());

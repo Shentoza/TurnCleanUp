@@ -103,7 +103,6 @@ public class SavingScript : MonoBehaviour {
             for(int z = 0; z < bfle.sizeZ * 10; ++z) {
                 for(int x = 0; x < bfle.sizeX * 10; ++x) {
                     currentMR = bfle.Farbzellen[x, z].GetComponent<MeshRenderer>();
-                    Debug.Log(currentMR.sharedMaterial.name);
                     m_writer.Write(LookUpTable.materialsInverse[currentMR.sharedMaterial]);
                 }
             }
