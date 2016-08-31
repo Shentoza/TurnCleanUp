@@ -172,9 +172,19 @@ public class UIEditorManager : MonoBehaviour {
             //Lese Bild aus Preview aus
             Texture2D texture = null;
 
+            /*
             //Liest die Textur aus der AssetPreview im Editor aus und setzt diese
             while (texture == null)
                 texture = AssetPreview.GetAssetPreview(key);
+                */
+
+
+            texture = Resources.Load<Texture2D>("Assets/Resources/Textures/GUI/LevelEditorButtons/Props" + "icon" + counter + 1 + ".jpg");
+
+            /*
+            string fileName = "Assets/Resources/Textures/GUI/LevelEditorButtons/Props" + counter + 1 + ".jpg";
+            texture = (Texture2D)Resources.LoadAssetAtPath(fileName, typeof(Texture2D)); */
+
 
 
             //Konvertiere Textur zu Sprite
