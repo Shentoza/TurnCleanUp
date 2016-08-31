@@ -179,10 +179,10 @@ public class UIEditorManager : MonoBehaviour {
                 */
 
 
-            texture = Resources.Load<Texture2D>("Assets/Resources/Textures/GUI/LevelEditorButtons/Props" + "icon" + counter + 1 + ".jpg");
+            texture = Resources.Load<Texture2D>("Assets/Resources/Textures/GUI/LevelEditorButtons/Brushes" + "icon" + counter + 1 + ".png");
 
             /*
-            string fileName = "Assets/Resources/Textures/GUI/LevelEditorButtons/Props" + counter + 1 + ".jpg";
+            string fileName = "Assets/Resources/Textures/GUI/LevelEditorButtons/Props" + counter + 1 + ".png";
             texture = (Texture2D)Resources.LoadAssetAtPath(fileName, typeof(Texture2D)); */
 
 
